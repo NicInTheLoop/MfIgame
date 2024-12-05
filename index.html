@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Test Your Knowledge</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}?v=1.0"> <!-- Added cache-busting query parameter -->
+    </head>
+<body>
+    <header>
+        <h1>Test Your Knowledge of the Model for Improvement!</h1>
+        <!-- Insert logo-->
+        <img src="{{ url_for('static', filename='QICLearn_logo.jpg') }}" alt="QIC Learn Logo" class="logo" />
+    </header>
+
+    <div class="main-container">
+        <div class="game-area" id="game-area">
+            <!-- Game area content -->
+            <div class="text-box" id="box1" ondrop="drop(event)" ondragover="allowDrop(event)">A</div>
+            <div class="downward-arrow"></div>
+            <div class="text-box" id="box2" ondrop="drop(event)" ondragover="allowDrop(event)">B</div>
+            <div class="downward-arrow"></div>
+            <div class="text-box" id="box3" ondrop="drop(event)" ondragover="allowDrop(event)">C</div>
+            <div class="downward-arrow"></div> <!-- Added downward arrow below the third text box -->
+            <div class="cycle">
+                <div class="quarter" id="quarter1" ondrop="drop(event)" ondragover="allowDrop(event)">
+                    <span>1</span>
+                    <div class="arrow" id="arrow1"></div>
+                </div>
+                <div class="quarter" id="quarter2" ondrop="drop(event)" ondragover="allowDrop(event)">
+                    <span>2</span>
+                    <div class="arrow" id="arrow2"></div>
+                </div>
+                <div class="quarter" id="quarter3" ondrop="drop(event)" ondragover="allowDrop(event)">
+                    <span>3</span>
+                    <div class="arrow" id="arrow3"></div>
+                </div>
+                <div class="quarter" id="quarter4" ondrop="drop(event)" ondragover="allowDrop(event)">
+                    <span>4</span>
+                    <div class="arrow" id="arrow4"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="instructions-container" id="instructions-container">
+            <div class="instructions">
+                <h2>Instructions</h2>
+                <p>Drag and drop the words to the correct section of the Model for Improvement.</p>
+                <p>Click the submit button to check your answers.</p>
+                <p>Correct answers will be highlighted in green (1 point).</p>
+                <p>Incorrect answers will turn grey.</p>
+                <p>Good luck!</p>
+            </div>
+
+            <div class="draggable-container" id="draggable-container">
+                <!-- Draggable words --><!--bank of words for people to guess from-->
+                <div id="word-bank">
+                    <span class="draggable" id="word1" draggable="true" ondragstart="drag(event)">Feedback Loop</span>
+                    <span class="draggable" id="word2" draggable="true" ondragstart="drag(event)">Plan</span>
+                    <span class="draggable" id="word3" draggable="true" ondragstart="drag(event)">Diagnostics</span>
+                    <span class="draggable" id="word4" draggable="true" ondragstart="drag(event)">Do</span>
+                    <span class="draggable" id="word5" draggable="true" ondragstart="drag(event)">Outcome</span>
+                    <span class="draggable" id="word6" draggable="true" ondragstart="drag(event)">Act</span>
+                    <span class="draggable" id="word7" draggable="true" ondragstart="drag(event)">Study</span>
+                    <span class="draggable" id="word8" draggable="true" ondragstart="drag(event)">Implementation</span>
+                    <span class="draggable" id="word9" draggable="true" ondragstart="drag(event)">Change Ideas</span>
+                    <span class="draggable" id="word10" draggable="true" ondragstart="drag(event)">Root Cause</span>
+                    <span class="draggable" id="word11" draggable="true" ondragstart="drag(event)">Try</span>
+                    <span class="draggable" id="word12" draggable="true" ondragstart="drag(event)">Aim</span>
+                    <span class="draggable" id="word13" draggable="true" ondragstart="drag(event)">Improvements</span>
+                    <span class="draggable" id="word14" draggable="true" ondragstart="drag(event)">Variables</span>
+                    <span class="draggable" id="word15" draggable="true" ondragstart="drag(event)">Audit</span>
+                    <span class="draggable" id="word16" draggable="true" ondragstart="drag(event)">Data Collection</span>
+                    <span class="draggable" id="word17" draggable="true" ondragstart="drag(event)">Standards</span>
+                    <span class="draggable" id="word18" draggable="true" ondragstart="drag(event)">Measure Twice</span>
+                    <span class="draggable" id="word19" draggable="true" ondragstart="drag(event)">Measures</span>
+                </div>
+            </div>
+
+            <button id="submit-button" onclick="submitAnswers()">Submit</button>
+            <button id="next-question-button" onclick="nextQuestion()" style="display: none;">Next Question</button>
+        </div>
+
+        <div class="new-question-container" id="new-question-container" style="display: none;">
+            <!-- New question content will be dynamically inserted here -->
+        </div>
+    </div>
+
+    <div class="process-container">
+        <!-- Process content -->
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}?v=1.0"></script> <!-- Added cache-busting query parameter -->
+</body>
+</html>
