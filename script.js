@@ -50,19 +50,6 @@ function allowDrop(event) {
     event.preventDefault();
 }
 
-function drag(event) {
-    event.dataTransfer.setData("text", event.target.id);
-}
-
-function drop(event) {
-    event.preventDefault();
-    var data = event.dataTransfer.getData("text");
-    var draggedElement = document.getElementById(data);
-    if (event.target.classList.contains('text-box') || event.target.classList.contains('quarter')) {
-        event.target.appendChild(draggedElement);
-    }
-}
-
 function submitAnswers() {
     console.log("submitAnswers called");
     // Implement the logic to check the answers and provide feedback
@@ -70,24 +57,8 @@ function submitAnswers() {
     document.getElementById('next-question-button').style.display = 'block';
 }
 
-function ensureArrowsVisible() {
-    const arrows = ['arrow1', 'arrow2', 'arrow3', 'arrow4'];
-    arrows.forEach(arrowId => {
-        const arrow = document.getElementById(arrowId);
-        if (arrow) {
-            arrow.style.display = 'block';
-            arrow.style.visibility = 'visible';
-        }
-    });
-}
-
 function nextQuestion() {
     console.log("nextQuestion called");
     // Implement the logic to load the next question
     alert('Next question logic not implemented yet.');
-}
-
-function checkAnswer(answer) {
-    // Implement the logic to check the answer and provide feedback
-    alert(`You selected: ${answer}`);
 }
