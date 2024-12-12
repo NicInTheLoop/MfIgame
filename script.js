@@ -64,84 +64,10 @@ function drop(event) {
 }
 
 function submitAnswers() {
-    // Correct answers
-    const correctAnswers = {
-        box1: "Aim",
-        box2: "Measures",
-        box3: "Change Ideas",
-        quarter1: "Plan",
-        quarter2: "Do",
-        quarter3: "Study",
-        quarter4: "Act"
-    };
-
-    let score = 0; // Initialize score
-    let hasGuesses = false; // Track if there are any guesses
-
-    // Collect guesses and check each box and quarter
-    const guesses = {};
-    for (const [id, correctAnswer] of Object.entries(correctAnswers)) {
-        const element = document.getElementById(id);
-        const answerElement = element.querySelector(".draggable");
-        const answer = answerElement ? answerElement.textContent : "";
-        guesses[id] = answer;
-        if (answer) {
-            hasGuesses = true; // There is at least one guess
-        }
-        if (answer === correctAnswer) {
-            element.style.backgroundColor = "#BCCF04"; // Lime green for correct answer
-            score++; // Increment score for correct answer
-        } else {
-            element.style.backgroundColor = "grey"; // Grey for incorrect answer
-            // Display the incorrect guess followed by the correct answer
-            if (answerElement && !answerElement.querySelector(".correct-answer")) {
-                const correctAnswerElement = document.createElement("span");
-                correctAnswerElement.textContent = ` (Correct: ${correctAnswer})`;
-                correctAnswerElement.style.color = "white";
-                correctAnswerElement.style.marginLeft = "10px";
-                correctAnswerElement.classList.add("correct-answer");
-                answerElement.appendChild(correctAnswerElement);
-            }
-            // Reset the rotation for the incorrect answer
-            if (element.classList.contains("quarter")) {
-                answerElement.style.transform = "none";
-            }
-        }
-    }
-
-    // Exclude cases where no guesses were made
-    if (!hasGuesses) {
-        alert("Please make at least one guess before submitting.");
-        const submitButton = document.getElementById('submit-button');
-        submitButton.disabled = false;
-        submitButton.classList.remove('disabled');
-        return;
-    }
-
-    // Display the score to the player
-    alert(`Your score is ${score} out of 7`);
-
-    // Show the next question button
+    console.log("submitAnswers called");
+    // Implement the logic to check the answers and provide feedback
+    // For now, just show the next question button
     document.getElementById('next-question-button').style.display = 'block';
-
-    // Collect additional data (e.g., course name)
-    const courseName = prompt("Please enter the course name:");
-
-    // Send the results to the server
-    fetch('/submit-results', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ guesses, score, courseName })
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log('Success:', data);
-    })
-    .catch((error) => {
-        console.error('Error:', error);
-    });
 }
 
 function ensureArrowsVisible() {
@@ -156,42 +82,9 @@ function ensureArrowsVisible() {
 }
 
 function nextQuestion() {
-    // Hide the instructions and draggable buttons
-    document.getElementById('instructions-container').style.display = 'none';
-    document.getElementById('draggable-container').style.display = 'none';
-
-    // Display the new question
-    const newQuestionContainer = document.getElementById('new-question-container');
-    newQuestionContainer.style.display = 'block';
-    newQuestionContainer.innerHTML = `
-        <div class="new-question">
-            <h3>How familiar are you with the entire Model for Improvement (ie from start to finish)?</h3>
-            <button onclick="checkAnswer('Answer 1')">First time I've seen it</button>
-            <button onclick="checkAnswer('Answer 2')">Seen it, trying it</button>
-            <button onclick="checkAnswer('Answer 3')">Tried it, want to know more</button>
-            <button onclick="checkAnswer('Answer 4')">Know it well</button>
-        </div>
-    `;
-
-    // Populate the Game Area with the correct answers
-    const correctAnswers = {
-        box1: "Aim",
-        box2: "Measures",
-        box3: "Change Ideas",
-        quarter1: "Plan",
-        quarter2: "Do",
-        quarter3: "Study",
-        quarter4: "Act"
-    };
-
-    for (const [id, correctAnswer] of Object.entries(correctAnswers)) {
-        const element = document.getElementById(id);
-        element.innerHTML = `<span>${correctAnswer}</span>`;
-        element.style.backgroundColor = ""; // Reset background color
-    }
-
-    // Ensure the arrows are still visible
-    ensureArrowsVisible();
+    console.log("nextQuestion called");
+    // Implement the logic to load the next question
+    alert('Next question logic not implemented yet.');
 }
 
 function checkAnswer(answer) {
