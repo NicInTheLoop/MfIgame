@@ -55,7 +55,7 @@ h1 {
 .text-box {
     width: 200px; /* Adjust width as needed */
     height: 50px; /* Reduced height */
-    background-color: #14A19A;
+    background-color: #12a19a;
     border: 1px solid #ccc;
     display: flex;
     justify-content: center;
@@ -183,7 +183,7 @@ h1 {
     padding: 20px;
     margin-bottom: 20px;
     display: block;
-    background-color: #14A19A; /* Teal background */
+    background-color: #12a19a; /* Teal background */
     color: white; /* White text */
     position: relative;
     z-index: 1;
