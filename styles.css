@@ -177,7 +177,7 @@ h1 {
     align-items: center;
     position: relative;
     margin-top: 20px; /* Add margin to create space between draggable container and instructions */
-    flex-direction: column; /* Ensure instructions are below the draggable container */
+    flex-direction: left; /* Ensure instructions are below the draggable container */
 }
 
 .instructions {
