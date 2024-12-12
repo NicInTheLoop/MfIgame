@@ -93,6 +93,11 @@ function submitAnswers() {
         } else {
             element.style.backgroundColor = 'grey'; // Incorrect
 
+            // Change the incorrect draggable button to a lighter shade of pink
+            if (child) {
+                child.style.backgroundColor = '#f4a6d7'; // Lighter shade of pink
+            }
+
             // Show correct answer in a styled box
             const correctElement = document.createElement('div');
             correctElement.textContent = document.getElementById(correctAnswers[key]).textContent;
