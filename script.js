@@ -31,7 +31,21 @@ blanks.forEach(blank => {
                 draggableContainer.appendChild(existingChild);
             }
             blank.appendChild(draggable);
-            draggable.style.transform = 'rotate(-90deg)'; // Rotate the draggable element
+            // Rotate the text inside the quarter
+            if (blank.classList.contains('quarter')) {
+                const span = blank.querySelector('span');
+                if (span) {
+                    if (blank.id === 'quarter1') {
+                        draggable.style.transform = 'rotate(90deg)';
+                    } else if (blank.id === 'quarter2') {
+                        draggable.style.transform = 'rotate(-90deg)';
+                    } else if (blank.id === 'quarter3') {
+                        draggable.style.transform = 'rotate(-90deg)';
+                    } else if (blank.id === 'quarter4') {
+                        draggable.style.transform = 'rotate(180deg)';
+                    }
+                }
+            }
         }
     });
 });
@@ -63,29 +77,20 @@ function submitAnswers() {
         quarter4: 'word20'  // Act
     };
 
-    let allCorrect = true;
-
-    for (const [boxId, correctWordId] of Object.entries(correctAnswers)) {
-        const box = document.getElementById(boxId);
-        const word = box.querySelector('.draggable');
-        if (word && word.id === correctWordId) {
-            word.style.backgroundColor = 'green';
+    Object.keys(correctAnswers).forEach(key => {
+        const element = document.getElementById(key);
+        const child = element.children[0];
+        if (child && child.id === correctAnswers[key]) {
+            element.style.backgroundColor = 'green';
         } else {
-            allCorrect = false;
-            if (word) {
-                word.style.backgroundColor = 'grey';
-                // Show the correct answer below the incorrect one
-                const correctWord = document.getElementById(correctWordId).cloneNode(true);
-                correctWord.style.backgroundColor = 'green';
-                correctWord.style.transform = 'rotate(0deg)'; // Reset rotation for correct answer
-                box.appendChild(correctWord);
-            }
+            element.style.backgroundColor = 'grey';
+            // Show the correct answer
+            const correctElement = document.createElement('div');
+            correctElement.textContent = document.getElementById(correctAnswers[key]).textContent;
+            correctElement.style.color = 'red';
+            element.appendChild(correctElement);
         }
-    }
-
-    if (allCorrect) {
-        document.getElementById('next-question-button').style.display = 'block';
-    }
+    });
 }
 
 function nextQuestion() {
