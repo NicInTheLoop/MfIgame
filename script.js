@@ -33,18 +33,17 @@ blanks.forEach(blank => {
             blank.appendChild(draggable);
             // Rotate the text inside the quarter
             if (blank.classList.contains('quarter')) {
-                const span = blank.querySelector('span');
-                if (span) {
-                    if (blank.id === 'quarter1') {
-                        draggable.style.transform = 'rotate(90deg)';
-                    } else if (blank.id === 'quarter2') {
-                        draggable.style.transform = 'rotate(-90deg)';
-                    } else if (blank.id === 'quarter3') {
-                        draggable.style.transform = 'rotate(-90deg)';
-                    } else if (blank.id === 'quarter4') {
-                        draggable.style.transform = 'rotate(180deg)';
-                    }
+                if (blank.id === 'quarter1') {
+                    draggable.style.transform = 'rotate(0deg)';
+                } else if (blank.id === 'quarter2') {
+                    draggable.style.transform = 'rotate(-90deg)';
+                } else if (blank.id === 'quarter3') {
+                    draggable.style.transform = 'rotate(180deg)';
+                } else if (blank.id === 'quarter4') {
+                    draggable.style.transform = 'rotate(90deg)';
                 }
+            } else {
+                draggable.style.transform = 'rotate(0deg)'; // Reset rotation for text-boxes
             }
         }
     });
@@ -84,9 +83,9 @@ function submitAnswers() {
             element.style.backgroundColor = 'green';
         } else {
             element.style.backgroundColor = 'grey';
-            // Show the correct answer
-            const correctElement = document.createElement('div');
-            correctElement.textContent = document.getElementById(correctAnswers[key]).textContent;
+            // Show the correct answer in brackets
+            const correctElement = document.createElement('span');
+            correctElement.textContent = ` (${document.getElementById(correctAnswers[key]).textContent})`;
             correctElement.style.color = 'red';
             element.appendChild(correctElement);
         }
