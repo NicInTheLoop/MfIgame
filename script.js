@@ -31,6 +31,7 @@ blanks.forEach(blank => {
                 draggableContainer.appendChild(existingChild);
             }
             blank.appendChild(draggable);
+            draggable.style.transform = 'rotate(-90deg)'; // Rotate the draggable element
         }
     });
 });
@@ -52,9 +53,39 @@ function allowDrop(event) {
 
 function submitAnswers() {
     console.log("submitAnswers called");
-    // Implement the logic to check the answers and provide feedback
-    // For now, just show the next question button
-    document.getElementById('next-question-button').style.display = 'block';
+    const correctAnswers = {
+        box1: 'word17', // Aim
+        box2: 'word3',  // Measure
+        box3: 'word9',  // Change Ideas
+        quarter1: 'word11', // Plan
+        quarter2: 'word6',  // Do
+        quarter3: 'word10', // Study
+        quarter4: 'word20'  // Act
+    };
+
+    let allCorrect = true;
+
+    for (const [boxId, correctWordId] of Object.entries(correctAnswers)) {
+        const box = document.getElementById(boxId);
+        const word = box.querySelector('.draggable');
+        if (word && word.id === correctWordId) {
+            word.style.backgroundColor = 'green';
+        } else {
+            allCorrect = false;
+            if (word) {
+                word.style.backgroundColor = 'grey';
+                // Show the correct answer below the incorrect one
+                const correctWord = document.getElementById(correctWordId).cloneNode(true);
+                correctWord.style.backgroundColor = 'green';
+                correctWord.style.transform = 'rotate(0deg)'; // Reset rotation for correct answer
+                box.appendChild(correctWord);
+            }
+        }
+    }
+
+    if (allCorrect) {
+        document.getElementById('next-question-button').style.display = 'block';
+    }
 }
 
 function nextQuestion() {
