@@ -55,7 +55,7 @@ h1 {
 .text-box {
     width: 200px; /* Adjust width as needed */
     height: 50px; /* Reduced height */
-    background-color: #14a19a;
+    background-color: #14A19A;
     border: 1px solid #ccc;
     display: flex;
     justify-content: center;
@@ -177,6 +177,7 @@ h1 {
     align-items: center;
     position: relative;
     margin-top: 20px; /* Add margin to create space between draggable container and instructions */
+    flex-direction: column; /* Ensure instructions are below the draggable container */
 }
 
 .instructions {
@@ -184,7 +185,7 @@ h1 {
     padding: 20px;
     margin-bottom: 20px;
     display: block;
-    background-color: #14a19a; /* Teal background */
+    background-color: #008080; /* Teal background */
     color: white; /* White text */
     position: relative;
     z-index: 1;
@@ -220,7 +221,7 @@ h1 {
 #submit-button, #next-question-button {
     font-size: 2.0em;
     padding: 10px 20px;
-    margin-left: 20px;
+    margin-top: 20px;
     background-color: #87898A;
     color: white;
     border: none;
