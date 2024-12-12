@@ -267,16 +267,4 @@ h1 {
     background-color: #b60d91; /* Darker pink on hover */
 }
 
-.word {
-    display: inline-block;
-    padding: 10px;
-    margin: 5px;
-    background-color: #f0f0f0;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    cursor: grab;
-}
 
-.word:active {
-    cursor: grabbing;
-}

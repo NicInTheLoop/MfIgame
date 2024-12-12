@@ -46,35 +46,20 @@ document.getElementById('submit-button').addEventListener('click', () => {
     }
 });
 
-function allowDrop(ev) {
-    ev.preventDefault();
+function allowDrop(event) {
+    event.preventDefault();
 }
 
-function drag(ev) {
-    ev.dataTransfer.setData("text", ev.target.id);
+function drag(event) {
+    event.dataTransfer.setData("text", event.target.id);
 }
 
-function drop(ev) {
-    ev.preventDefault();
-    var data = ev.dataTransfer.getData("text");
-    var target = ev.target;
-    // Ensure the target is a valid drop zone
-    if (target.classList.contains("text-box") || target.classList.contains("quarter")) {
-        // If the target already has a child, remove it and put it back into the draggable area
-        if (target.children.length > 0) {
-            const existingChild = target.children[0];
-            draggableContainer.appendChild(existingChild);
-        }
-        // Append the dragged element to the drop target
-        target.appendChild(document.getElementById(data));
-    } else if (target.parentElement.classList.contains("text-box") || target.parentElement.classList.contains("quarter")) {
-        // If the parent of the target already has a child, remove it and put it back into the draggable area
-        if (target.parentElement.children.length > 0) {
-            const existingChild = target.parentElement.children[0];
-            draggableContainer.appendChild(existingChild);
-        }
-        // Append the dragged element to the parent of the drop target if the target is a child element
-        target.parentElement.appendChild(document.getElementById(data));
+function drop(event) {
+    event.preventDefault();
+    var data = event.dataTransfer.getData("text");
+    var draggedElement = document.getElementById(data);
+    if (event.target.classList.contains('text-box') || event.target.classList.contains('quarter')) {
+        event.target.appendChild(draggedElement);
     }
 }
 
