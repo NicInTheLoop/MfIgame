@@ -81,6 +81,8 @@ function submitAnswers() {
         const element = document.getElementById(key);
         const child = element.children[0]; // First child element
 
+        console.log(`Checking ${key}: expected ${correctAnswers[key]}, found ${child ? child.id : 'none'}`);
+
         // Clear previous children added for corrections
         while (element.firstChild) {
             element.removeChild(element.firstChild);
