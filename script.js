@@ -66,6 +66,7 @@ function allowDrop(event) {
 
 function submitAnswers() {
     console.log("submitAnswers called");
+
     const correctAnswers = {
         box1: 'word17', // Aim
         box2: 'word3',  // Measure
@@ -78,21 +79,24 @@ function submitAnswers() {
 
     Object.keys(correctAnswers).forEach(key => {
         const element = document.getElementById(key);
-        const child = element.querySelector('.draggable');
+        const child = element.children[0]; // First child element
+
+        // Clear previous children added for corrections
+        while (element.firstChild) {
+            element.removeChild(element.firstChild);
+        }
+
+        // Check the answer
         if (child && child.id === correctAnswers[key]) {
-            element.style.backgroundColor = 'green';
+            element.style.backgroundColor = '#BCCF04'; // Correct (lime green)
+            element.textContent = child.textContent; // Reset to only the dragged word
         } else {
-            element.style.backgroundColor = 'grey';
-            // Remove any existing correct answer spans
-            const existingCorrectSpan = element.querySelector('.correct-answer');
-            if (existingCorrectSpan) {
-                existingCorrectSpan.remove();
-            }
-            // Show the correct answer in brackets
+            element.style.backgroundColor = 'grey'; // Incorrect
+
+            // Show correct answer in red
             const correctElement = document.createElement('span');
             correctElement.textContent = ` (${document.getElementById(correctAnswers[key]).textContent})`;
             correctElement.style.color = 'red';
-            correctElement.classList.add('correct-answer');
             element.appendChild(correctElement);
         }
     });
