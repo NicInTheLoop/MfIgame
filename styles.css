@@ -102,19 +102,19 @@ h1 {
 
 #quarter2 {
     top: 50%;
-    left: 83%; /* Adjusted left position */
+    left: 68%; /* Adjusted left position */
     transform: translate(-100%, -50%) rotate(90deg);
 }
 
 #quarter3 {
-    top: 65%;
-    left: 33%; /* Adjusted left position */
+    top: 100%;
+    left: 17%; /* Adjusted left position */
     transform: translate(-50%, -100%) rotate(180deg);
 }
 
 #quarter4 {
     top: 33%;
-    left: 10%; /* Adjusted left position */
+    left: 22%; /* Adjusted left position */
     transform: translate(0, -50%) rotate(270deg);
 }
 
@@ -157,17 +157,33 @@ h1 {
 }
 
 .instructions-container {
-    width: 50%;
+    width: 100%;
     display: flex;
-    flex-direction: column;
     align-items: center;
+    position: relative;
 }
 
 .instructions {
-    width: 100%;
+    width: 60%;
     padding: 20px;
     margin-bottom: 20px;
     display: block;
+    background-color: #008080; /* Teal background */
+    color: white; /* White text */
+    position: relative;
+    z-index: 1;
+}
+
+.arrow-right {
+    width: 0;
+    height: 0;
+    border-top: 20px solid transparent;
+    border-bottom: 20px solid transparent;
+    border-left: 20px solid #008080; /* Teal arrow */
+    position: absolute;
+    right: -20px;
+    top: 50%;
+    transform: translateY(-50%);
 }
 
 .draggable-container {
