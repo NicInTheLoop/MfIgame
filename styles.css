@@ -113,7 +113,7 @@ h1 {
 }
 
 #quarter4 {
-    top: 17%;
+    top: 15%;
     left: 18%; /* Adjusted left position */
     transform: translate(0, -50%) rotate(270deg);
 }
