@@ -119,25 +119,25 @@ h1 {
 
 #quarter1 {
     top: 0;
-    left: 50%;
+    left: 68%;
     transform: translate(-50%, 0) rotate(0deg);
 }
 
 #quarter2 {
     top: 50%;
-    left: 100%;
+    left: 68%;
     transform: translate(-100%, -50%) rotate(90deg);
 }
 
 #quarter3 {
-    top: 100%;
-    left: 50%;
+    top: 50%;
+    left: 17%;
     transform: translate(-50%, -100%) rotate(180deg);
 }
 
 #quarter4 {
-    top: 50%;
-    left: 0;
+    top: 0%;
+    left: 17;
     transform: translate(0, -50%) rotate(270deg);
 }
 
