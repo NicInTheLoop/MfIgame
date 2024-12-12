@@ -89,6 +89,9 @@ h1 {
     background-color: #BCCF04;
     position: absolute;
     border-radius: 0 100% 0 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 #quarter1 {
@@ -99,7 +102,7 @@ h1 {
 
 #quarter2 {
     top: 50%;
-    left: 100%; /* Adjusted left position */
+    left: 68%; /* Adjusted left position */
     transform: translate(-100%, -50%) rotate(90deg);
 }
 
@@ -113,6 +116,11 @@ h1 {
     top: 50%;
     left: 17%; /* Adjusted left position */
     transform: translate(0, -50%) rotate(270deg);
+}
+
+.quarter span {
+    display: block;
+    transform: rotate(-90deg); /* Rotate text back to normal orientation */
 }
 
 .arrow {
