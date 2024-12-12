@@ -102,7 +102,7 @@ h1 {
 
 #quarter2 {
     top: 50%;
-    left: 100%; /* Adjusted left position */
+    left: 68%; /* Adjusted left position */
     transform: translate(-100%, -50%) rotate(90deg);
 }
 
