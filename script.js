@@ -68,13 +68,13 @@ function submitAnswers() {
     console.log("submitAnswers called");
 
     const correctAnswers = {
-        box1: 'word17', // Aim
+        box1: 'word20', // Act
         box2: 'word3',  // Measure
         box3: 'word9',  // Change Ideas
         quarter1: 'word11', // Plan
         quarter2: 'word6',  // Do
         quarter3: 'word10', // Study
-        quarter4: 'word20'  // Act
+        quarter4: 'word17'  // Aim
     };
 
     Object.keys(correctAnswers).forEach(key => {
