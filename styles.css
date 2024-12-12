@@ -118,9 +118,24 @@ h1 {
     transform: translate(0, -50%) rotate(270deg);
 }
 
-.quarter span {
+#quarter1 span {
+    display: block;
+    transform: rotate(0deg); /* No rotation */
+}
+
+#quarter2 span {
     display: block;
     transform: rotate(-90deg); /* Rotate text back to normal orientation */
+}
+
+#quarter3 span {
+    display: block;
+    transform: rotate(-180deg); /* Rotate text back to normal orientation */
+}
+
+#quarter4 span {
+    display: block;
+    transform: rotate(90deg); /* Rotate text back to normal orientation */
 }
 
 .arrow {
