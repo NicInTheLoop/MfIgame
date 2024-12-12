@@ -93,10 +93,16 @@ function submitAnswers() {
         } else {
             element.style.backgroundColor = 'grey'; // Incorrect
 
-            // Show correct answer in red
-            const correctElement = document.createElement('span');
-            correctElement.textContent = ` (${document.getElementById(correctAnswers[key]).textContent})`;
-            correctElement.style.color = 'red';
+            // Show correct answer in a styled box
+            const correctElement = document.createElement('div');
+            correctElement.textContent = document.getElementById(correctAnswers[key]).textContent;
+            correctElement.style.color = 'white';
+            correctElement.style.backgroundColor = 'grey';
+            correctElement.style.border = '2px solid #e6027e';
+            correctElement.style.padding = '10px 15px';
+            correctElement.style.margin = '5px';
+            correctElement.style.borderRadius = '5px';
+            correctElement.style.display = 'inline-block';
             element.appendChild(correctElement);
         }
     });
