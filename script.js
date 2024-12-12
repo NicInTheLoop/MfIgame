@@ -78,15 +78,21 @@ function submitAnswers() {
 
     Object.keys(correctAnswers).forEach(key => {
         const element = document.getElementById(key);
-        const child = element.children[0];
+        const child = element.querySelector('.draggable');
         if (child && child.id === correctAnswers[key]) {
             element.style.backgroundColor = 'green';
         } else {
             element.style.backgroundColor = 'grey';
+            // Remove any existing correct answer spans
+            const existingCorrectSpan = element.querySelector('.correct-answer');
+            if (existingCorrectSpan) {
+                existingCorrectSpan.remove();
+            }
             // Show the correct answer in brackets
             const correctElement = document.createElement('span');
             correctElement.textContent = ` (${document.getElementById(correctAnswers[key]).textContent})`;
             correctElement.style.color = 'red';
+            correctElement.classList.add('correct-answer');
             element.appendChild(correctElement);
         }
     });
