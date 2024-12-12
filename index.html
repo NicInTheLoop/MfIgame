@@ -43,7 +43,7 @@
         
         <div class="instructions-container" id="instructions-container">
             <div class="instructions">
-                <h2>Instructions</h2>
+                <h2>Instructions: Drag and drop</h2>
                 <p>Drag and drop the words to the correct section of the Model for Improvement.</p>
                 <p>Click the submit button to check your answers.</p>
                 <p>Correct answers will be highlighted in green.</p>
@@ -79,10 +79,9 @@
                     <div class="draggable" id="word24" draggable="true" ondragstart="drag(event)">Agree</div>
                 </div>
             </div>
+            <button id="submit-button" onclick="submitAnswers()">Submit</button>
+            <button id="next-question-button" onclick="nextQuestion()" style="display: none;">Next Question</button>
         </div>
-
-        <button id="submit-button" onclick="submitAnswers()">Submit</button>
-        <button id="next-question-button" onclick="nextQuestion()" style="display: none;">Next Question</button>
     </div>
 
     <div class="new-question-container" id="new-question-container" style="display: none;">
