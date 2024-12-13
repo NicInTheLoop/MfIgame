@@ -89,11 +89,11 @@ function submitAnswers() {
         } else {
             element.style.backgroundColor = 'grey'; // Incorrect
 
-            // Change the incorrect draggable button to a lighter shade of pink
+            // Change the incorrect draggable button to the usual pink
             if (child) {
-                child.style.backgroundColor = '#f4a6d7'; // Lighter shade of pink
+                child.style.backgroundColor = '#e6027e'; // Usual pink
                 // Append the correct answer in brackets
-                child.textContent += ` (Correct: ${document.getElementById(correctAnswers[key]).textContent})`;
+                child.textContent = `${child.textContent.split(' (Correct:')[0]} (Correct: ${document.getElementById(correctAnswers[key]).textContent})`;
             }
 
             // Apply the same rotation as the draggable button
