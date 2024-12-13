@@ -51,24 +51,26 @@ blanks.forEach(blank => {
 
 // Ensure the event listener is only attached once
 document.getElementById('submit-button').addEventListener('click', () => {
-    if (!document.getElementById('submit-button').classList.contains('disabled')) {
-        const blanks = document.querySelectorAll('.text-box, .quarter');
-        let emptyCount = 0;
+    const blanks = document.querySelectorAll('.text-box, .quarter');
+    let emptyCount = 0;
 
-        blanks.forEach(blank => {
-            if (!blank.querySelector('.draggable')) {
-                emptyCount++;
-            }
-        });
-
-        if (emptyCount >= 4) {
-            alert("You've left too many answers blank. Drag and drop answers into the correct boxes in the cycle.");
-            resetGame();
-            return;
+    // Count blank spaces
+    blanks.forEach(blank => {
+        if (!blank.querySelector('.draggable')) {
+            emptyCount++;
         }
+    });
 
-        submitAnswers();
+    console.log(`Number of blank spaces: ${emptyCount}`); // Debugging log
+
+    // If there are too many blanks, alert and exit
+    if (emptyCount >= 4) {
+        alert("You've left too many answers blank. Drag and drop answers into the correct boxes in the cycle.");
+        return; // Exit the function here
     }
+
+    // Proceed with submitAnswers if the above condition is not met
+    submitAnswers();
 });
 
 function allowDrop(event) {
