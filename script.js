@@ -52,12 +52,35 @@ blanks.forEach(blank => {
 // Ensure the event listener is only attached once
 document.getElementById('submit-button').addEventListener('click', () => {
     if (!document.getElementById('submit-button').classList.contains('disabled')) {
+        const blanks = document.querySelectorAll('.text-box, .quarter');
+        let emptyCount = 0;
+
+        blanks.forEach(blank => {
+            if (!blank.querySelector('.draggable')) {
+                emptyCount++;
+            }
+        });
+
+        if (emptyCount >= 4) {
+            alert("You've left too many answers blank. Drag and drop answers into the correct boxes in the cycle.");
+            return;
+        }
+
         submitAnswers();
         // Disable the submit button after it has been pressed
         const submitButton = document.getElementById('submit-button');
         submitButton.disabled = true;
         submitButton.classList.add('disabled');
 
+        // Show the next question button
+        const nextQuestionButton = document.getElementById('next-question-button');
+        nextQuestionButton.style.display = 'inline-block';
+
+        // Update the instructions
+        const initialInstructions = document.getElementById('initial-instructions');
+        const nextInstructions = document.getElementById('next-instructions');
+        initialInstructions.style.display = 'none';
+        nextInstructions.style.display = 'block';
     }
 });
 
@@ -112,29 +135,12 @@ function submitAnswers() {
         }
     });
 
-    document.getElementById('submit-button').addEventListener('click', () => {
-        const submitButton = document.getElementById('submit-button');
-        const nextQuestionButton = document.getElementById('next-question-button');
-        const instructionsContainer = document.querySelector('.instructions-container');
-        const oldInstructions = document.querySelector('.instructions');
-    
-        // Disable the submit button and update its style
-        submitButton.disabled = true;
-        submitButton.classList.add('disabled');
-    
-        // Show the next question button
-        nextQuestionButton.style.display = 'inline-block';
-    
-        // Replace the instructions box
-        oldInstructions.style.display = 'none'; // Hide the old instructions
-        const newInstructions = document.createElement('div');
-        newInstructions.className = 'instructions';
-        newInstructions.innerHTML = '<h2>Click here to move on to the final question</h2>';
-        instructionsContainer.appendChild(newInstructions);
+    // Disable dragging for all draggable elements
+    draggables.forEach(draggable => {
+        draggable.setAttribute('draggable', 'false');
+        draggable.removeEventListener('dragstart', drag);
+        draggable.removeEventListener('dragend', drag);
     });
-    
-    
-
 }
 
 function nextQuestion() {
