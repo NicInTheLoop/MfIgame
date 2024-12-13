@@ -9,18 +9,17 @@
 
 /* General styles */
 body {
-    font-family: 'Lato', sans-serif; 
+    font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-    background-color: #f8f8f8;
+    text-align: center;
+    margin-bottom: 20px;
 }
 
 h1 {
@@ -36,62 +35,53 @@ h1 {
 
 .main-container {
     display: flex;
-    justify-content: flex-start; /* Align the game area to the left */
-    align-items: flex-start;
-    padding: 20px;
+    flex-direction: column;
+    align-items: center;
 }
 
 /* Game area styles */
 .game-area {
-    width: 450px; /* Adjust the width of the game area */
-    border: 1px solid #000;
-    padding: 10px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-right: 20px; /* Add some space between the game area and the instructions container */
+    margin-bottom: 20px;
 }
 
 .text-box {
-    width: 200px; /* Adjust width as needed */
-    height: 50px; /* Reduced height */
-    background-color: #14A19A; /* Teal color */
-    border: 1px solid #ccc;
+    width: 100px;
+    height: 100px;
+    border: 2px solid #000;
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: 10px auto; /* Reduced margin */
-    text-align: center;
+    margin: 10px;
 }
 
 .downward-arrow {
     width: 0;
     height: 0;
-    border-left: 10px solid transparent;
-    border-right: 10px solid transparent;
-    border-top: 10px solid #000;
-    margin: 5px auto; /* Reduced margin */
+    border-left: 20px solid transparent;
+    border-right: 20px solid transparent;
+    border-top: 20px solid #000;
+    margin: 10px 0;
 }
 
 .cycle {
-    position: relative; /* Needed for absolute positioning of arrows */
-    width: 400px; /* Reduced width */
-    height: 400px; /* Reduced height */
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
-    align-items: center;
-    margin: 10px auto; /* Adjusted margin to move the cycle upwards */
+    width: 220px;
 }
 
 .quarter {
-    width: 120px; /* Reduced width */
-    height: 120px; /* Reduced height */
-    background-color: #BCCF04;
-    position: absolute;
-    border-radius: 0 100% 0 0;
+    width: 100px;
+    height: 100px;
+    border: 2px solid #000;
     display: flex;
     justify-content: center;
     align-items: center;
+    margin: 10px;
+    position: relative;
 }
 
 #quarter1 {
@@ -143,8 +133,11 @@ h1 {
     height: 0;
     border-left: 10px solid transparent;
     border-right: 10px solid transparent;
-    border-top: 20px solid black;
+    border-top: 10px solid #000;
     position: absolute;
+    bottom: 5px;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 #arrow1 {
@@ -172,45 +165,35 @@ h1 {
 }
 
 .instructions-container {
-    width: 100%;
-    display: flex;
-    align-items: center;
+    text-align: center;
+    margin-bottom: 20px;
     position: relative;
-    margin-top: 20px; /* Add margin to create space between draggable container and instructions */
-    flex-direction: left; /* Ensure instructions are below the draggable container */
 }
 
 .instructions {
-    width: 60%;
+    background-color: #f0f0f0;
     padding: 20px;
-    margin-bottom: 20px;
-    display: block;
-    background-color: #008080; /* Teal background */
-    color: white; /* White text */
-    position: relative;
-    z-index: 1;
-    clip-path: polygon(0 0, 90% 0, 100% 50%, 90% 100%, 0 100%);
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 .draggable-container {
-    width: 100%;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    align-items: flex-start;
-    gap: 10px;
+    margin-bottom: 20px;
 }
 
 .draggable {
-    padding: 10px 15px;
-    margin: 5px;
-    display: inline-block;
+    width: 100px;
+    height: 50px;
+    background-color: #e6027e;
     color: white;
-    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 5px;
     cursor: pointer;
-    user-select: none;
-    background-color: #E6007E;
-    border: 2px solid #8A8B8D;
     border-radius: 5px;
 }
 
