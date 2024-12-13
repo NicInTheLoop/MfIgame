@@ -63,6 +63,7 @@ document.getElementById('submit-button').addEventListener('click', () => {
 
         if (emptyCount >= 4) {
             alert("You've left too many answers blank. Drag and drop answers into the correct boxes in the cycle.");
+            resetGame();
             return;
         }
 
@@ -160,6 +161,41 @@ function submitAnswers() {
         draggable.removeEventListener('dragstart', drag);
         draggable.removeEventListener('dragend', drag);
     });
+}
+
+function resetGame() {
+    // Reset the game to its initial state
+    const blanks = document.querySelectorAll('.text-box, .quarter');
+    blanks.forEach(blank => {
+        while (blank.firstChild) {
+            const child = blank.firstChild;
+            draggableContainer.appendChild(child);
+            blank.removeChild(child);
+        }
+        blank.style.backgroundColor = ''; // Reset background color
+    });
+
+    // Enable dragging for all draggable elements
+    draggables.forEach(draggable => {
+        draggable.setAttribute('draggable', 'true');
+        draggable.addEventListener('dragstart', drag);
+        draggable.addEventListener('dragend', drag);
+    });
+
+    // Reset the submit button
+    const submitButton = document.getElementById('submit-button');
+    submitButton.disabled = false;
+    submitButton.classList.remove('disabled');
+
+    // Hide the next question button
+    const nextQuestionButton = document.getElementById('next-question-button');
+    nextQuestionButton.style.display = 'none';
+
+    // Reset the instructions
+    const initialInstructions = document.getElementById('initial-instructions');
+    const nextInstructions = document.getElementById('next-instructions');
+    initialInstructions.style.display = 'block';
+    nextInstructions.style.display = 'none';
 }
 
 function nextQuestion() {
