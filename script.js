@@ -51,36 +51,43 @@ blanks.forEach(blank => {
 
 // Ensure the event listener is only attached once
 document.getElementById('submit-button').addEventListener('click', () => {
+    console.log("Submit button clicked!"); // Log when the button is clicked
+
     const blanks = document.querySelectorAll('.text-box, .quarter');
     let emptyCount = 0;
 
-    // Count blank spaces
+    // Count blank spaces and log each element
     blanks.forEach(blank => {
+        console.log(`Checking blank space: ${blank.id}, contains:`, blank.querySelector('.draggable')); // Log each blank and its contents
         if (!blank.querySelector('.draggable')) {
             emptyCount++;
         }
     });
 
-    console.log(`Number of blank spaces: ${emptyCount}`); // Debugging log
+    console.log(`Total blank spaces: ${emptyCount}`); // Log the total number of blanks
 
-    // If there are too many blanks, alert and exit
+    // If there are too many blanks, show an alert and exit
     if (emptyCount >= 4) {
+        console.log("Too many blank spaces. Submission blocked."); // Log the reason for stopping
         alert("You've left too many answers blank. Drag and drop answers into the correct boxes in the cycle.");
-        return; // Exit the function here
+        return; // Stop execution
     }
 
-    // If there are fewer than 4 blanks, proceed
+    console.log("Enough answers provided. Proceeding to submit answers."); // Log that submission will proceed
+
+    // Proceed with the rest of the logic if blanks < 4
     submitAnswers();
 
-    // Disable the submit button after it has been pressed
+    // Disable the submit button after submission
     const submitButton = document.getElementById('submit-button');
     submitButton.disabled = true;
     submitButton.classList.add('disabled');
 
-    // Show the next question button
+    // Show the "Next Question" button
     const nextQuestionButton = document.getElementById('next-question-button');
     nextQuestionButton.style.display = 'inline-block';
 });
+
 
 function allowDrop(event) {
     event.preventDefault();
