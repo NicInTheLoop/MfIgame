@@ -110,6 +110,13 @@ function submitAnswers() {
             }
         }
     });
+
+    // Disable dragging for all draggable elements
+    draggables.forEach(draggable => {
+        draggable.setAttribute('draggable', 'false');
+        draggable.removeEventListener('dragstart', drag);
+        draggable.removeEventListener('dragend', drag);
+    });
 }
 
 function nextQuestion() {
