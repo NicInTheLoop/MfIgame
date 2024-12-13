@@ -79,7 +79,7 @@ function submitAnswers() {
 
     Object.keys(correctAnswers).forEach(key => {
         const element = document.getElementById(key);
-        const child = element.children[0]; // First child element
+        const child = element.querySelector('.draggable'); // First child element with class 'draggable'
 
         console.log(`Checking ${key}: expected ${correctAnswers[key]}, found ${child ? child.id : 'none'}`);
 
