@@ -69,8 +69,17 @@ document.getElementById('submit-button').addEventListener('click', () => {
         return; // Exit the function here
     }
 
-    // Proceed with submitAnswers if the above condition is not met
+    // If there are fewer than 4 blanks, proceed
     submitAnswers();
+
+    // Disable the submit button after it has been pressed
+    const submitButton = document.getElementById('submit-button');
+    submitButton.disabled = true;
+    submitButton.classList.add('disabled');
+
+    // Show the next question button
+    const nextQuestionButton = document.getElementById('next-question-button');
+    nextQuestionButton.style.display = 'inline-block';
 });
 
 function allowDrop(event) {
