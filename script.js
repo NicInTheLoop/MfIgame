@@ -66,8 +66,18 @@ document.getElementById('submit-button').addEventListener('click', () => {
             resetGame();
             return;
         }
+    }
+});
 
-        submitAnswers();
+function allowDrop(event) {
+    event.preventDefault();
+}
+
+
+function submitAnswers() {
+    console.log("submitAnswers called");
+
+    submitAnswers();
         // Disable the submit button after it has been pressed
         const submitButton = document.getElementById('submit-button');
         submitButton.disabled = true;
@@ -82,15 +92,6 @@ document.getElementById('submit-button').addEventListener('click', () => {
         const nextInstructions = document.getElementById('next-instructions');
         initialInstructions.style.display = 'none';
         nextInstructions.style.display = 'block';
-    }
-});
-
-function allowDrop(event) {
-    event.preventDefault();
-}
-
-function submitAnswers() {
-    console.log("submitAnswers called");
 
     const correctAnswers = {
         box1: 'word17', // Aim
