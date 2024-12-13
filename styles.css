@@ -250,7 +250,7 @@ button:hover {
 }
 
 #submit-button.disabled {
-    background-color: #8a8d8dc0; /* Flat grey color */
+    background-color: #c0ced3; /* Flat grey color */
     cursor: not-allowed;
 }
 
