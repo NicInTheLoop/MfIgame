@@ -58,15 +58,6 @@ document.getElementById('submit-button').addEventListener('click', () => {
         submitButton.disabled = true;
         submitButton.classList.add('disabled');
 
-        // Show the next question button
-        const nextQuestionButton = document.getElementById('next-question-button');
-        nextQuestionButton.style.display = 'inline-block';
-
-        // Update the instructions
-        const initialInstructions = document.getElementById('initial-instructions');
-        const nextInstructions = document.getElementById('next-instructions');
-        initialInstructions.style.display = 'none';
-        nextInstructions.style.display = 'block';
     }
 });
 
@@ -121,12 +112,29 @@ function submitAnswers() {
         }
     });
 
-    // Disable dragging for all draggable elements
-    draggables.forEach(draggable => {
-        draggable.setAttribute('draggable', 'false');
-        draggable.removeEventListener('dragstart', drag);
-        draggable.removeEventListener('dragend', drag);
+    document.getElementById('submit-button').addEventListener('click', () => {
+        const submitButton = document.getElementById('submit-button');
+        const nextQuestionButton = document.getElementById('next-question-button');
+        const instructionsContainer = document.querySelector('.instructions-container');
+        const oldInstructions = document.querySelector('.instructions');
+    
+        // Disable the submit button and update its style
+        submitButton.disabled = true;
+        submitButton.classList.add('disabled');
+    
+        // Show the next question button
+        nextQuestionButton.style.display = 'inline-block';
+    
+        // Replace the instructions box
+        oldInstructions.style.display = 'none'; // Hide the old instructions
+        const newInstructions = document.createElement('div');
+        newInstructions.className = 'instructions';
+        newInstructions.innerHTML = '<h2>Click here to move on to the final question</h2>';
+        instructionsContainer.appendChild(newInstructions);
     });
+    
+    
+
 }
 
 function nextQuestion() {
