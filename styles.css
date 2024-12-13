@@ -250,8 +250,12 @@ button:hover {
 }
 
 #submit-button.disabled {
-    background-color: #f0f0f0; /* Very pale ghostlike grey */
+    background-color: #8a8d8dc0; /* Flat grey color */
     cursor: not-allowed;
+}
+
+#submit-button.disabled:hover {
+    background-color: #8a8d8dc0; /* Ensure it does not change color on hover */
 }
 
 #next-question-button {

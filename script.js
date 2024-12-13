@@ -57,16 +57,14 @@ document.getElementById('submit-button').addEventListener('click', () => {
         const submitButton = document.getElementById('submit-button');
         submitButton.disabled = true;
         submitButton.classList.add('disabled');
-        submitButton.style.backgroundColor = '#f0f0f0'; // Very pale ghostlike grey
 
         // Show the next question button
         const nextQuestionButton = document.getElementById('next-question-button');
         nextQuestionButton.style.display = 'inline-block';
-        nextQuestionButton.style.backgroundColor = '#87898A'; // Same grey as the submit button initially
 
         // Update the instructions
         const instructions = document.querySelector('.instructions');
-        instructions.innerHTML = '<p>Click here to move on to the final question.</p>';
+        instructions.innerHTML = '<p>Click here to move on to the final question</p>';
     }
 });
 
