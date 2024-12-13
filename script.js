@@ -111,25 +111,37 @@ function submitAnswers() {
         if (child && child.id === correctAnswers[key]) {
             element.style.backgroundColor = '#BCCF04'; // Correct (lime green)
         } else {
-            element.style.backgroundColor = 'grey'; // Incorrect
+            element.style.backgroundColor = 'grey'; // Incorrect or blank
 
-            // Change the incorrect draggable button to the usual pink
-            if (child) {
+            // If the box is blank, show the correct answer
+            if (!child) {
+                const correctElement = document.createElement('div');
+                correctElement.textContent = `blank (Correct: ${document.getElementById(correctAnswers[key]).textContent})`;
+                correctElement.style.color = 'white';
+                correctElement.style.backgroundColor = 'grey';
+                correctElement.style.border = '2px solid #e6027e';
+                correctElement.style.padding = '10px 15px';
+                correctElement.style.margin = '5px';
+                correctElement.style.borderRadius = '5px';
+                correctElement.style.display = 'inline-block';
+                element.appendChild(correctElement);
+            } else {
+                // Change the incorrect draggable button to the usual pink
                 child.style.backgroundColor = '#e6027e'; // Usual pink
                 // Append the correct answer in brackets
                 child.textContent = `${child.textContent.split(' (Correct:')[0]} (Correct: ${document.getElementById(correctAnswers[key]).textContent})`;
-            }
 
-            // Apply the same rotation as the draggable button
-            if (element.classList.contains('quarter')) {
-                if (element.id === 'quarter1') {
-                    child.style.transform = 'rotate(0deg)';
-                } else if (element.id === 'quarter2') {
-                    child.style.transform = 'rotate(-90deg)';
-                } else if (element.id === 'quarter3') {
-                    child.style.transform = 'rotate(180deg)';
-                } else if (element.id === 'quarter4') {
-                    child.style.transform = 'rotate(90deg)';
+                // Apply the same rotation as the draggable button
+                if (element.classList.contains('quarter')) {
+                    if (element.id === 'quarter1') {
+                        child.style.transform = 'rotate(0deg)';
+                    } else if (element.id === 'quarter2') {
+                        child.style.transform = 'rotate(-90deg)';
+                    } else if (element.id === 'quarter3') {
+                        child.style.transform = 'rotate(180deg)';
+                    } else if (element.id === 'quarter4') {
+                        child.style.transform = 'rotate(90deg)';
+                    }
                 }
             }
         }
