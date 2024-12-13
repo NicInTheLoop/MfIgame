@@ -255,12 +255,12 @@ button:hover {
 }
 
 #submit-button.disabled:hover {
-    background-color: #8a8d8dc0; /* Ensure it does not change color on hover */
+    background-color: #c0ced3; /* Ensure it does not change color on hover */
 }
 
 #next-question-button {
     display: none;
-    background-color: #e6027e; /* Usual pink */
+    background-color: #87898A; /* Usual pink */
     color: white;
     border: none;
     border-radius: 5px;
@@ -268,7 +268,7 @@ button:hover {
 }
 
 #next-question-button:hover {
-    background-color: #b60d91;
+    background-color: #8a8d8dc0;
 }
 
 .new-question {
