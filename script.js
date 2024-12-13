@@ -57,7 +57,6 @@ document.getElementById('submit-button').addEventListener('click', () => {
         const submitButton = document.getElementById('submit-button');
         submitButton.disabled = true;
         submitButton.classList.add('disabled');
-        submitButton.style.backgroundColor = '#f0f0f0'; // Very pale ghostlike grey
 
         // Show the next question button
         const nextQuestionButton = document.getElementById('next-question-button');

@@ -218,6 +218,22 @@ h1 {
     background-color: #b60d91;
 }
 
+/* General button styles */
+button {
+    font-size: 1.5em;
+    padding: 10px 20px;
+    margin: 10px;
+    background-color: #87898A;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #8a8d8dc0;
+}
+
 #submit-button, #next-question-button {
     font-size: 2.0em;
     padding: 10px 20px;
@@ -234,12 +250,21 @@ h1 {
 }
 
 #submit-button.disabled {
-    background-color: #d3d3d3;
+    background-color: #f0f0f0; /* Very pale ghostlike grey */
     cursor: not-allowed;
 }
 
 #next-question-button {
     display: none;
+    background-color: #e6027e; /* Usual pink */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#next-question-button:hover {
+    background-color: #b60d91;
 }
 
 .new-question {
