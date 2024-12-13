@@ -98,8 +98,8 @@ function submitAnswers() {
             const correctElement = document.createElement('div');
             correctElement.textContent = document.getElementById(correctAnswers[key]).textContent;
             correctElement.style.color = 'white';
-            correctElement.style.backgroundColor = 'grey';
-            correctElement.style.border = '2px solid #e6027e';
+            correctElement.style.backgroundColor = '#004d4d'; // Very dark teal
+            correctElement.style.border = '2px solid grey';
             correctElement.style.padding = '10px 15px';
             correctElement.style.margin = '5px';
             correctElement.style.borderRadius = '5px';
@@ -118,7 +118,11 @@ function submitAnswers() {
                 }
             }
 
-            element.appendChild(correctElement);
+            // Ensure the correct answer is only added once
+            if (!element.querySelector('.correct-answer')) {
+                correctElement.classList.add('correct-answer');
+                element.appendChild(correctElement);
+            }
         }
     });
 }
