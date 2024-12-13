@@ -89,16 +89,16 @@ function submitAnswers() {
         } else {
             element.style.backgroundColor = 'grey'; // Incorrect
 
-            // Change the incorrect draggable button to a lighter shade of pink
+            // Change the incorrect draggable button to a darker shade of pink
             if (child) {
-                child.style.backgroundColor = '#f4a6d7'; // Lighter shade of pink
+                child.style.backgroundColor = '#b60d91'; // Darker pink
             }
 
             // Show correct answer in a styled box
             const correctElement = document.createElement('div');
             correctElement.textContent = document.getElementById(correctAnswers[key]).textContent;
             correctElement.style.color = 'white';
-            correctElement.style.backgroundColor = '#004d4d'; // Very dark teal
+            correctElement.style.backgroundColor = '#1472a0'; // Very dark teal
             correctElement.style.border = '2px solid grey';
             correctElement.style.padding = '10px 15px';
             correctElement.style.margin = '5px';
