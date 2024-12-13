@@ -63,8 +63,10 @@ document.getElementById('submit-button').addEventListener('click', () => {
         nextQuestionButton.style.display = 'inline-block';
 
         // Update the instructions
-        const instructions = document.querySelector('.instructions');
-        instructions.innerHTML = '<p>Click here to move on to the final question</p>';
+        const initialInstructions = document.getElementById('initial-instructions');
+        const nextInstructions = document.getElementById('next-instructions');
+        initialInstructions.style.display = 'none';
+        nextInstructions.style.display = 'block';
     }
 });
 
