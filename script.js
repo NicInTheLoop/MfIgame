@@ -66,10 +66,11 @@ document.getElementById('submit-button').addEventListener('click', () => {
 
     console.log(`Total blank spaces: ${emptyCount}`); // Log the total number of blanks
 
-    // If there are too many blanks, show an alert and exit
+    // If there are too many blanks, show an alert and reset the game
     if (emptyCount >= 4) {
         console.log("Too many blank spaces. Submission blocked."); // Log the reason for stopping
         alert("You've left too many answers blank. Drag and drop answers into the correct boxes in the cycle.");
+        resetGame();
         return; // Stop execution
     }
 
@@ -88,7 +89,6 @@ document.getElementById('submit-button').addEventListener('click', () => {
     nextQuestionButton.style.display = 'inline-block';
 });
 
-
 function allowDrop(event) {
     event.preventDefault();
 }
@@ -102,7 +102,7 @@ function submitAnswers() {
         box3: 'word9',  // Change Ideas
         quarter1: 'word11', // Plan
         quarter2: 'word6',  // Do
-        quarter3: 'word10', // Study
+        quarter3: 'word10',  // Study
         quarter4: 'word20'  // Act
     };
 
