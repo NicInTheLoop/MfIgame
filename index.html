@@ -13,20 +13,34 @@
         <img src="QICLearn_logo.jpg" alt="QIC Learn Logo" class="logo" />
     </header>
 
-    <div class="instructions-container" id="instructions-container">
-        <div class="instructions" id="initial-instructions">
-            <h2>Get your MfI Score: Drag and drop</h2>
-            <p>When you've dropped an item into each of the sections click on this button:</p>
-            <p>Correct answers will be highlighted in green, incorrect in grey</p>
-            <p>Good luck!</p>
-        </div>
-        <div class="instructions" id="next-instructions" style="display: none;">
-            <p>Click here to move on to the final question</p>
-        </div>
-        <div class="arrow-down"></div>
-    </div>
-
     <div class="main-container">
+        <div class="game-area" id="game-area">
+            <div class="text-box" id="box1" ondrop="drop(event)" ondragover="allowDrop(event)">A</div>
+            <div class="downward-arrow"></div>
+            <div class="text-box" id="box2" ondrop="drop(event)" ondragover="allowDrop(event)">B</div>
+            <div class="downward-arrow"></div>
+            <div class="text-box" id="box3" ondrop="drop(event)" ondragover="allowDrop(event)">C</div>
+            <div class="downward-arrow"></div>
+            <div class="cycle">
+                <div class="quarter" id="quarter1" ondrop="drop(event)" ondragover="allowDrop(event)">
+                    <span>1</span>
+                    <div class="arrow" id="arrow1"></div>
+                </div>
+                <div class="quarter" id="quarter2" ondrop="drop(event)" ondragover="allowDrop(event)">
+                    <span>2</span>
+                    <div class="arrow" id="arrow2"></div>
+                </div>
+                <div class="quarter" id="quarter3" ondrop="drop(event)" ondragover="allowDrop(event)">
+                    <span>3</span>
+                    <div class="arrow" id="arrow3"></div>
+                </div>
+                <div class="quarter" id="quarter4" ondrop="drop(event)" ondragover="allowDrop(event)">
+                    <span>4</span>
+                    <div class="arrow" id="arrow4"></div>
+                </div>
+            </div>
+        </div>
+
         <div class="draggable-container" id="draggable-container">
             <div id="word-bank">
                 <div class="draggable" id="word1" draggable="true" ondragstart="drag(event)">Learn</div>
@@ -56,34 +70,14 @@
             </div>
         </div>
 
-        <div class="game-area" id="game-area">
-            <div class="text-box" id="box1" ondrop="drop(event)" ondragover="allowDrop(event)">A</div>
-            <div class="downward-arrow"></div>
-            <div class="text-box" id="box2" ondrop="drop(event)" ondragover="allowDrop(event)">B</div>
-            <div class="downward-arrow"></div>
-            <div class="text-box" id="box3" ondrop="drop(event)" ondragover="allowDrop(event)">C</div>
-            <div class="downward-arrow"></div>
-            <div class="cycle">
-                <div class="quarter" id="quarter1" ondrop="drop(event)" ondragover="allowDrop(event)">
-                    <span>1</span>
-                    <div class="arrow" id="arrow1"></div>
-                </div>
-                <div class="quarter" id="quarter2" ondrop="drop(event)" ondragover="allowDrop(event)">
-                    <span>2</span>
-                    <div class="arrow" id="arrow2"></div>
-                </div>
-                <div class="quarter" id="quarter3" ondrop="drop(event)" ondragover="allowDrop(event)">
-                    <span>3</span>
-                    <div class="arrow" id="arrow3"></div>
-                </div>
-                <div class="quarter" id="quarter4" ondrop="drop(event)" ondragover="allowDrop(event)">
-                    <span>4</span>
-                    <div class="arrow" id="arrow4"></div>
-                </div>
+        <div class="instructions-container" id="instructions-container">
+            <div class="instructions">
+                <h2>Get your MfI Score: Drag and drop</h2>
+                <p>When you've dropped an item into each of the sections click on this button:</p>
+                <p>Correct answers will be highlighted in green, incorrect in grey</p>
+                <p>Good luck!</p>
             </div>
-        </div>
-
-        <div class="button-container">
+            <div class="arrow-right"></div>
             <button id="submit-button" onclick="submitAnswers()">Submit</button>
             <button id="next-question-button" onclick="nextQuestion()" style="display: none;">Next Question</button>
         </div>
