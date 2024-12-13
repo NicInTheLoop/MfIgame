@@ -131,6 +131,20 @@ function submitAnswers() {
                 correctElement.style.margin = '5px';
                 correctElement.style.borderRadius = '5px';
                 correctElement.style.display = 'inline-block';
+
+                // Apply the same rotation as the draggable button
+                if (element.classList.contains('quarter')) {
+                    if (element.id === 'quarter1') {
+                        correctElement.style.transform = 'rotate(0deg)';
+                    } else if (element.id === 'quarter2') {
+                        correctElement.style.transform = 'rotate(-90deg)';
+                    } else if (element.id === 'quarter3') {
+                        correctElement.style.transform = 'rotate(180deg)';
+                    } else if (element.id === 'quarter4') {
+                        correctElement.style.transform = 'rotate(90deg)';
+                    }
+                }
+
                 element.appendChild(correctElement);
             } else {
                 // Change the incorrect draggable button to the usual pink
