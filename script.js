@@ -66,6 +66,8 @@ document.getElementById('submit-button').addEventListener('click', () => {
             resetGame();
             return;
         }
+
+        submitAnswers();
     }
 });
 
@@ -73,25 +75,8 @@ function allowDrop(event) {
     event.preventDefault();
 }
 
-
 function submitAnswers() {
     console.log("submitAnswers called");
-
-    submitAnswers();
-        // Disable the submit button after it has been pressed
-        const submitButton = document.getElementById('submit-button');
-        submitButton.disabled = true;
-        submitButton.classList.add('disabled');
-
-        // Show the next question button
-        const nextQuestionButton = document.getElementById('next-question-button');
-        nextQuestionButton.style.display = 'inline-block';
-
-        // Update the instructions
-        const initialInstructions = document.getElementById('initial-instructions');
-        const nextInstructions = document.getElementById('next-instructions');
-        initialInstructions.style.display = 'none';
-        nextInstructions.style.display = 'block';
 
     const correctAnswers = {
         box1: 'word17', // Aim
@@ -169,6 +154,21 @@ function submitAnswers() {
             }
         }
     });
+
+    // Disable the submit button after it has been pressed
+    const submitButton = document.getElementById('submit-button');
+    submitButton.disabled = true;
+    submitButton.classList.add('disabled');
+
+    // Show the next question button
+    const nextQuestionButton = document.getElementById('next-question-button');
+    nextQuestionButton.style.display = 'inline-block';
+
+    // Update the instructions
+    const initialInstructions = document.getElementById('initial-instructions');
+    const nextInstructions = document.getElementById('next-instructions');
+    initialInstructions.style.display = 'none';
+    nextInstructions.style.display = 'block';
 
     // Disable dragging for all draggable elements
     draggables.forEach(draggable => {
