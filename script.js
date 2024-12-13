@@ -107,9 +107,15 @@ function submitAnswers() {
 
         console.log(`Checking ${key}: expected ${correctAnswers[key]}, found ${child ? child.id : 'none'}`);
 
+        // Clear previous children added for corrections
+        while (element.firstChild) {
+            element.removeChild(element.firstChild);
+        }
+
         // Check the answer
         if (child && child.id === correctAnswers[key]) {
             element.style.backgroundColor = '#BCCF04'; // Correct (lime green)
+            element.appendChild(child); // Ensure the child is re-appended
         } else {
             element.style.backgroundColor = 'grey'; // Incorrect or blank
 
@@ -143,6 +149,7 @@ function submitAnswers() {
                         child.style.transform = 'rotate(90deg)';
                     }
                 }
+                element.appendChild(child); // Ensure the child is re-appended
             }
         }
     });
