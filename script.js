@@ -89,39 +89,24 @@ function submitAnswers() {
         } else {
             element.style.backgroundColor = 'grey'; // Incorrect
 
-            // Change the incorrect draggable button to a darker shade of pink
+            // Change the incorrect draggable button to a lighter shade of pink
             if (child) {
-                child.style.backgroundColor = '#b60d91'; // Darker pink
+                child.style.backgroundColor = '#f4a6d7'; // Lighter shade of pink
+                // Append the correct answer in brackets
+                child.textContent += ` (Correct: ${document.getElementById(correctAnswers[key]).textContent})`;
             }
-
-            // Show correct answer in a styled box
-            const correctElement = document.createElement('div');
-            correctElement.textContent = document.getElementById(correctAnswers[key]).textContent;
-            correctElement.style.color = 'white';
-            correctElement.style.backgroundColor = '#1472a0'; // Very dark teal
-            correctElement.style.border = '2px solid grey';
-            correctElement.style.padding = '10px 15px';
-            correctElement.style.margin = '5px';
-            correctElement.style.borderRadius = '5px';
-            correctElement.style.display = 'inline-block';
 
             // Apply the same rotation as the draggable button
             if (element.classList.contains('quarter')) {
                 if (element.id === 'quarter1') {
-                    correctElement.style.transform = 'rotate(0deg)';
+                    child.style.transform = 'rotate(0deg)';
                 } else if (element.id === 'quarter2') {
-                    correctElement.style.transform = 'rotate(-90deg)';
+                    child.style.transform = 'rotate(-90deg)';
                 } else if (element.id === 'quarter3') {
-                    correctElement.style.transform = 'rotate(180deg)';
+                    child.style.transform = 'rotate(180deg)';
                 } else if (element.id === 'quarter4') {
-                    correctElement.style.transform = 'rotate(90deg)';
+                    child.style.transform = 'rotate(90deg)';
                 }
-            }
-
-            // Ensure the correct answer is only added once
-            if (!element.querySelector('.correct-answer')) {
-                correctElement.classList.add('correct-answer');
-                element.appendChild(correctElement);
             }
         }
     });
