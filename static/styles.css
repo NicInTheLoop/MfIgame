@@ -44,13 +44,14 @@ header h1 {
     display: flex;
     flex-direction: column;
     align-items: flex-start; /* Align items to the start */
+    gap: 20px;
 }
 
 .instructions-container {
-    width: 80%;
+    width: 60%;
     display: flex;
-    align-items: center; /* Center items vertically */
-    text-align: left; /* Align text to the left */
+    flex-direction: column; /* Stack instructions and buttons */
+    align-items: flex-start; /* Align instructions to the left */
     margin-bottom: 20px;
 }
 
@@ -67,14 +68,20 @@ header h1 {
     clip-path: polygon(0 0, 90% 0, 100% 50%, 90% 100%, 0 100%); /* Pentagon shape */
 }
 
-#submit-button {
-    font-size: 1.5em; /* Adjust font size */
-    padding: 10px 20px; /* Add padding */
-    margin-left: 20px; /* Add margin to separate from instructions */
+#submit-button, #next-question-button {
     background-color: #87898A; /* Grey background */
     color: white; /* White text */
     border: none; /* Remove border */
     border-radius: 5px; /* Rounded corners */
+    padding: 10px 20px; /* Add padding */
+    font-size: 1.5em; /* Adjust font size */
+    cursor: pointer; /* Pointer cursor */
+    margin-left: 20px; /* Add margin to the left to space out from instructions */
+}
+
+#submit-button:disabled {
+    background-color: #ccc; /* Disabled background */
+    cursor: not-allowed; /* Not-allowed cursor */
 }
 
 .draggable-container {
@@ -108,12 +115,11 @@ header h1 {
 #next-question-button {
     font-size: 1.5em; /* Adjust font size */
     padding: 10px 20px; /* Add padding */
-    margin-left: 20px; /* Add margin to separate from instructions */
+    margin-top: 20px; /* Add margin to separate from other elements */
     background-color: #87898A; /* Grey background */
     color: white; /* White text */
     border: none; /* Remove border */
     border-radius: 5px; /* Rounded corners */
-    display: none; /* Initially hidden */
 }
 
 /* Game area styles */
@@ -212,6 +218,7 @@ header h1 {
     width: 0;
     height: 0;
     border-style: solid;
+    
 }
 
 #arrow1 {
@@ -246,16 +253,27 @@ header h1 {
     border-color: transparent transparent #000 transparent;
 }
 
-.final-question-container {
-    margin-top: 20px;
+.correction {
+    display: inline-block;
+    background-color: #8A8B8D; /* Grey background */
+    color: white; /* White text */
+    border-radius: 5px; /* Rounded corners */
+    padding: 8px; /* Padding to match draggable buttons */
     text-align: center;
+    font-size: 1em; /* Same font size as draggable buttons */
+    border: 2px solid #e6007e; /* Border colour */
+}
+
+.final-question-container {
+    width: 30%; /* Ensure it takes the full width */
+    display: none; /* Initially hidden */
+    margin-top: 20px; /* Add some margin at the top */
 }
 
 .final-options {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 10px;
+    gap: 10px; /* Add some space between the options */
 }
 
 .final-option {
@@ -266,12 +284,12 @@ header h1 {
     text-align: center; /* Center text */
     cursor: pointer; /* Change cursor to pointer */
     user-select: none; /* Prevent text selection */
-    background-color: #E6007E; /* Button colour */
+    background-color: #14a19a; /* Button colour */
     border: 2px solid #8A8B8D; /* Border colour */
     border-radius: 5px; /* Rounded corners */
     font-size: 1.2em; /* Same font size as draggable buttons */
 }
 
 .final-option:hover {
-    background-color: #b60d91; /* Darker pink on hover */
+    background-color: #0b6b66; /* Darker teal on hover */
 }

@@ -59,6 +59,12 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function checkAnswers() {
+        // Disable the submit button to prevent multiple submissions
+        const submitButton = document.getElementById('submit-button');
+        submitButton.disabled = true;
+        submitButton.style.backgroundColor = '#ccc';
+        console.log('Submit button disabled');
+    
         const correctAnswers = {
             box1: 'word17', // Correct answer for Aim
             box2: 'word3',  // Correct answer for Measure
@@ -79,21 +85,22 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
                 element.style.transform = "rotate(0deg)";
             }
-            element.style.transformOrigin = "center center";
+            element.style.transformOrigin = "center center"; // Ensure the rotation origin is correct
         }
     
+        // Process each zone
         Object.keys(correctAnswers).forEach(zoneId => {
             const zone = document.getElementById(zoneId);
             if (!zone) {
                 console.warn(`Zone with ID ${zoneId} not found.`);
-                return;
+                return; // Skip this zone if it doesn't exist
             }
     
             const child = zone.querySelector('.draggable');
     
             // Remove draggable children and existing corrections
             Array.from(zone.children).forEach(childNode => {
-                if (childNode.classList.contains('draggable') || childNode.classList.contains('correction')) {
+                if (childNode.classList.contains('draggable') || childNode.textContent.includes('Correct:')) {
                     zone.removeChild(childNode);
                 }
             });
@@ -105,24 +112,20 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
                 zone.style.backgroundColor = 'grey'; // Incorrect - grey
     
-                // Add correction styled as a grey text box
+                // Add correction
                 const correction = document.createElement('div');
-                correction.classList.add('correction'); // Add a class for styling
                 correction.textContent = child
                     ? `${child.textContent} (Correct: ${document.getElementById(correctAnswers[zoneId]).textContent})`
                     : `Correct: ${document.getElementById(correctAnswers[zoneId]).textContent}`;
-                correction.style.backgroundColor = '#8A8B8D'; // Grey box color
-                correction.style.color = 'white'; // White text
-                correction.style.padding = '8px';
-                correction.style.borderRadius = '5px';
+                correction.style.color = 'white';
+                correction.style.padding = '5px';
                 correction.style.textAlign = 'center';
+                zone.appendChild(correction);
     
                 // Apply rotation if in a quarter
                 if (zoneId.startsWith('quarter')) {
                     applyRotation(zoneId, correction);
                 }
-    
-                zone.appendChild(correction);
             }
         });
     
@@ -137,13 +140,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('initial-instructions').style.display = 'none';
         document.getElementById('next-instructions').style.display = 'block';
         document.getElementById('next-question-button').style.display = 'block';
-    
-        // Disable submit button
-        const submitButton = document.getElementById('submit-button');
-        submitButton.disabled = true;
-        submitButton.style.backgroundColor = '#ccc';
-    }
-    
+    }       
 
     function nextQuestion() {
         // Reset the game area to lime green
@@ -171,20 +168,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
 
-            // Reset background color to lime green
-            zone.style.backgroundColor = '#BCCF04';
-
-            // Remove only dynamic content (draggables and corrections), keep arrows
-            Array.from(zone.children).forEach(childNode => {
-                if (childNode.classList.contains('draggable') || childNode.textContent.includes('Correct:')) {
-                    zone.removeChild(childNode);
-                }
-            });
-
-            // Add the correct answer as new content
+            // Add the correct answer to the zone
             const answerElement = document.createElement('span');
             answerElement.textContent = correctAnswers[zoneId];
-            answerElement.style.textAlign = 'center';
             zone.appendChild(answerElement);
 
             // Apply rotation if the zone is a quarter
@@ -203,11 +189,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
         });
-
-        // Ensure arrows remain visible
-        document.getElementById('arrow3').style.visibility = 'visible';
-        document.getElementById('arrow4').style.visibility = 'visible';
-
+        
         // Hide the instructions, draggable buttons, and submit button
         instructionsContainer.style.display = 'none';
         draggableContainer.style.display = 'none';
