@@ -1,284 +1,245 @@
-/* Import Lato font from Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap');
-
-#model {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-/* General styles */
+/* Styles.css content as of 6/11/24 */
 body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    font-family: 'Lato', sans-serif;
 }
 
 header {
-    text-align: center;
-    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
 }
 
-h1 {
-    font-size: 2.5em;
+header h1 {
     margin: 0;
-    color: #333;
 }
 
 .logo {
-    width: 150px;
+    width: 200px; /* Adjust the width to make it smaller */
     height: auto; /* Maintain aspect ratio */
 }
 
 .main-container {
     display: flex;
-    flex-direction: column;
-    align-items: center;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
+    padding: 20px;
 }
 
-/* Game area styles */
 .game-area {
+    width: 30%; /* Adjust the width to be percentage-based */
+    max-width: 400px; /* Ensure it doesn't exceed 400px */
+    border: 1px solid #000;
+    padding: 10px;
     display: flex;
     flex-direction: column;
     align-items: center;
+    margin-right: 20px; /* Add some space between the game area and the instructions container */
+    flex: 1;
+}
+
+.right-container {
+    width: 75%; /* Adjust the width to be percentage-based */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Align items to the start */
+}
+
+.instructions-container {
+    width: 80%;
+    display: flex;
+    align-items: center; /* Center items vertically */
+    text-align: left; /* Align text to the left */
     margin-bottom: 20px;
 }
 
+.instructions {
+    width: 40%; /* Adjust the width of the instructions */
+    padding: 20px;
+    margin-bottom: 20px; /* Added margin-bottom to space out the instructions */
+    display: block; /* Ensure the instructions are displayed as a block element */
+    background-color: #87898A; /* Lime green background */
+    color: white; /* Black text */
+    position: relative;
+    text-align: left; /* Align text to the left */
+    border-radius: 5px; /* Rounded corners */
+    clip-path: polygon(0 0, 90% 0, 100% 50%, 90% 100%, 0 100%); /* Pentagon shape */
+}
+
+#submit-button {
+    font-size: 1.5em; /* Adjust font size */
+    padding: 10px 20px; /* Add padding */
+    margin-left: 20px; /* Add margin to separate from instructions */
+    background-color: #87898A; /* Grey background */
+    color: white; /* White text */
+    border: none; /* Remove border */
+    border-radius: 5px; /* Rounded corners */
+}
+
+.draggable-container {
+    width: 50%; /* Keep the width of the draggable container */
+    display: flex;
+    flex-wrap: wrap; /* Allow wrapping of buttons */
+    justify-content: center; /* Center the buttons */
+    align-items: flex-start; /* Align items to the start to prevent vertical overlap */
+    gap: 10px; /* Add gap between buttons */
+    flex: 1;
+}
+
+.draggable {
+    padding: 8px 12px; /* Slightly reduced padding */
+    margin: 4px; /* Slightly reduced margin */
+    display: inline-block; /* Display buttons in a row */
+    color: white; /* White text */
+    text-align: center; /* Center text */
+    cursor: pointer; /* Change cursor to pointer */
+    user-select: none; /* Prevent text selection while dragging */
+    background-color: #E6007E; /* Button colour */
+    border: 2px solid #8A8B8D; /* Border colour */
+    border-radius: 5px; /* Rounded corners */
+}
+
+.draggable:hover {
+    background-color: #b60d91; /* Darker pink on hover */
+}
+
+#next-question-button {
+    font-size: 1.5em; /* Adjust font size */
+    padding: 10px 20px; /* Add padding */
+    margin-top: 20px; /* Add margin to separate from other elements */
+    background-color: #87898A; /* Grey background */
+    color: white; /* White text */
+    border: none; /* Remove border */
+    border-radius: 5px; /* Rounded corners */
+    display: none; /* Initially hidden */
+}
+
+/* Game area styles */
 .text-box {
-    width: 100px;
-    height: 100px;
-    border: 2px solid #000;
+    width: 250px; /* Adjust width as needed */
+    height: 50px; /* Reduced height */
+    background-color: #14A19A;
+    border: 1px solid #ccc;
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: 10px;
+    margin: 10px auto; /* Reduced margin */
+    text-align: center;
 }
 
 .downward-arrow {
     width: 0;
     height: 0;
-    border-left: 20px solid transparent;
-    border-right: 20px solid transparent;
-    border-top: 20px solid #000;
-    margin: 10px 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 10px solid #000;
+    margin: 5px auto; /* Reduced margin */
 }
 
 .cycle {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    width: 220px;
-}
-
-.quarter {
-    width: 100px;
-    height: 100px;
-    border: 2px solid #000;
+    position: relative; /* Needed for absolute positioning of arrows */
+    width: 400px; /* Adjusted width */
+    height: 400px; /* Adjusted height */
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: 10px;
-    position: relative;
+    margin: 10px auto; /* Adjusted margin to move the cycle upwards */
+}
+
+.quarter {
+    width: 150px; /* Adjusted width */
+    height: 150px; /* Adjusted height */
+    background-color: #BCCF04;
+    position: absolute;
+    border-radius: 0 100% 0 0; /* Create a quarter-circle */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center; /* Center text */
+}
+
+.quarter span {
+    font-size: 1.2em; /* Reduced font size */
+    display: block;
+    transform-origin: center center;
+}
+
+#quarter1 span {
+    transform: rotate(0deg); /* Adjust rotation for quarter 1 */
+}
+
+#quarter2 span {
+    transform: rotate(-90deg); /* Adjust rotation for quarter 2 */
+}
+
+#quarter3 span {
+    transform: rotate(-180deg); /* Adjust rotation for quarter 3 */
+}
+
+#quarter4 span {
+    transform: rotate(-270deg); /* Adjust rotation for quarter 4 */
 }
 
 #quarter1 {
     top: 0;
-    left: 68%; /* Adjusted left position */
+    left: 72%;
     transform: translate(-50%, 0) rotate(0deg);
 }
 
 #quarter2 {
-    top: 50%;
-    left: 83%; /* Adjusted left position */
-    transform: translate(-100%, -50%) rotate(90deg);
+    top: 60%;
+    left: 72%;
+    transform: translate(-50%, -50%) rotate(90deg);
 }
 
 #quarter3 {
-    top: 65%;
-    left: 33%; /* Adjusted left position */
-    transform: translate(-50%, -100%) rotate(180deg);
+    top: 60%;
+    left: 29%;
+    transform: translate(-50%, -50%) rotate(180deg);
 }
 
 #quarter4 {
-    top: 15%;
-    left: 18%; /* Adjusted left position */
-    transform: translate(0, -50%) rotate(270deg);
-}
-
-#quarter1 span {
-    display: block;
-    transform: rotate(0deg); /* No rotation */
-}
-
-#quarter2 span {
-    display: block;
-    transform: rotate(-90deg); /* Rotate text back to normal orientation */
-}
-
-#quarter3 span {
-    display: block;
-    transform: rotate(-180deg); /* Rotate text back to normal orientation */
-}
-
-#quarter4 span {
-    display: block;
-    transform: rotate(90deg); /* Rotate text back to normal orientation */
+    top: 0;
+    left: 29%;
+    transform: translate(-50%, 0) rotate(270deg);
 }
 
 .arrow {
+    position: absolute;
     width: 0;
     height: 0;
-    border-left: 10px solid transparent;
-    border-right: 10px solid transparent;
-    border-top: 10px solid #000;
-    position: absolute;
-    bottom: 5px;
-    left: 50%;
-    transform: translateX(-50%);
+    border-style: solid;
 }
 
 #arrow1 {
-    top: 50%;
-    left: 0%;
-    transform: translate(-50%, -50%) rotate(-90deg);
+    top: 55%;
+    right: 150px; /* Move further left */
+    transform: translate(50%, -50%) rotate(0deg);
+    border-width: 10px 0 10px 10px;
+    border-color: transparent transparent transparent #000;
 }
 
 #arrow2 {
-    top: 50%;
+    bottom: 75px; /* Move further left/right */
     left: 0%;
-    transform: translate(-50%, -50%) rotate(270deg);
+    transform: translate(-50%, 50%) rotate(270deg); /* Rotate 180 degrees */
+    border-width: 10px 10px 0 10px;
+    border-color: #000 transparent transparent transparent;
 }
 
 #arrow3 {
     top: 50%;
-    left: 0%;
-    transform: translate(-50%, -50%) rotate(-90deg);
+    left: -0px;
+    transform: translate(-50%, -50%) rotate(180deg);
+    border-width: 10px 10px 10px 0;
+    border-color: transparent #000 transparent transparent;
 }
 
 #arrow4 {
-    top: 50%;
+    top: 60px; /* Move lower down */
     left: 0%;
-    transform: translate(-50%, -50%) rotate(270deg);
-}
-
-.instructions-container {
-    text-align: center;
-    margin-bottom: 20px;
-    position: relative;
-}
-
-.instructions {
-    background-color: #f0f0f0;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-.draggable-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    margin-bottom: 20px;
-}
-
-.draggable {
-    width: 100px;
-    height: 50px;
-    background-color: #e6027e;
-    color: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 5px;
-    cursor: pointer;
-    border-radius: 5px;
-}
-
-.draggable:hover {
-    background-color: #b60d91;
-}
-
-/* General button styles */
-button {
-    font-size: 1.5em;
-    padding: 10px 20px;
-    margin: 10px;
-    background-color: #87898A;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-button:hover {
-    background-color: #8a8d8dc0;
-}
-
-#submit-button, #next-question-button {
-    font-size: 2.0em;
-    padding: 10px 20px;
-    margin-top: 20px;
-    background-color: #87898A;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-#submit-button:hover, #next-question-button:hover {
-    background-color: #8a8d8dc0;
-}
-
-#submit-button.disabled {
-    background-color: #c0ced3; /* Flat grey color */
-    cursor: not-allowed;
-}
-
-#submit-button.disabled:hover {
-    background-color: #c0ced3; /* Ensure it does not change color on hover */
-}
-
-#next-question-button {
-    display: none;
-    background-color: #87898A; /* Usual pink */
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-#next-question-button:hover {
-    background-color: #8a8d8dc0;
-}
-
-.new-question {
-    font-size: 2.0em;
-    margin-left: 20px;
-    padding: 20px;
-    background-color: #f0f0f0;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-.new-question h3 {
-    margin-top: 0;
-}
-
-.new-question button {
-    font-size: 1.0em;
-    background-color: #E6007E;
-    color: white;
-    border: 2px solid #8A8B8D;
-    padding: 10px 15px;
-    margin: 5px;
-    border-radius: 5px;
-    display: block;
-    cursor: pointer;
-}
-
-.new-question button:hover {
-    background-color: #b60d91;
+    transform: translate(-50%, 50%) rotate(90deg); /* Rotate 180 degrees */
+    border-width: 0 10px 10px 10px;
+    border-color: transparent transparent #000 transparent;
 }
