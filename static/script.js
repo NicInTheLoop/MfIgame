@@ -63,18 +63,47 @@ document.getElementById('submit-button').addEventListener('click', () => {
 
     console.log(`Number of blank spaces: ${emptyCount}`); // Debugging log
 
-    // If there are too many blanks, alert and exit
-    if (emptyCount >= 4) {
-        alert("You've left too many answers blank. Drag and drop answers into the correct boxes in the cycle.");
-        return; // Exit the function here
-    }
-
     // Proceed with submitAnswers if the above condition is not met
     submitAnswers();
 });
 
 function allowDrop(event) {
     event.preventDefault();
+}
+
+function drag(event) {
+    event.dataTransfer.setData("text", event.target.id);
+}
+
+function drop(event) {
+    event.preventDefault();
+    var data = event.dataTransfer.getData("text");
+    var draggedElement = document.getElementById(data);
+    var dropTarget = event.target;
+
+    // Ensure the drop target is a quarter
+    if (dropTarget.classList.contains("quarter") || dropTarget.parentElement.classList.contains("quarter")) {
+        if (!dropTarget.classList.contains("quarter")) {
+            dropTarget = dropTarget.parentElement;
+        }
+        dropTarget.appendChild(draggedElement);
+
+        // Apply rotation based on the quarter
+        if (dropTarget.id === "quarter2") {
+            draggedElement.style.transform = "rotate(-90deg)";
+        } else if (dropTarget.id === "quarter3") {
+            draggedElement.style.transform = "rotate(180deg)";
+        } else if (dropTarget.id === "quarter4") {
+            draggedElement.style.transform = "rotate(90deg)";
+        } else {
+            draggedElement.style.transform = "rotate(0deg)";
+        }
+    }
+
+    // Enable the submit button if at least one guess is placed
+    const submitButton = document.getElementById('submit-button');
+    submitButton.disabled = false;
+    submitButton.style.backgroundColor = '#87898A'; // Grey background
 }
 
 function submitAnswers() {
@@ -111,73 +140,33 @@ function submitAnswers() {
             // If the box is blank, show the correct answer
             if (!child) {
                 const correctElement = document.createElement('div');
-                correctElement.textContent = `blank (Correct: ${document.getElementById(correctAnswers[key]).textContent})`;
+                correctElement.textContent = `Correct: ${document.getElementById(correctAnswers[key]).textContent}`;
                 correctElement.style.color = 'white';
                 correctElement.style.backgroundColor = 'grey';
-                correctElement.style.border = '2px solid #e6027e';
-                correctElement.style.padding = '10px 15px';
-                correctElement.style.margin = '5px';
-                correctElement.style.borderRadius = '5px';
-                correctElement.style.display = 'inline-block';
-
-                // Apply the same rotation as the draggable button
-                if (element.classList.contains('quarter')) {
-                    if (element.id === 'quarter1') {
-                        correctElement.style.transform = 'rotate(0deg)';
-                    } else if (element.id === 'quarter2') {
-                        correctElement.style.transform = 'rotate(-90deg)';
-                    } else if (element.id === 'quarter3') {
-                        correctElement.style.transform = 'rotate(180deg)';
-                    } else if (element.id === 'quarter4') {
-                        correctElement.style.transform = 'rotate(90deg)';
-                    }
-                }
-
                 element.appendChild(correctElement);
-            } else {
-                // Change the incorrect draggable button to the usual pink
-                child.style.backgroundColor = '#e6027e'; // Usual pink
-                // Append the correct answer in brackets
-                child.textContent = `${child.textContent.split(' (Correct:')[0]} (Correct: ${document.getElementById(correctAnswers[key]).textContent})`;
 
-                // Apply the same rotation as the draggable button
-                if (element.classList.contains('quarter')) {
-                    if (element.id === 'quarter1') {
-                        child.style.transform = 'rotate(0deg)';
-                    } else if (element.id === 'quarter2') {
-                        child.style.transform = 'rotate(-90deg)';
-                    } else if (element.id === 'quarter3') {
-                        child.style.transform = 'rotate(180deg)';
-                    } else if (element.id === 'quarter4') {
-                        child.style.transform = 'rotate(90deg)';
-                    }
+                // Apply rotation based on the quarter
+                if (element.id === "quarter2") {
+                    correctElement.style.transform = "rotate(-90deg)";
+                } else if (element.id === "quarter3") {
+                    correctElement.style.transform = "rotate(180deg)";
+                } else if (element.id === "quarter4") {
+                    correctElement.style.transform = "rotate(90deg)";
+                } else {
+                    correctElement.style.transform = "rotate(0deg)";
                 }
-                element.appendChild(child); // Ensure the child is re-appended
             }
         }
     });
 
-    // Disable the submit button after it has been pressed
+    // Disable the submit button and change its color
     const submitButton = document.getElementById('submit-button');
     submitButton.disabled = true;
-    submitButton.classList.add('disabled');
+    submitButton.style.backgroundColor = '#D3D3D3'; // Very pale grey
 
     // Show the next question button
     const nextQuestionButton = document.getElementById('next-question-button');
-    nextQuestionButton.style.display = 'inline-block';
-
-    // Update the instructions
-    const initialInstructions = document.getElementById('initial-instructions');
-    const nextInstructions = document.getElementById('next-instructions');
-    initialInstructions.style.display = 'none';
-    nextInstructions.style.display = 'block';
-
-    // Disable dragging for all draggable elements
-    draggables.forEach(draggable => {
-        draggable.setAttribute('draggable', 'false');
-        draggable.removeEventListener('dragstart', drag);
-        draggable.removeEventListener('dragend', drag);
-    });
+    nextQuestionButton.style.display = 'block';
 }
 
 function resetGame() {
@@ -217,6 +206,76 @@ function resetGame() {
 
 function nextQuestion() {
     console.log("nextQuestion called");
-    // Implement the logic to load the next question
-    alert('Next question logic not implemented yet.');
+
+    // Fill the game area with the correct answers
+    document.getElementById('box1').textContent = 'Aim';
+    document.getElementById('box2').textContent = 'Measure';
+    document.getElementById('box3').textContent = 'Change Ideas';
+    document.getElementById('quarter1').innerHTML = '<span>Plan</span>';
+    document.getElementById('quarter2').innerHTML = '<span>Do</span>';
+    document.getElementById('quarter3').innerHTML = '<span>Study</span>';
+    document.getElementById('quarter4').innerHTML = '<span>Act</span>';
+
+    // Set the background color of text boxes and quarters to lime green
+    document.getElementById('box1').style.backgroundColor = '#BCCF04';
+    document.getElementById('box2').style.backgroundColor = '#BCCF04';
+    document.getElementById('box3').style.backgroundColor = '#BCCF04';
+    document.getElementById('quarter1').style.backgroundColor = '#BCCF04';
+    document.getElementById('quarter2').style.backgroundColor = '#BCCF04';
+    document.getElementById('quarter3').style.backgroundColor = '#BCCF04';
+    document.getElementById('quarter4').style.backgroundColor = '#BCCF04';
+
+    // Remove all draggable elements from the game area
+    const draggables = document.querySelectorAll('.draggable');
+    draggables.forEach(draggable => {
+        draggable.remove();
+    });
+
+    // Hide the instructions, draggable buttons, and submit button
+    document.getElementById('instructions-container').style.display = 'none';
+    document.getElementById('draggable-container').style.display = 'none';
+    document.getElementById('submit-button').style.display = 'none';
+    document.getElementById('next-question-button').style.display = 'none';
+
+    // Display the final question
+    const finalQuestionContainer = document.querySelector('.final-question-container');
+    finalQuestionContainer.style.display = 'block';
+}
+
+// Reset function to ensure arrows stay in place and buttons are draggable
+function reset() {
+    const draggables = document.querySelectorAll('.draggable');
+    const draggableContainer = document.getElementById('word-bank');
+    const blanks = document.querySelectorAll('.text-box, .quarter');
+    blanks.forEach(blank => {
+        while (blank.firstChild) {
+            const child = blank.firstChild;
+            draggableContainer.appendChild(child);
+            blank.removeChild(child);
+        }
+        blank.style.backgroundColor = ''; // Reset background color
+    });
+
+    // Enable dragging for all draggable elements
+    draggables.forEach(draggable => {
+        draggable.setAttribute('draggable', 'true');
+        draggable.addEventListener('dragstart', drag);
+        draggable.addEventListener('dragend', drag);
+        draggable.style.transform = "rotate(0deg)"; // Reset rotation
+    });
+
+    // Reset the submit button
+    const submitButton = document.getElementById('submit-button');
+    submitButton.disabled = true;
+    submitButton.style.backgroundColor = '#87898A'; // Grey background
+
+    // Hide the next question button
+    const nextQuestionButton = document.getElementById('next-question-button');
+    nextQuestionButton.style.display = 'none';
+
+    // Reset the instructions
+    const initialInstructions = document.getElementById('initial-instructions');
+    const nextInstructions = document.getElementById('next-instructions');
+    initialInstructions.style.display = 'block';
+    nextInstructions.style.display = 'none';
 }
