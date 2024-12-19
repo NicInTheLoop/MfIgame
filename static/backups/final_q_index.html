@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,30 +11,11 @@
     <!-- Link to the backup CSS file (commented out for easy use if needed) -->
     <!--<link rel="stylesheet" href="{{ url_for('static', filename='backups/styles_layout.css') }}"> -->
 </head>
-
-<div id="course-setup" class="course-setup-container">
-    <h2>Setup Course Session</h2>
-    <form id="course-form">
-        <label for="course-code">Course Code:</label>
-        <input type="text" id="course-code" name="course-code" required>
-        <label for="session-number">Session Number:</label>
-        <input type="number" id="session-number" name="session-number" min="1" max="4" required>
-        <button type="submit">Generate Session Link</button>
-    </form>
-    <div id="session-link" class="link-container" style="display: none;">
-        <p>Share this link with learners:</p>
-        <div class="link-box">
-            <span id="link-output"></span>
-            <button id="copy-link" title="Copy Link">📋</button>
-        </div>
-    </div>
-</div>
-
-<header class="header-container">
-    <h1 id="main-title">Test Your Knowledge of the Model for Improvement!</h1>
-    <p id="course-title" class="hidden"></p>
-    <img src="{{ url_for('static', filename='images/QICLearn_logo.jpg') }}" alt="QIC Learn Logo" class="logo" />
-</header>
+<body>
+    <header>
+        <h1>Test Your Knowledge of the Model for Improvement!</h1>
+        <img src="{{ url_for('static', filename='images/QICLearn_logo.jpg') }}" alt="QIC Learn Logo" class="logo" />
+    </header>
 
     <div class="main-container">
         <!-- Game Area -->
@@ -117,14 +97,13 @@
           
             <!-- Final Question -->
             <div class="final-question-container" id="final-question-container" style="display: none;">
-                <h2>How familiar are you with this change method (from start to finish)?</h2>
+                <h2>How familiar are you with this change method?</h2>
                 <div class="final-options">
-                    <div class="final-option" onclick="selectFinalOption(this)">1st time I've seen it</div>
-                    <div class="final-option" onclick="selectFinalOption(this)">Seen it, tried it or trying it</div>
-                    <div class="final-option" onclick="selectFinalOption(this)">Know it - used it</div>
-                    <div class="final-option" onclick="selectFinalOption(this)">Use it well - want to learn more</div>
+                    <div class="final-option">1st time I've seen it</div>
+                    <div class="final-option">Seen it, tried it or trying it</div>
+                    <div class="final-option">Know it - used it</div>
+                    <div class="final-option">Use it well - want to learn more</div>
                 </div>
-                <button id="final-submit-button" onclick="submitFinalAnswer()" disabled>Submit</button>
             </div>
         </div>
     </div>

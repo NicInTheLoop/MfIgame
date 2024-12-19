@@ -41,22 +41,6 @@ window.addEventListener('load', function () {
     }
 });
 
-function submitGameData(data) {
-    const apiUrl = 'https://script.google.com/macros/s/AKfycbxambL5wNq-GqD_y_gMZFajgMgqy--jyjYcmdhpxRkHXjdhk5cV3zRUMyZWzDxZwhYu6w/exec';
-
-    fetch(apiUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-    })
-        .then(response => response.json())
-        .then(result => {
-            console.log('Data successfully submitted:', result);
-        })
-        .catch(error => {
-            console.error('Error submitting data:', error);
-        });
-}
 
 let correctAnswersCount = 0;
 let incorrectGuesses = [];
@@ -83,8 +67,6 @@ function checkAnswers() {
         word10: 'Study',
         word20: 'Act'
     };
-
-    
 
     function applyRotation(quarterId, element) {
         if (quarterId === "quarter2") {
@@ -142,8 +124,6 @@ function checkAnswers() {
         }
     });
 
-
-
     const draggables = document.querySelectorAll('.draggable');
     draggables.forEach(draggable => {
         draggable.setAttribute('draggable', 'true');
@@ -168,18 +148,6 @@ function checkAnswers() {
 
     const submitButton = document.getElementById('submit-button');
     submitButton.disabled = true;
-
-    // Collect Course and Session Info
-    const courseCode = localStorage.getItem('courseCode');
-    const sessionNumber = localStorage.getItem('sessionNumber');
-
-    // Send data to Google Sheets
-    submitGameData({
-        course: courseCode,
-        session: sessionNumber,
-        correctAnswers: correctAnswersCount,
-        incorrectGuesses: incorrectGuesses,
-    });
 }
 
 function checkSubmitButtonState() {
@@ -367,18 +335,7 @@ function submitFinalAnswer() {
     });
 
     console.log('Final answer submitted:', selectedFinalOption.textContent);
-    
-    // Get the stats on the final answer
-    const courseCode = localStorage.getItem('courseCode');
-    const sessionNumber = localStorage.getItem('sessionNumber');
-
-    const data = {
-        course: courseCode,
-        session: sessionNumber,
-        finalResponse: selectedFinalOption.textContent,
-    };
-
-    submitGameData(data);
 }
+
 
 

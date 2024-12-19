@@ -1,67 +1,3 @@
-document.getElementById('course-form').addEventListener('submit', function (event) {
-    event.preventDefault();
-
-    const courseCode = document.getElementById('course-code').value.trim();
-    const sessionNumber = document.getElementById('session-number').value.trim();
-    const sessionLink = `${window.location.origin}?course=${encodeURIComponent(courseCode)}&session=${sessionNumber}`;
-
-    document.getElementById('link-output').textContent = sessionLink;
-    document.getElementById('session-link').style.display = 'block';
-
-    // Store course and session in localStorage for tracking
-    localStorage.setItem('courseCode', courseCode);
-    localStorage.setItem('sessionNumber', sessionNumber);
-});
-
-document.getElementById('copy-link').addEventListener('click', function () {
-    const linkOutput = document.getElementById('link-output').textContent;
-    navigator.clipboard.writeText(linkOutput)
-        .then(() => {
-            alert('Link copied to clipboard!');
-        })
-        .catch(err => {
-            console.error('Failed to copy link: ', err);
-        });
-});
-
-window.addEventListener('load', function () {
-    const urlParams = new URLSearchParams(window.location.search);
-    const courseCode = urlParams.get('course');
-    const sessionNumber = urlParams.get('session');
-
-    if (courseCode && sessionNumber) {
-        // Hide the course setup box
-        document.getElementById('course-setup').classList.add('hidden');
-
-        // Show the course title
-        const courseTitle = `Course Session: ${courseCode} (Session ${sessionNumber})`;
-        const courseTitleElement = document.getElementById('course-title');
-        courseTitleElement.textContent = courseTitle;
-        courseTitleElement.classList.remove('hidden');
-    }
-});
-
-function submitGameData(data) {
-    const apiUrl = 'https://script.google.com/macros/s/AKfycbxambL5wNq-GqD_y_gMZFajgMgqy--jyjYcmdhpxRkHXjdhk5cV3zRUMyZWzDxZwhYu6w/exec';
-
-    fetch(apiUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-    })
-        .then(response => response.json())
-        .then(result => {
-            console.log('Data successfully submitted:', result);
-        })
-        .catch(error => {
-            console.error('Error submitting data:', error);
-        });
-}
-
-let correctAnswersCount = 0;
-let incorrectGuesses = [];
-let finalQuestionResponse = '';
-
 // Global Function Definitions
 function checkAnswers() {
     const correctAnswers = {
@@ -83,8 +19,6 @@ function checkAnswers() {
         word10: 'Study',
         word20: 'Act'
     };
-
-    
 
     function applyRotation(quarterId, element) {
         if (quarterId === "quarter2") {
@@ -142,8 +76,6 @@ function checkAnswers() {
         }
     });
 
-
-
     const draggables = document.querySelectorAll('.draggable');
     draggables.forEach(draggable => {
         draggable.setAttribute('draggable', 'true');
@@ -168,18 +100,6 @@ function checkAnswers() {
 
     const submitButton = document.getElementById('submit-button');
     submitButton.disabled = true;
-
-    // Collect Course and Session Info
-    const courseCode = localStorage.getItem('courseCode');
-    const sessionNumber = localStorage.getItem('sessionNumber');
-
-    // Send data to Google Sheets
-    submitGameData({
-        course: courseCode,
-        session: sessionNumber,
-        correctAnswers: correctAnswersCount,
-        incorrectGuesses: incorrectGuesses,
-    });
 }
 
 function checkSubmitButtonState() {
@@ -306,14 +226,35 @@ function nextQuestion() {
         zone.appendChild(answerText);
 
         // Re-add arrows for quarters
-        if (zone.classList.contains('quarter') && !zone.querySelector('.arrow')) {
+        if (zone.id.startsWith('quarter') && !zone.querySelector('.arrow')) {
             const arrow = document.createElement('div');
-            arrow.classList.add('arrow');
-            if (zone.id === 'quarter1') arrow.id = 'arrow1';
-            if (zone.id === 'quarter2') arrow.id = 'arrow2';
-            if (zone.id === 'quarter3') arrow.id = 'arrow3';
-            if (zone.id === 'quarter4') arrow.id = 'arrow4';
+            arrow.classList.add('arrow'); // Ensure the correct styles are applied
             zone.appendChild(arrow);
+
+            // Apply unique ID or additional styles for precise positioning
+            if (zone.id === 'quarter1') {
+                arrow.id = 'arrow1';
+            } else if (zone.id === 'quarter2') {
+                arrow.id = 'arrow2';
+            } else if (zone.id === 'quarter3') {
+                arrow.id = 'arrow3';
+            } else if (zone.id === 'quarter4') {
+                arrow.id = 'arrow4';
+            }
+        }
+
+        // Apply rotation if the zone is a quarter
+        if (zone.id.startsWith('quarter')) {
+            answerText.style.transformOrigin = 'center center';
+            if (zone.id === 'quarter2') {
+                answerText.style.transform = 'rotate(-90deg)';
+            } else if (zone.id === 'quarter3') {
+                answerText.style.transform = 'rotate(180deg)';
+            } else if (zone.id === 'quarter4') {
+                answerText.style.transform = 'rotate(90deg)';
+            } else {
+                answerText.style.transform = 'rotate(0deg)';
+            }
         }
     });
 
@@ -324,61 +265,16 @@ function nextQuestion() {
     document.getElementById('next-question-button').classList.add('hidden');
 
     // Show the final question
-    const finalQuestionContainer = document.getElementById('final-question-container');
-    finalQuestionContainer.style.display = 'block'; // Ensure visibility
+    const finalQuestionContainer = document.querySelector('.final-question-container');
     finalQuestionContainer.classList.remove('hidden');
     finalQuestionContainer.classList.add('visible');
+    finalQuestionContainer.style.display = ''; // Ensure inline style doesn't block visibility
 
-    // Ensure the final submit button is disabled initially
-    const finalSubmitButton = document.getElementById('final-submit-button');
-    finalSubmitButton.disabled = true;
-}
-
-let selectedFinalOption = null; // Track the selected answer
-
-function selectFinalOption(option) {
-    // Deselect any previously selected option
-    if (selectedFinalOption) {
-        selectedFinalOption.classList.remove('selected');
-    }
-
-    // Select the clicked option
-    option.classList.add('selected');
-    selectedFinalOption = option;
-
-    // Enable the submit button
-    const submitButton = document.getElementById('final-submit-button');
-    submitButton.disabled = false;
-}
-
-function submitFinalAnswer() {
-    // Disable the submit button
-    const submitButton = document.getElementById('final-submit-button');
-    submitButton.disabled = true;
-
-    // Keep the selected option pink and make unselected options teal
-    const options = document.querySelectorAll('.final-option');
-    options.forEach(option => {
-        if (option === selectedFinalOption) {
-            option.style.backgroundColor = '#E6007E'; // Pink for the chosen answer
-        } else {
-            option.style.backgroundColor = '#14a19a'; // Teal for unchosen answers
-        }
+    // Show all options for the final question
+    const finalOptions = document.querySelectorAll('.final-options .final-option');
+    finalOptions.forEach(option => {
+        option.classList.remove('hidden');
+        option.classList.add('visible');
+        option.style.display = ''; // Remove inline display: none if present
     });
-
-    console.log('Final answer submitted:', selectedFinalOption.textContent);
-    
-    // Get the stats on the final answer
-    const courseCode = localStorage.getItem('courseCode');
-    const sessionNumber = localStorage.getItem('sessionNumber');
-
-    const data = {
-        course: courseCode,
-        session: sessionNumber,
-        finalResponse: selectedFinalOption.textContent,
-    };
-
-    submitGameData(data);
 }
-
-
