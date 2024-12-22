@@ -41,26 +41,36 @@ window.addEventListener('load', function () {
     }
 });
 
-function submitGameData(data) {
-    const apiUrl = 'https://script.google.com/macros/s/AKfycbxambL5wNq-GqD_y_gMZFajgMgqy--jyjYcmdhpxRkHXjdhk5cV3zRUMyZWzDxZwhYu6w/exec';
-
-    fetch(apiUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-    })
-        .then(response => response.json())
-        .then(result => {
-            console.log('Data successfully submitted:', result);
-        })
-        .catch(error => {
-            console.error('Error submitting data:', error);
-        });
-}
 
 let correctAnswersCount = 0;
 let incorrectGuesses = [];
 let finalQuestionResponse = '';
+
+function submitGameData(data) {
+    console.log('Submitting data to API:', JSON.stringify(data, null, 2));
+
+    fetch('https://script.google.com/macros/s/AKfycbx8plC_7LyN0nR5wHkAIWECeyqXtXCs8qTIqys4LtKiECl7TNvp4o_IoL-tuifcigvuYw/exec', {
+        method: 'POST',
+        mode: 'cors', // Enable CORS
+        body: JSON.stringify(data),
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    })
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then((result) => {
+            console.log('Data submitted successfully:', result);
+        })
+        .catch((error) => {
+            console.error('Error submitting data:', error);
+        });
+}
+
 
 // Global Function Definitions
 function checkAnswers() {
@@ -83,8 +93,6 @@ function checkAnswers() {
         word10: 'Study',
         word20: 'Act'
     };
-
-    
 
     function applyRotation(quarterId, element) {
         if (quarterId === "quarter2") {
@@ -139,10 +147,26 @@ function checkAnswers() {
             if (draggableChild) {
                 draggableChild.remove();
             }
+                
+            const submitButton = document.getElementById('submit-button');
+            submitButton.disabled = true;
+            
+            // Submit data to API/Google Sheets
+            const courseCode = localStorage.getItem('courseCode') || 'DefaultCourseCode';
+            const sessionNumber = localStorage.getItem('sessionNumber') || 'DefaultSessionNumber';
+
+            const data = {
+                course: courseCode,
+                session: sessionNumber,
+                correctAnswers: correctAnswersCount,
+                incorrectGuesses: incorrectGuesses,
+            };
+
+            submitGameData(data);
+            console.log("Data sent to Google Sheets:", data);
+
         }
     });
-
-
 
     const draggables = document.querySelectorAll('.draggable');
     draggables.forEach(draggable => {
@@ -168,18 +192,6 @@ function checkAnswers() {
 
     const submitButton = document.getElementById('submit-button');
     submitButton.disabled = true;
-
-    // Collect Course and Session Info
-    const courseCode = localStorage.getItem('courseCode');
-    const sessionNumber = localStorage.getItem('sessionNumber');
-
-    // Send data to Google Sheets
-    submitGameData({
-        course: courseCode,
-        session: sessionNumber,
-        correctAnswers: correctAnswersCount,
-        incorrectGuesses: incorrectGuesses,
-    });
 }
 
 function checkSubmitButtonState() {
@@ -366,11 +378,8 @@ function submitFinalAnswer() {
         }
     });
 
-    console.log('Final answer submitted:', selectedFinalOption.textContent);
-    
-    // Get the stats on the final answer
-    const courseCode = localStorage.getItem('courseCode');
-    const sessionNumber = localStorage.getItem('sessionNumber');
+    const courseCode = localStorage.getItem('courseCode') || 'DefaultCourseCode';
+    const sessionNumber = localStorage.getItem('sessionNumber') || 'DefaultSessionNumber';
 
     const data = {
         course: courseCode,
@@ -379,6 +388,11 @@ function submitFinalAnswer() {
     };
 
     submitGameData(data);
+    console.log("Final question data sent to Google Sheets:", data);
+
+
+    console.log('Final answer submitted:', selectedFinalOption.textContent);
 }
+
 
 

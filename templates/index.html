@@ -10,12 +10,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
 
     <!-- Link to the backup CSS file (commented out for easy use if needed) -->
-    <!--<link rel="stylesheet" href="{{ url_for('static', filename='backups/styles_layout.css') }}"> -->
+    <!--<link rel="stylesheet" href="{{ url_for('static', filename='backups/course_info_styles.css') }}"> -->
 </head>
 
 <div id="course-setup" class="course-setup-container">
     <h2>Setup Course Session</h2>
-    <form id="course-form">
+    <form id="course-form" onsubmit="generateLink(event)">
         <label for="course-code">Course Code:</label>
         <input type="text" id="course-code" name="course-code" required>
         <label for="session-number">Session Number:</label>
@@ -131,6 +131,6 @@
     
     <script src="{{ url_for('static', filename='script.js') }}"></script>
     <!-- Link to the backup js file (commented out for easy use if needed) -->
-    <!--<script src="{{ url_for('static', filename='backups/script_layout.js') }}"></script>-->
+    <!--<script src="{{ url_for('static', filename='backups/course_info_script.js') }}"></script>-->
 </body>
 </html>
