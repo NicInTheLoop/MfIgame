@@ -277,6 +277,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Initial check to disable/enable the submit button
     checkSubmitButtonState();
+
+    // Add query parameter logic here
+    handleQueryParameters(); // Function to process query parameters
 });
 
 // Attach globally accessible functions (if needed by HTML)
@@ -284,6 +287,28 @@ window.submitAnswers = checkAnswers;
 window.allowDrop = allowDrop;
 window.drag = drag;
 window.drop = drop;
+
+function handleQueryParameters() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const course = urlParams.get('course');
+    const session = urlParams.get('session');
+
+    if (course && session) {
+        // Hide the course setup form
+        const courseSetup = document.getElementById('course-setup');
+        if (courseSetup) {
+            courseSetup.classList.add('hidden');
+        }
+
+        // Show course details
+        const courseTitle = `Course: ${course}, Session: ${session}`;
+        const courseTitleElement = document.getElementById('course-title');
+        if (courseTitleElement) {
+            courseTitleElement.textContent = courseTitle;
+            courseTitleElement.classList.remove('hidden');
+        }
+    }
+}
 
 function nextQuestion() {
     // Reset the game area
@@ -393,6 +418,3 @@ function submitFinalAnswer() {
 
     console.log('Final answer submitted:', selectedFinalOption.textContent);
 }
-
-
-
