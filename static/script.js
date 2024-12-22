@@ -3,14 +3,18 @@ document.getElementById('course-form').addEventListener('submit', function (even
 
     const courseCode = document.getElementById('course-code').value.trim();
     const sessionNumber = document.getElementById('session-number').value.trim();
-    const sessionLink = `${window.location.origin}?course=${encodeURIComponent(courseCode)}&session=${sessionNumber}`;
 
+    // Correct base URL for GitHub Pages
+    const baseUrl = `${window.location.origin}/MfIgame/`;
+    const sessionLink = `${baseUrl}?course=${encodeURIComponent(courseCode)}&session=${encodeURIComponent(sessionNumber)}`;
+
+    // Display the generated link
     document.getElementById('link-output').textContent = sessionLink;
     document.getElementById('session-link').style.display = 'block';
 
     // Store course and session in localStorage for tracking
-    localStorage.setItem('courseCode', courseCode);
-    localStorage.setItem('sessionNumber', sessionNumber);
+    saveToStorage('courseCode', courseCode);
+    saveToStorage('sessionNumber', sessionNumber);
 });
 
 document.getElementById('copy-link').addEventListener('click', function () {
@@ -256,30 +260,25 @@ document.addEventListener('DOMContentLoaded', function () {
     const submitButton = document.getElementById('submit-button');
     const nextQuestionButton = document.getElementById('next-question-button');
 
-    // Set initial state
+    // Existing logic to set initial state and add event listeners
     submitButton.disabled = true;
-
-    // Add event listeners
     submitButton.addEventListener('click', checkAnswers);
     nextQuestionButton.addEventListener('click', nextQuestion);
 
     const draggables = document.querySelectorAll('.draggable');
     const blanks = document.querySelectorAll('.text-box, .quarter');
-
     draggables.forEach(draggable => {
         draggable.addEventListener('dragstart', drag);
     });
-
     blanks.forEach(blank => {
         blank.addEventListener('dragover', allowDrop);
         blank.addEventListener('drop', drop);
     });
 
-    // Initial check to disable/enable the submit button
-    checkSubmitButtonState();
+    checkSubmitButtonState(); // Initial state check
 
-    // Add query parameter logic here
-    handleQueryParameters(); // Function to process query parameters
+    // Call the query parameter handling function
+    handleQueryParameters();
 });
 
 // Attach globally accessible functions (if needed by HTML)
