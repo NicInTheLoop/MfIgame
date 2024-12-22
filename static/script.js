@@ -50,6 +50,7 @@ let correctAnswersCount = 0;
 let incorrectGuesses = [];
 let finalQuestionResponse = '';
 
+
 function submitGameData(data) {
     console.log('Submitting data to API:', JSON.stringify(data, null, 2));
 
