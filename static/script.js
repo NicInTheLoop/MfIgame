@@ -201,21 +201,20 @@ function checkAnswers() {
 }
 
 function checkSubmitButtonState() {
+    const draggables = document.querySelectorAll('.draggable');
     const dropZones = document.querySelectorAll('.text-box, .quarter');
-    let hasDraggable = false;
+    let allDropped = true;
 
     dropZones.forEach(zone => {
-        // Check if the zone contains at least one draggable element
-        const draggableChild = Array.from(zone.children).some(child => child.classList.contains('draggable'));
-        if (draggableChild) {
-            hasDraggable = true;
+        if (!zone.querySelector('.draggable')) {
+            allDropped = false;
         }
-        console.log(`Checking zone: ${zone.id}, Has draggable: ${draggableChild}`);
     });
 
-    // Enable or disable the submit button based on presence of draggables
     const submitButton = document.getElementById('submit-button');
-    submitButton.disabled = !hasDraggable;
+    if (submitButton) {
+        submitButton.disabled = !allDropped;
+    }
 }
 
 
@@ -419,3 +418,60 @@ function submitFinalAnswer() {
 
     console.log('Final answer submitted:', selectedFinalOption.textContent);
 }
+
+function dragStart(event) {
+    if (event.type === 'touchstart') {
+        // Store the dragged element's ID in the data transfer object for touch
+        event.target.dataset.dragging = 'true';
+    } else {
+        event.dataTransfer.setData("text", event.target.id);
+    }
+}
+
+function dragOver(event) {
+    event.preventDefault(); // Allow dropping
+}
+
+function drop(event) {
+    event.preventDefault();
+
+    let data;
+    if (event.type === 'touchend') {
+        // Find the element marked as dragging
+        data = document.querySelector('[data-dragging="true"]');
+    } else {
+        // Get the dragged element's ID
+        data = document.getElementById(event.dataTransfer.getData("text"));
+    }
+
+    const dropZone = event.target.closest('.text-box, .quarter');
+    if (dropZone) {
+        dropZone.appendChild(data);
+    }
+
+    // Clear dragging data
+    if (data) {
+        data.removeAttribute('data-dragging');
+    }
+    checkSubmitButtonState();
+}
+
+// Add event listeners for both mouse and touch
+function enableDragAndDrop() {
+    const draggables = document.querySelectorAll('.draggable');
+    const dropZones = document.querySelectorAll('.text-box, .quarter');
+
+    draggables.forEach(draggable => {
+        draggable.addEventListener('dragstart', dragStart);
+        draggable.addEventListener('touchstart', dragStart);
+    });
+
+    dropZones.forEach(zone => {
+        zone.addEventListener('dragover', dragOver);
+        zone.addEventListener('drop', drop);
+        zone.addEventListener('touchend', drop);
+    });
+}
+
+// Initialize drag and drop functionality
+document.addEventListener('DOMContentLoaded', enableDragAndDrop);
