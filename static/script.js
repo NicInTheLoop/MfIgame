@@ -585,20 +585,32 @@ function toggleBackroomVisibility() {
 document.addEventListener('DOMContentLoaded', () => {
     console.log("DOM fully loaded.");
 
-    // Ensure #backroom-course-form exists before adding event listener
+    // Example: Add listener for the backroom course form
     const courseForm = document.getElementById('backroom-course-form');
     if (courseForm) {
         courseForm.addEventListener('submit', (event) => {
             event.preventDefault();
             console.log("Course form submitted.");
-            setCourse(event); // Use existing setCourse logic
+            setCourse(event); // Use your existing setCourse logic
         });
     } else {
         console.warn("Course form not found in the DOM.");
     }
 
-    // Toggle backroom visibility based on URL parameters
-    toggleBackroomVisibility();
+    // Ensure the rest of the event listeners only attach to existing elements
+    const submitButton = document.getElementById('submit-button');
+    if (submitButton) {
+        submitButton.addEventListener('click', checkAnswers);
+    } else {
+        console.warn("Submit button not found.");
+    }
+
+    const nextQuestionButton = document.getElementById('next-question-button');
+    if (nextQuestionButton) {
+        nextQuestionButton.addEventListener('click', nextQuestion);
+    } else {
+        console.warn("Next question button not found.");
+    }
 
     // Add Listeners for Draggables and Drop Zones
     const draggables = document.querySelectorAll('.draggable');
@@ -610,20 +622,6 @@ document.addEventListener('DOMContentLoaded', () => {
         zone.addEventListener('dragover', allowDrop);
         zone.addEventListener('drop', drop);
     });
-
-    // Submit and Next Question Buttons
-    const submitButton = document.getElementById('submit-button');
-    const nextQuestionButton = document.getElementById('next-question-button');
-    if (submitButton) {
-        submitButton.addEventListener('click', checkAnswers);
-    } else {
-        console.warn("Submit button not found.");
-    }
-    if (nextQuestionButton) {
-        nextQuestionButton.addEventListener('click', nextQuestion);
-    } else {
-        console.warn("Next question button not found.");
-    }
 
     // Copy Link Button
     const copyLinkButton = document.getElementById('copy-link');
@@ -645,6 +643,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initial state check
     checkSubmitButtonState();
     updateSubmissionTally();
+
+    // Call the query parameter handling function
+    handleQueryParameters();
 });
 
 function toggleBackroomVisibility() {
