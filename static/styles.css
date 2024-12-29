@@ -129,7 +129,7 @@
 }
 
 .hidden {
-    display: none; /* Hide elements initially */
+    display: none !important; /* Hide elements initially */
 }
 
 /* Main Game styles start */
@@ -491,7 +491,7 @@ button {
 
 /* Additional styles for hiding and showing elements */
 .hidden {
-    display: none;
+    display: none !important;
 }
 
 .visible {

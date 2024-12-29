@@ -627,3 +627,26 @@ if (targetNode) {
 } else {
     console.error('Target node for MutationObserver does not exist.');
 }
+
+function toggleBackroomVisibility() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const course = urlParams.get('course');
+    const session = urlParams.get('session');
+
+    if (course && session) {
+        // Hide the backroom for player view
+        const backroom = document.getElementById('backroom');
+        if (backroom) {
+            backroom.classList.add('hidden');
+        }
+
+        // Hide the reset/export statistics buttons for players
+        const resetButton = document.querySelector("button[onclick='resetStats()']");
+        const exportButton = document.querySelector("button[onclick='exportStats()']");
+        if (resetButton) resetButton.classList.add('hidden');
+        if (exportButton) exportButton.classList.add('hidden');
+    }
+}
+
+// Call the function on page load
+document.addEventListener('DOMContentLoaded', toggleBackroomVisibility);
