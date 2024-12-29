@@ -51,29 +51,17 @@ let incorrectGuesses = [];
 let finalQuestionResponse = '';
 
 
-function submitGameData(data) {
-    console.log('Submitting data to API:', JSON.stringify(data, null, 2));
+function saveStatsLocally(data) {
+    let stats = JSON.parse(localStorage.getItem('gameStats')) || [];
+    stats.push(data);
+    localStorage.setItem('gameStats', JSON.stringify(stats));
+    console.log('Statistics saved locally:', stats);
+}
 
-    fetch('https://script.google.com/macros/s/AKfycbx8plC_7LyN0nR5wHkAIWECeyqXtXCs8qTIqys4LtKiECl7TNvp4o_IoL-tuifcigvuYw/exec', {
-        method: 'POST',
-        mode: 'cors', // Enable CORS
-        body: JSON.stringify(data),
-        headers: {
-            'Content-Type': 'application/json',
-        },
-    })
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then((result) => {
-            console.log('Data submitted successfully:', result);
-        })
-        .catch((error) => {
-            console.error('Error submitting data:', error);
-        });
+function submitGameData(data) {
+    console.log('Saving game data locally:', data);
+    saveStatsLocally(data);
+    alert('Your data has been saved locally!');
 }
 
 
@@ -224,41 +212,12 @@ function drag(event) {
 
 function drop(event) {
     event.preventDefault();
-
-    let data;
-    if (event.type === 'touchend') {
-        // Find the element marked as dragging
-        data = document.querySelector('[data-dragging="true"]');
-    } else {
-        // Get the dragged element's ID
-        const draggedId = event.dataTransfer.getData("text");
-        data = document.getElementById(draggedId);
-    }
-
+    const data = event.dataTransfer.getData("text");
+    const draggedElement = document.getElementById(data);
     const dropZone = event.target.closest('.text-box, .quarter');
-    console.log(`Dropped in: ${dropZone ? dropZone.id : 'None'}`);
-    if (dropZone && data) {
-        // Append the dragged element to the drop zone
-        dropZone.appendChild(data);
-
-        // Apply rotation based on the drop zone
-        if (dropZone.id === "quarter2") {
-            data.style.transform = "rotate(-90deg)";
-        } else if (dropZone.id === "quarter3") {
-            data.style.transform = "rotate(180deg)";
-        } else if (dropZone.id === "quarter4") {
-            data.style.transform = "rotate(90deg)";
-        } else {
-            data.style.transform = "rotate(0deg)";
-        }
+    if (draggedElement && dropZone) {
+        dropZone.appendChild(draggedElement);
     }
-
-    // Clear dragging data
-    if (data) {
-        data.removeAttribute('data-dragging');
-    }
-
-    // Recheck the submit button state
     checkSubmitButtonState();
 }
 
@@ -395,39 +354,20 @@ function selectFinalOption(option) {
 }
 
 function submitFinalAnswer() {
-    // Disable the submit button
-    const submitButton = document.getElementById('final-submit-button');
-    submitButton.disabled = true;
-
-    // Keep the selected option pink and make unselected options teal
-    const options = document.querySelectorAll('.final-option');
-    options.forEach(option => {
-        if (option === selectedFinalOption) {
-            option.style.backgroundColor = '#E6007E'; // Pink for the chosen answer
-        } else {
-            option.style.backgroundColor = '#14a19a'; // Teal for unchosen answers
-        }
-    });
-
-    const courseCode = localStorage.getItem('courseCode') || 'DefaultCourseCode';
-    const sessionNumber = localStorage.getItem('sessionNumber') || 'DefaultSessionNumber';
-
     const data = {
-        course: courseCode,
-        session: sessionNumber,
-        finalResponse: selectedFinalOption.textContent,
+        timestamp: Date.now(),
+        course: getFromStorage('courseCode', 'DefaultCourseCode'),
+        session: getFromStorage('sessionNumber', 'DefaultSessionNumber'),
+        correctAnswers: correctAnswersCount,
+        incorrectGuesses: incorrectGuesses,
+        finalResponse: selectedFinalOption
     };
 
     submitGameData(data);
-    console.log("Final question data sent to Google Sheets:", data);
-
-
-    console.log('Final answer submitted:', selectedFinalOption.textContent);
 }
 
 function dragStart(event) {
     if (event.type === 'touchstart') {
-        // Store the dragged element's ID in the data transfer object for touch
         event.target.dataset.dragging = 'true';
     } else {
         event.dataTransfer.setData("text", event.target.id);
@@ -459,11 +399,214 @@ function enableDragAndDrop() {
 document.addEventListener('DOMContentLoaded', enableDragAndDrop);
 
 document.addEventListener('DOMContentLoaded', () => {
-    if (course && session) {
+    if (typeof course !== 'undefined' && typeof session !== 'undefined') {
         const courseTitleElement = document.getElementById('course-title');
         if (courseTitleElement) {
             courseTitleElement.textContent = `Course: ${course}, Session: ${session}`;
             courseTitleElement.classList.remove('hidden');
         }
     }
+});
+
+function calculateAndDisplayStats() {
+    const statsContainer = document.getElementById('stats-container');
+    if (!statsContainer) {
+        console.error('Stats container not found in the DOM.');
+        return;
+    }
+    const stats = JSON.parse(localStorage.getItem('gameStats')) || [];
+    const totalGames = stats.length;
+    const totalScore = stats.reduce((sum, game) => sum + (game.correctAnswers || 0), 0);
+    const averageScore = totalGames > 0 ? (totalScore / totalGames).toFixed(2) : 0;
+
+    statsContainer.innerHTML = `
+        <h3>Game Statistics</h3>
+        <p>Total Games Played: ${totalGames}</p>
+        <p>Total Correct Answers: ${totalScore}</p>
+        <p>Average Score: ${averageScore}</p>
+    `;
+}
+
+document.addEventListener('DOMContentLoaded', calculateAndDisplayStats);
+
+function resetStats() {
+    if (confirm('Are you sure you want to reset all statistics?')) {
+        localStorage.removeItem('gameStats');
+        calculateAndDisplayStats();
+        alert('Statistics have been reset.');
+    }
+}
+
+function exportStats() {
+    const stats = JSON.parse(localStorage.getItem('gameStats')) || [];
+    const csvContent = [
+        ['Date', 'Course', 'Session', 'Correct Answers', 'Incorrect Guesses', 'Final Response'],
+        ...stats.map(stat => [
+            new Date(stat.timestamp).toLocaleString(),
+            stat.course,
+            stat.session,
+            stat.correctAnswers,
+            stat.incorrectGuesses?.join('; '),
+            stat.finalResponse,
+        ])
+    ].map(row => row.join(',')).join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'game_statistics.csv';
+    link.click();
+}
+
+function showTab(tabId) {
+    const tabContent = document.getElementById(tabId);
+    if (!tabContent) {
+        console.error(`Tab with ID ${tabId} does not exist.`);
+        return;
+    }
+    document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
+    tabContent.classList.remove('hidden');
+}
+
+function displaySubmissionTally() {
+    const stats = JSON.parse(localStorage.getItem('gameStats')) || [];
+    const tally = stats.length;
+
+    document.getElementById('submission-tally').innerHTML = `
+        <p>Total Submissions: ${tally}</p>
+    `;
+}
+
+showTab('stats-tally');
+displaySubmissionTally();
+
+function createBarChart() {
+    const stats = JSON.parse(localStorage.getItem('gameStats')) || [];
+    const correctCounts = stats.map(stat => stat.correctAnswers);
+
+    const ctx = document.getElementById('bar-chart').getContext('2d');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: stats.map((_, index) => `Player ${index + 1}`),
+            datasets: [{
+                label: 'Correct Guesses',
+                data: correctCounts,
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+}
+
+function createWordCloud() {
+    const stats = JSON.parse(localStorage.getItem('gameStats')) || [];
+    const incorrectGuesses = stats.flatMap(stat => stat.incorrectGuesses || []);
+    const wordCounts = {};
+
+    incorrectGuesses.forEach(word => {
+        wordCounts[word] = (wordCounts[word] || 0) + 1;
+    });
+
+    const wordArray = Object.entries(wordCounts).map(([word, count]) => [word, count]);
+
+    WordCloud(document.getElementById('word-cloud'), { list: wordArray });
+}
+
+function isLocalStorageAvailable() {
+    try {
+        const testKey = 'test';
+        localStorage.setItem(testKey, 'testValue');
+        localStorage.removeItem(testKey);
+        return true;
+    } catch (e) {
+        return false;
+    }
+}
+
+function updateSubmissionTally() {
+    const stats = JSON.parse(localStorage.getItem('gameStats')) || [];
+    const tally = {};
+
+    stats.forEach(stat => {
+        const session = stat.session || 'Unknown';
+        tally[session] = (tally[session] || 0) + 1;
+    });
+
+    const tallyList = document.getElementById('submission-tally-list');
+    tallyList.innerHTML = ''; // Clear previous tally
+    Object.keys(tally).forEach(session => {
+        const listItem = document.createElement('li');
+        listItem.textContent = `${session}: ${tally[session]} submissions`;
+        tallyList.appendChild(listItem);
+    });
+}
+
+// Call this whenever stats are updated
+updateSubmissionTally();
+
+function viewStats() {
+    const session = document.getElementById('stats-session-select').value;
+    const stats = JSON.parse(localStorage.getItem('gameStats')) || [];
+    const filteredStats = session === 'all'
+        ? stats
+        : stats.filter(stat => stat.session === session);
+
+    const statsDisplay = document.getElementById('stats-display');
+    statsDisplay.innerHTML = `<h4>Statistics for ${session === 'all' ? 'All Sessions' : `Session ${session}`}</h4>`;
+
+    // Example: Display total correct answers
+    const totalCorrect = filteredStats.reduce((sum, stat) => sum + (stat.correctAnswers || 0), 0);
+    statsDisplay.innerHTML += `<p>Total Correct Answers: ${totalCorrect}</p>`;
+}
+
+function generateLink() {
+    const courseName = document.getElementById('course-name').value.trim();
+    const sessionNumber = document.getElementById('session-number').value;
+
+    if (!courseName) {
+        alert('Please enter a course name.');
+        return;
+    }
+
+    const baseUrl = `${window.location.origin}/MfIgame/`;
+    const sessionLink = `${baseUrl}?course=${encodeURIComponent(courseName)}&session=${encodeURIComponent(sessionNumber)}`;
+
+    const linkOutput = document.getElementById('link-output');
+    linkOutput.textContent = sessionLink;
+    document.getElementById('generated-link').classList.remove('hidden');
+}
+
+function copyLink() {
+    const linkOutput = document.getElementById('link-output').textContent;
+    navigator.clipboard.writeText(linkOutput)
+        .then(() => alert('Link copied to clipboard!'))
+        .catch(err => console.error('Failed to copy link:', err));
+}
+
+function setCourse(event) {
+    event.preventDefault();
+    const courseName = document.getElementById('course-name').value.trim();
+    if (!courseName) {
+        alert('Please enter a course name.');
+        return;
+    }
+    document.getElementById('current-course').textContent = courseName;
+    document.getElementById('selected-course').classList.remove('hidden');
+    document.getElementById('session-options').classList.remove('hidden');
+    document.getElementById('submission-tally-container').classList.remove('hidden');
+    document.getElementById('stats-view-container').classList.remove('hidden');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('backroom-course-form').addEventListener('submit', setCourse);
+    updateSubmissionTally();
 });

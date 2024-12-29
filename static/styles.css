@@ -573,3 +573,15 @@ img {
     max-width: 100%;
     height: auto;
 }
+
+#backroom {
+    margin: 20px;
+}
+.tabs button {
+    margin-right: 10px;
+    padding: 10px;
+    cursor: pointer;
+}
+.tab-content.hidden {
+    display: none;
+}
