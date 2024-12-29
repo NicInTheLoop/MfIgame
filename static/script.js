@@ -549,7 +549,7 @@ function setCourse(event) {
     document.getElementById('submission-tally-container').classList.remove('hidden');
     document.getElementById('stats-view-container').classList.remove('hidden');
 }
-});
+
 
 const targetNode = document.getElementById('target-element-id');
 if (targetNode) {
