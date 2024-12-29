@@ -228,31 +228,41 @@ function drag(event) {
 
 function drop(event) {
     event.preventDefault();
-    const data = event.dataTransfer.getData("text");
-    const draggedElement = document.getElementById(data);
-    let dropTarget = event.target;
 
-    if (
-        dropTarget.classList.contains("text-box") || 
-        dropTarget.classList.contains("quarter") || 
-        dropTarget.parentElement.classList.contains("quarter")
-    ) {
-        if (!dropTarget.classList.contains("quarter") && dropTarget.parentElement.classList.contains("quarter")) {
-            dropTarget = dropTarget.parentElement;
-        }
-        dropTarget.appendChild(draggedElement);
+    let data;
+    if (event.type === 'touchend') {
+        // Find the element marked as dragging
+        data = document.querySelector('[data-dragging="true"]');
+    } else {
+        // Get the dragged element's ID
+        const draggedId = event.dataTransfer.getData("text");
+        data = document.getElementById(draggedId);
+    }
 
-        if (dropTarget.id === "quarter2") {
-            draggedElement.style.transform = "rotate(-90deg)";
-        } else if (dropTarget.id === "quarter3") {
-            draggedElement.style.transform = "rotate(180deg)";
-        } else if (dropTarget.id === "quarter4") {
-            draggedElement.style.transform = "rotate(90deg)";
+    const dropZone = event.target.closest('.text-box, .quarter');
+    console.log(`Dropped in: ${dropZone ? dropZone.id : 'None'}`);
+    if (dropZone && data) {
+        // Append the dragged element to the drop zone
+        dropZone.appendChild(data);
+
+        // Apply rotation based on the drop zone
+        if (dropZone.id === "quarter2") {
+            data.style.transform = "rotate(-90deg)";
+        } else if (dropZone.id === "quarter3") {
+            data.style.transform = "rotate(180deg)";
+        } else if (dropZone.id === "quarter4") {
+            data.style.transform = "rotate(90deg)";
         } else {
-            draggedElement.style.transform = "rotate(0deg)";
+            data.style.transform = "rotate(0deg)";
         }
     }
 
+    // Clear dragging data
+    if (data) {
+        data.removeAttribute('data-dragging');
+    }
+
+    // Recheck the submit button state
     checkSubmitButtonState();
 }
 
@@ -430,30 +440,6 @@ function dragStart(event) {
 
 function dragOver(event) {
     event.preventDefault(); // Allow dropping
-}
-
-function drop(event) {
-    event.preventDefault();
-
-    let data;
-    if (event.type === 'touchend') {
-        // Find the element marked as dragging
-        data = document.querySelector('[data-dragging="true"]');
-    } else {
-        // Get the dragged element's ID
-        data = document.getElementById(event.dataTransfer.getData("text"));
-    }
-
-    const dropZone = event.target.closest('.text-box, .quarter');
-    if (dropZone) {
-        dropZone.appendChild(data);
-    }
-
-    // Clear dragging data
-    if (data) {
-        data.removeAttribute('data-dragging');
-    }
-    checkSubmitButtonState();
 }
 
 // Add event listeners for both mouse and touch
