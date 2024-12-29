@@ -585,11 +585,6 @@ function toggleBackroomVisibility() {
 document.addEventListener('DOMContentLoaded', () => {
     console.log("DOM fully loaded.");
 
-    document.addEventListener('DOMContentLoaded', () => {
-        document.getElementById('backroom-course-form').addEventListener('submit', setCourse);
-        toggleBackroomVisibility();
-        updateSubmissionTally();
-
     // Ensure #backroom-course-form exists before adding event listener
     const courseForm = document.getElementById('backroom-course-form');
     if (courseForm) {
@@ -630,8 +625,26 @@ document.addEventListener('DOMContentLoaded', () => {
         console.warn("Next question button not found.");
     }
 
+    // Copy Link Button
+    const copyLinkButton = document.getElementById('copy-link');
+    if (copyLinkButton) {
+        copyLinkButton.addEventListener('click', () => {
+            const linkOutput = document.getElementById('link-output').textContent;
+            navigator.clipboard.writeText(linkOutput)
+                .then(() => {
+                    alert('Link copied to clipboard!');
+                })
+                .catch(err => {
+                    console.error('Failed to copy link: ', err);
+                });
+        });
+    } else {
+        console.warn("Copy link button not found.");
+    }
+
     // Initial state check
     checkSubmitButtonState();
+    updateSubmissionTally();
 });
 
 function toggleBackroomVisibility() {
@@ -656,5 +669,3 @@ function toggleBackroomVisibility() {
         if (exportButton) exportButton.classList.add('hidden');
     }
 }
-
-document.addEventListener('DOMContentLoaded', toggleBackroomVisibility);
