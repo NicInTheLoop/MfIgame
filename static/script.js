@@ -532,6 +532,12 @@ function isLocalStorageAvailable() {
     }
 }
 
+if (isLocalStorageAvailable()) {
+    // Safe to use localStorage
+} else {
+    console.error('LocalStorage is not available in this context.');
+}
+
 function updateSubmissionTally() {
     const stats = JSON.parse(localStorage.getItem('gameStats')) || [];
     const tally = {};
@@ -610,3 +616,11 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('backroom-course-form').addEventListener('submit', setCourse);
     updateSubmissionTally();
 });
+
+const targetNode = document.getElementById('target-element-id');
+if (targetNode) {
+    const observer = new MutationObserver(callbackFunction);
+    observer.observe(targetNode, { attributes: true });
+} else {
+    console.error('Target node for MutationObserver does not exist.');
+}
