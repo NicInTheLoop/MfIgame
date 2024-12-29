@@ -630,7 +630,7 @@ document.addEventListener('DOMContentLoaded', () => {
         zone.addEventListener('dragover', allowDrop);
         zone.addEventListener('drop', drop);
     });
-});
+
 
     // Copy Link Button
     const copyLinkButton = document.getElementById('copy-link');
@@ -655,6 +655,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Call the query parameter handling function
     handleQueryParameters();
+
 });
 
 function toggleBackroomVisibility() {
