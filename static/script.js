@@ -591,5 +591,43 @@ function toggleBackroomVisibility() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    console.log("DOM fully loaded.");
+
+    // Toggle Backroom Visibility
     toggleBackroomVisibility();
+
+    // Add Listeners for Draggables and Drop Zones
+    const draggables = document.querySelectorAll('.draggable');
+    const dropZones = document.querySelectorAll('.text-box, .quarter');
+    draggables.forEach(draggable => {
+        draggable.addEventListener('dragstart', drag);
+    });
+    dropZones.forEach(zone => {
+        zone.addEventListener('dragover', allowDrop);
+        zone.addEventListener('drop', drop);
+    });
+
+    // Submit and Next Question Buttons
+    const submitButton = document.getElementById('submit-button');
+    const nextQuestionButton = document.getElementById('next-question-button');
+    if (submitButton) {
+        submitButton.addEventListener('click', checkAnswers);
+    } else {
+        console.warn("Submit button not found.");
+    }
+    if (nextQuestionButton) {
+        nextQuestionButton.addEventListener('click', nextQuestion);
+    } else {
+        console.warn("Next question button not found.");
+    }
+
+    // Initial state check
+    checkSubmitButtonState();
 });
+
+const backroom = document.getElementById('backroom');
+if (backroom.classList.contains('hidden')) {
+    console.log("Backroom is successfully hidden.");
+} else {
+    console.warn("Backroom is not hidden.");
+}
