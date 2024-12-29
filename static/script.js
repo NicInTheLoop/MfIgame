@@ -549,11 +549,6 @@ function setCourse(event) {
     document.getElementById('submission-tally-container').classList.remove('hidden');
     document.getElementById('stats-view-container').classList.remove('hidden');
 }
-
-document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('backroom-course-form').addEventListener('submit', setCourse);
-    toggleBackroomVisibility();
-    updateSubmissionTally();
 });
 
 const targetNode = document.getElementById('target-element-id');
@@ -569,31 +564,45 @@ function toggleBackroomVisibility() {
     const course = urlParams.get('course');
     const session = urlParams.get('session');
 
-    console.log(`Course: ${course}, Session: ${session}`);
-    console.log(`Backroom visibility toggled: ${!!(course && session)}`);
+    console.log("Toggle Backroom Visibility: ", { course, session });
 
     if (course && session) {
         const backroom = document.getElementById('backroom');
         if (backroom) {
             backroom.classList.add('hidden');
+            console.log("Backroom hidden for player view.");
+        } else {
+            console.warn("Backroom element not found.");
         }
 
         const resetButton = document.querySelector("button[onclick='resetStats()']");
         const exportButton = document.querySelector("button[onclick='exportStats()']");
         if (resetButton) resetButton.classList.add('hidden');
         if (exportButton) exportButton.classList.add('hidden');
-
-        const courseSetup = document.getElementById('course-setup');
-        if (courseSetup) {
-            courseSetup.classList.add('hidden');
-        }
     }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
     console.log("DOM fully loaded.");
 
-    // Toggle Backroom Visibility
+    document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('backroom-course-form').addEventListener('submit', setCourse);
+        toggleBackroomVisibility();
+        updateSubmissionTally();
+
+    // Ensure #backroom-course-form exists before adding event listener
+    const courseForm = document.getElementById('backroom-course-form');
+    if (courseForm) {
+        courseForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+            console.log("Course form submitted.");
+            setCourse(event); // Use existing setCourse logic
+        });
+    } else {
+        console.warn("Course form not found in the DOM.");
+    }
+
+    // Toggle backroom visibility based on URL parameters
     toggleBackroomVisibility();
 
     // Add Listeners for Draggables and Drop Zones
@@ -625,9 +634,27 @@ document.addEventListener('DOMContentLoaded', () => {
     checkSubmitButtonState();
 });
 
-const backroom = document.getElementById('backroom');
-if (backroom.classList.contains('hidden')) {
-    console.log("Backroom is successfully hidden.");
-} else {
-    console.warn("Backroom is not hidden.");
+function toggleBackroomVisibility() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const course = urlParams.get('course');
+    const session = urlParams.get('session');
+
+    console.log("Toggle Backroom Visibility: ", { course, session });
+
+    if (course && session) {
+        const backroom = document.getElementById('backroom');
+        if (backroom) {
+            backroom.classList.add('hidden');
+            console.log("Backroom hidden for player view.");
+        } else {
+            console.warn("Backroom element not found.");
+        }
+
+        const resetButton = document.querySelector("button[onclick='resetStats()']");
+        const exportButton = document.querySelector("button[onclick='exportStats()']");
+        if (resetButton) resetButton.classList.add('hidden');
+        if (exportButton) exportButton.classList.add('hidden');
+    }
 }
+
+document.addEventListener('DOMContentLoaded', toggleBackroomVisibility);
