@@ -54,7 +54,25 @@
         <button onclick="resetStats()">Reset Statistics</button>
         <button onclick="exportStats()">Export Statistics</button>
     </div>
-    
+
+    <div id="course-setup" class="course-setup-container">
+        <h2>Setup Course Session</h2>
+        <form id="course-form" onsubmit="generateLink(event)">
+            <label for="course-code">Course Code:</label>
+            <input type="text" id="course-code" name="course-code" required>
+            <label for="session-number">Session Number:</label>
+            <input type="number" id="session-number" name="session-number" min="1" max="4" required>
+            <button type="submit">Generate Session Link</button>
+        </form>
+        <div id="session-link" class="link-container" style="display: none;">
+            <p>Share this link with learners:</p>
+            <div class="link-box">
+                <span id="link-output"></span>
+                <button id="copy-link" title="Copy Link">📋</button>
+            </div>
+        </div>
+    </div>
+
     <header class="header-container">
         <h1 id="main-title">Test Your Knowledge of the Model for Improvement!</h1>
         <p id="course-title" class="hidden"></p>
@@ -154,6 +172,11 @@
         </div>
     </div>
 
+    <div id="stats-tally" class="tab-content hidden">
+        <h2>Submission Tally</h2>
+        <div id="submission-tally"></div>
+    </div>
+    <div id="stats-container"></div>
     <script>
         const course = "{{ course|default:'' }}";
         const session = "{{ session|default:'' }}";

@@ -130,8 +130,10 @@
 }
 
 .hidden {
-    display: none !important; /* Hide elements initially */
-    visibility: hidden;
+    display: none !important; /* Remove from layout */
+    visibility: hidden; /* Ensure it’s not visible */
+    height: 0; /* Remove height impact */
+    overflow: hidden; /* Prevent content from spilling */
 }
 
 /* Main Game styles start */
@@ -493,8 +495,10 @@ button {
 
 /* Additional styles for hiding and showing elements */
 .hidden {
-    display: none !important;
-    visibility: hidden;
+    display: none !important; /* Remove from layout */
+    visibility: hidden; /* Ensure it’s not visible */
+    height: 0; /* Remove height impact */
+    overflow: hidden; /* Prevent content from spilling */
 }
 
 .visible {

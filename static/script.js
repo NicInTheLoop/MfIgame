@@ -569,20 +569,20 @@ function toggleBackroomVisibility() {
     const course = urlParams.get('course');
     const session = urlParams.get('session');
 
+    console.log(`Course: ${course}, Session: ${session}`);
+    console.log(`Backroom visibility toggled: ${!!(course && session)}`);
+
     if (course && session) {
-        // Hide the backroom for player view
         const backroom = document.getElementById('backroom');
         if (backroom) {
             backroom.classList.add('hidden');
         }
 
-        // Hide the reset/export statistics buttons for players
         const resetButton = document.querySelector("button[onclick='resetStats()']");
         const exportButton = document.querySelector("button[onclick='exportStats()']");
         if (resetButton) resetButton.classList.add('hidden');
         if (exportButton) exportButton.classList.add('hidden');
 
-        // Hide the course setup container if it exists
         const courseSetup = document.getElementById('course-setup');
         if (courseSetup) {
             courseSetup.classList.add('hidden');
@@ -590,5 +590,6 @@ function toggleBackroomVisibility() {
     }
 }
 
-// Call the function on page load
-document.addEventListener('DOMContentLoaded', toggleBackroomVisibility);
+document.addEventListener('DOMContentLoaded', () => {
+    toggleBackroomVisibility();
+});
