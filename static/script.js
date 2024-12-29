@@ -588,7 +588,9 @@ function generateLink() {
 
     const linkOutput = document.getElementById('link-output');
     linkOutput.textContent = sessionLink;
-    document.getElementById('generated-link').classList.remove('hidden');
+
+    const generatedLinkContainer = document.getElementById('generated-link');
+    generatedLinkContainer.classList.remove('hidden');
 }
 
 function copyLink() {
@@ -605,6 +607,7 @@ function setCourse(event) {
         alert('Please enter a course name.');
         return;
     }
+
     document.getElementById('current-course').textContent = courseName;
     document.getElementById('selected-course').classList.remove('hidden');
     document.getElementById('session-options').classList.remove('hidden');

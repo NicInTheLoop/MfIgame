@@ -576,6 +576,29 @@ img {
 
 #backroom {
     margin: 20px;
+    background-color: #f4f4f4;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+#backroom h1 {
+    font-size: 1.8em;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+#backroom .hidden {
+    display: none;
+}
+
+#generated-link p {
+    margin: 0;
+    font-weight: bold;
+}
+
+#backroom {
+    margin: 20px;
 }
 .tabs button {
     margin-right: 10px;
