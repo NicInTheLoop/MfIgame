@@ -131,6 +131,7 @@
 
 .hidden {
     display: none !important; /* Hide elements initially */
+    visibility: hidden;
 }
 
 /* Main Game styles start */
@@ -493,6 +494,7 @@ button {
 /* Additional styles for hiding and showing elements */
 .hidden {
     display: none !important;
+    visibility: hidden;
 }
 
 .visible {
@@ -587,10 +589,6 @@ img {
     font-size: 1.8em;
     color: #333;
     margin-bottom: 20px;
-}
-
-#backroom .hidden {
-    display: none;
 }
 
 #generated-link p {

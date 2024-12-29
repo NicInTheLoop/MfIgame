@@ -34,14 +34,23 @@ window.addEventListener('load', function () {
     const sessionNumber = urlParams.get('session');
 
     if (courseCode && sessionNumber) {
-        // Hide the course setup box
-        document.getElementById('course-setup').classList.add('hidden');
+        // Hide the backroom for player view
+        const backroom = document.getElementById('backroom');
+        if (backroom) {
+            backroom.classList.add('hidden');
+        }
 
-        // Show the course title
-        const courseTitle = `Course Session: ${courseCode} (Session ${sessionNumber})`;
-        const courseTitleElement = document.getElementById('course-title');
-        courseTitleElement.textContent = courseTitle;
-        courseTitleElement.classList.remove('hidden');
+        // Hide the reset/export statistics buttons for players
+        const resetButton = document.querySelector("button[onclick='resetStats()']");
+        const exportButton = document.querySelector("button[onclick='exportStats()']");
+        if (resetButton) resetButton.classList.add('hidden');
+        if (exportButton) exportButton.classList.add('hidden');
+
+        // Hide the course setup container if it exists
+        const courseSetup = document.getElementById('course-setup');
+        if (courseSetup) {
+            courseSetup.classList.add('hidden');
+        }
     }
 });
 
@@ -64,8 +73,6 @@ function submitGameData(data) {
     alert('Your data has been saved locally!');
 }
 
-
-
 // Global Function Definitions
 function checkAnswers() {
     const correctAnswers = {
@@ -78,114 +85,28 @@ function checkAnswers() {
         quarter4: 'word20'  // Correct answer for Act
     };
 
-    const answerLabels = {
-        word17: 'Aim',
-        word3: 'Measure',
-        word9: 'Change Ideas',
-        word11: 'Plan',
-        word6: 'Do',
-        word10: 'Study',
-        word20: 'Act'
-    };
-
-    function applyRotation(quarterId, element) {
-        if (quarterId === "quarter2") {
-            element.classList.add('rotate-90');
-        } else if (quarterId === "quarter3") {
-            element.classList.add('rotate-180');
-        } else if (quarterId === "quarter4") {
-            element.classList.add('rotate-90-reverse');
-        } else {
-            element.classList.remove('rotate-90', 'rotate-180', 'rotate-90-reverse');
-        }
-    }
+    let allCorrect = true;
 
     Object.keys(correctAnswers).forEach(zoneId => {
         const zone = document.getElementById(zoneId);
-        if (!zone) {
-            console.warn(`Zone with ID ${zoneId} not found.`);
-            return;
-        }
-
-        // Remove existing correction elements
-        Array.from(zone.querySelectorAll('.correction')).forEach(correction => correction.remove());
-
         const draggableChild = zone.querySelector('.draggable');
-        console.log(`Zone: ${zoneId}, Found: ${draggableChild ? draggableChild.id : 'None'}, Expected: ${correctAnswers[zoneId]}`);
 
-        if (draggableChild && draggableChild.id === correctAnswers[zoneId]) {
-            console.log(`Correct! Zone: ${zoneId}, Dragged ID: ${draggableChild.id}`);
-            zone.classList.add('correct');
-            zone.classList.remove('incorrect');
-        } else {
-            console.warn(`Incorrect or empty. Zone: ${zoneId}, Dragged ID: ${draggableChild ? draggableChild.id : 'None'}`);
+        if (!draggableChild || draggableChild.id !== correctAnswers[zoneId]) {
+            allCorrect = false;
             zone.classList.add('incorrect');
             zone.classList.remove('correct');
-
-            // Add a correction element
-            const correction = document.createElement('div');
-            correction.classList.add('correction');
-
-            const correctText = answerLabels[correctAnswers[zoneId]] || 'Unknown';
-            correction.textContent = draggableChild
-                ? `${draggableChild.textContent} (Correct: ${correctText})`
-                : `Correct: ${correctText}`;
-
-            if (zoneId.startsWith('quarter')) {
-                applyRotation(zoneId, correction);
-            }
-
-            zone.appendChild(correction);
-
-            // Remove the draggable button from the zone
-            if (draggableChild) {
-                draggableChild.remove();
-            }
-                
-            const submitButton = document.getElementById('submit-button');
-            submitButton.disabled = true;
-            
-            // Submit data to API/Google Sheets
-            const courseCode = localStorage.getItem('courseCode') || 'DefaultCourseCode';
-            const sessionNumber = localStorage.getItem('sessionNumber') || 'DefaultSessionNumber';
-
-            const data = {
-                course: courseCode,
-                session: sessionNumber,
-                correctAnswers: correctAnswersCount,
-                incorrectGuesses: incorrectGuesses,
-            };
-
-            submitGameData(data);
-            console.log("Data sent to Google Sheets:", data);
-
+        } else {
+            zone.classList.add('correct');
+            zone.classList.remove('incorrect');
         }
     });
 
-    const draggables = document.querySelectorAll('.draggable');
-    draggables.forEach(draggable => {
-        draggable.setAttribute('draggable', 'true');
-        draggable.addEventListener('dragstart', drag);
-    });
-
-    // Hide initial instructions and show next instructions and next question button
-    document.getElementById('initial-instructions').classList.add('hidden');
-    console.log('Initial instructions hidden:', document.getElementById('initial-instructions').classList.contains('hidden'));
-
-    const nextInstructions = document.getElementById('next-instructions');
-    nextInstructions.classList.remove('hidden');
-    nextInstructions.classList.add('visible');
-    nextInstructions.style.display = ''; // Resets to CSS default
-    console.log('Next instructions visible:', nextInstructions.classList.contains('visible'));
-
-    const nextQuestionButton = document.getElementById('next-question-button');
-    nextQuestionButton.classList.remove('hidden');
-    nextQuestionButton.classList.add('visible');
-    nextQuestionButton.style.display = ''; // Resets to CSS default
-    console.log('Next question button visible:', nextQuestionButton.classList.contains('visible'));
-
-    const submitButton = document.getElementById('submit-button');
-    submitButton.disabled = true;
+    if (allCorrect) {
+        document.getElementById('submit-button').disabled = true;
+        document.getElementById('next-question-button').style.display = 'block';
+    } else {
+        alert('Not all answers are correct. Please try again.');
+    }
 }
 
 function checkSubmitButtonState() {
@@ -212,13 +133,27 @@ function drag(event) {
 
 function drop(event) {
     event.preventDefault();
-    const data = event.dataTransfer.getData("text");
-    const draggedElement = document.getElementById(data);
+    const draggedId = event.dataTransfer.getData("text");
+    const draggedElement = document.getElementById(draggedId);
     const dropZone = event.target.closest('.text-box, .quarter');
+
     if (draggedElement && dropZone) {
+        // Append the dragged element to the drop zone
         dropZone.appendChild(draggedElement);
+
+        // Apply rotation based on drop zone ID
+        if (dropZone.id === 'quarter2') {
+            draggedElement.style.transform = 'rotate(-90deg)';
+        } else if (dropZone.id === 'quarter3') {
+            draggedElement.style.transform = 'rotate(180deg)';
+        } else if (dropZone.id === 'quarter4') {
+            draggedElement.style.transform = 'rotate(90deg)';
+        } else {
+            draggedElement.style.transform = 'rotate(0deg)';
+        }
     }
-    checkSubmitButtonState();
+
+    checkSubmitButtonState(); // Recheck the submit button state
 }
 
 // DOMContentLoaded Listener
@@ -617,6 +552,7 @@ function setCourse(event) {
 
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('backroom-course-form').addEventListener('submit', setCourse);
+    toggleBackroomVisibility();
     updateSubmissionTally();
 });
 
@@ -645,6 +581,12 @@ function toggleBackroomVisibility() {
         const exportButton = document.querySelector("button[onclick='exportStats()']");
         if (resetButton) resetButton.classList.add('hidden');
         if (exportButton) exportButton.classList.add('hidden');
+
+        // Hide the course setup container if it exists
+        const courseSetup = document.getElementById('course-setup');
+        if (courseSetup) {
+            courseSetup.classList.add('hidden');
+        }
     }
 }
 
