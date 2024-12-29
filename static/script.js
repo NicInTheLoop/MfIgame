@@ -201,20 +201,16 @@ function checkAnswers() {
 }
 
 function checkSubmitButtonState() {
-    const draggables = document.querySelectorAll('.draggable');
-    const dropZones = document.querySelectorAll('.text-box, .quarter');
-    let allDropped = true;
-
-    dropZones.forEach(zone => {
-        if (!zone.querySelector('.draggable')) {
-            allDropped = false;
-        }
-    });
+    const dropZones = document.querySelectorAll('.text-box, .quarter'); // Select all drop zones
+    const filledZones = Array.from(dropZones).filter(zone => zone.querySelector('.draggable')).length;
 
     const submitButton = document.getElementById('submit-button');
     if (submitButton) {
-        submitButton.disabled = !allDropped;
+        // Enable the button only if at least 3 zones are filled
+        submitButton.disabled = filledZones < 3;
     }
+
+    console.log(`Filled zones: ${filledZones}/${dropZones.length}`);
 }
 
 
@@ -461,3 +457,13 @@ function enableDragAndDrop() {
 
 // Initialize drag and drop functionality
 document.addEventListener('DOMContentLoaded', enableDragAndDrop);
+
+document.addEventListener('DOMContentLoaded', () => {
+    if (course && session) {
+        const courseTitleElement = document.getElementById('course-title');
+        if (courseTitleElement) {
+            courseTitleElement.textContent = `Course: ${course}, Session: ${session}`;
+            courseTitleElement.classList.remove('hidden');
+        }
+    }
+});
