@@ -4,19 +4,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Game Statistics</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <title>Statistics</title>
+    <link rel="stylesheet" href="static/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
 </head>
 
 <body>
-    <h1>Game Statistics</h1>
-    <div id="statistics-container">
-        <!-- Stats content will be dynamically added -->
+    <header class="header-container">
+        <h1 id="main-title">Statistics</h1>
+    </header>
+
+    <div class="main-container">
+        <!-- Statistics content goes here -->
     </div>
     <script>
         // Load stats from local storage
         const stats = JSON.parse(localStorage.getItem('gameStatistics')) || {};
-        const statsContainer = document.getElementById('statistics-container');
+        const statsContainer = document.querySelector('.main-container');
         statsContainer.innerHTML = `
             <p>Correct Answers: ${stats.correctCount || 0}</p>
             <p>Incorrect Guesses: ${stats.incorrect?.join(', ') || 'None'}</p>
