@@ -23,7 +23,6 @@
     <script>
         try {
             const stats = JSON.parse(localStorage.getItem('gameStatistics')) || {};
-            console.log('Statistics retrieved:', stats);
             document.getElementById('statistics-container').innerHTML = `
                 <p>Correct Answers: ${stats.correctCount || 0}</p>
                 <p>Incorrect Guesses: ${stats.incorrect?.join(', ') || 'None'}</p>
@@ -36,6 +35,7 @@
             `;
         }
     </script>
+    
 </body>
 
 </html>

@@ -3,9 +3,7 @@ document.getElementById('course-form').addEventListener('submit', function (even
 
     const courseCode = document.getElementById('course-code').value.trim();
     const sessionNumber = document.getElementById('session-number').value.trim();
-    const isGitHubPages = window.location.hostname === 'nicintheloop.github.io';
-    const basePath = isGitHubPages ? '/MfIgame' : '';
-    const sessionLink = `${window.location.origin}${basePath}/?course=${encodeURIComponent(courseCode)}&session=${sessionNumber}`;
+    const sessionLink = `${window.location.origin}?course=${encodeURIComponent(courseCode)}&session=${sessionNumber}`;
 
     document.getElementById('link-output').textContent = sessionLink;
     document.getElementById('session-link').style.display = 'block';
@@ -40,16 +38,14 @@ window.addEventListener('load', function () {
         const courseTitleElement = document.getElementById('course-title');
         courseTitleElement.textContent = courseTitle;
         courseTitleElement.classList.remove('hidden');
-
-        // Show the game area
-        document.getElementById('game-area').style.display = 'flex';
     }
 });
 
-// Global variables for tracking statistics
-let correctAnswersCount = 0; // Example global variable for correct answers
-let incorrectGuesses = []; // To track incorrect guesses
-let finalQuestionResponse = ''; // Response to the final question
+
+
+let correctAnswersCount = 0;
+let incorrectGuesses = [];
+let finalQuestionResponse = '';
 
 // Global Function Definitions
 function checkAnswers() {
@@ -344,11 +340,9 @@ function submitFinalAnswer() {
 
 // Function to view statistics
 function viewStatistics() {
-    // Open the statistics page in a new tab
-    const isGitHubPages = window.location.hostname === 'nicintheloop.github.io';
-    const basePath = isGitHubPages ? '/MfIgame' : '';
-    const statisticsLink = `${window.location.origin}${basePath}/statistics`;
-    window.open(statisticsLink, '_blank');
+    //  display statistics within the same page
+    const statisticsContainer = document.getElementById('statistics-container');
+    // statisticsContainer.style.display = 'block';
 }
 
 // Example function to collect and save statistics
@@ -373,12 +367,5 @@ function collectStatistics() {
 // Ensure statistics are saved when the game completes
 document.getElementById('final-submit-button').addEventListener('click', collectStatistics);
 
-// Example function to update statistics (this should be called at relevant points in your game logic)
-function updateStatistics(correct, incorrect, finalResponse) {
-    correctAnswersCount = correct;
-    incorrectGuesses = incorrect;
-    finalQuestionResponse = finalResponse;
-}
 
-// Example usage of updateStatistics function
-// updateStatistics(5, ['guess1', 'guess2'], 'Know it - used it');
+
