@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Statistics</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+
+<body>
+    <h1>Game Statistics</h1>
+    <div id="statistics-container">
+        <!-- Stats content will be dynamically added -->
+    </div>
+    <script>
+        // Load stats from local storage
+        const stats = JSON.parse(localStorage.getItem('gameStatistics')) || {};
+        const statsContainer = document.getElementById('statistics-container');
+        statsContainer.innerHTML = `
+            <p>Correct Answers: ${stats.correctCount || 0}</p>
+            <p>Incorrect Guesses: ${stats.incorrect?.join(', ') || 'None'}</p>
+            <p>Final Question Response: ${stats.finalResponse || 'None'}</p>
+        `;
+    </script>
+</body>
+
+</html>
