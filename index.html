@@ -42,7 +42,7 @@
     <header class="header-container">
         <h1 id="main-title">Test Your Knowledge of the Model for Improvement!</h1>
         <p id="course-title" class="hidden"></p>
-        <img src="{{ url_for('static', filename='images/QICLearn_logo.jpg') }}" alt="QIC Learn Logo" class="logo" />
+        <img id="logo" alt="QIC Learn Logo" class="logo" />
     </header>
 
     <div class="main-container">
@@ -148,6 +148,12 @@
             const basePath = isGitHubPages ? '/MfIgame/static/' : '/static/';
             document.write(`<script src="${basePath}script.js" defer><\/script>`);
         }
+    </script>
+    <script>
+        // Dynamically set the logo source
+        const isGitHubPages = window.location.hostname === 'nicintheloop.github.io';
+        const basePath = isGitHubPages ? '/MfIgame/static/' : '/static/';
+        document.getElementById('logo').src = `${basePath}images/QICLearn_logo.jpg`;
     </script>
 </body>
 </html>
