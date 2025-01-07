@@ -6,12 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Test Your Knowledge</title>
     <!-- Dynamically set the stylesheet path -->
-    <head>
-        <link rel="stylesheet" href="static/styles.css">
-        <script src="static/script.js" defer></script>
-        <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
-    </head>
-    
+    <script>
+        const isGitHubPages = window.location.hostname === 'nicintheloop.github.io';
+        const basePath = isGitHubPages ? '/MfIgame/static/' : '/static/';
+        document.write(`<link rel="stylesheet" href="${basePath}styles.css">`);
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/wordcloud@1.2.2"></script>
 </head>
 
 <body>
@@ -31,6 +33,8 @@
                 <button id="copy-link" title="Copy Link">📋</button>
             </div>
         </div>
+        <!-- New button to view statistics -->
+        <button id="view-statistics" onclick="viewStatistics()">View Statistics</button>
     </div>
     
 
