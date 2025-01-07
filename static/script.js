@@ -40,9 +40,11 @@ window.addEventListener('load', function () {
         const courseTitleElement = document.getElementById('course-title');
         courseTitleElement.textContent = courseTitle;
         courseTitleElement.classList.remove('hidden');
+
+        // Show the game area
+        document.getElementById('game-area').style.display = 'flex';
     }
 });
-
 
 // Global variables for tracking statistics
 let correctAnswersCount = 0; // Example global variable for correct answers
