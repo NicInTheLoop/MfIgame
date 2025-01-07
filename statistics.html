@@ -4,24 +4,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Game Statistics</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <title>Statistics</title>
+    <link rel="stylesheet" href="static/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
 </head>
 
 <body>
-    <h1>Game Statistics</h1>
-    <div id="statistics-container">
-        <!-- Stats content will be dynamically added -->
+    <header class="header-container">
+        <h1 id="main-title">Statistics</h1>
+    </header>
+
+    <div class="main-container">
+        <div id="statistics-container">
+            <!-- Statistics content will be dynamically inserted here -->
+        </div>
     </div>
+
     <script>
-        // Load stats from local storage
-        const stats = JSON.parse(localStorage.getItem('gameStatistics')) || {};
-        const statsContainer = document.getElementById('statistics-container');
-        statsContainer.innerHTML = `
-            <p>Correct Answers: ${stats.correctCount || 0}</p>
-            <p>Incorrect Guesses: ${stats.incorrect?.join(', ') || 'None'}</p>
-            <p>Final Question Response: ${stats.finalResponse || 'None'}</p>
-        `;
+        try {
+            const stats = JSON.parse(localStorage.getItem('gameStatistics')) || {};
+            console.log('Statistics retrieved:', stats);
+            document.getElementById('statistics-container').innerHTML = `
+                <p>Correct Answers: ${stats.correctCount || 0}</p>
+                <p>Incorrect Guesses: ${stats.incorrect?.join(', ') || 'None'}</p>
+                <p>Final Question Response: ${stats.finalResponse || 'None'}</p>
+            `;
+        } catch (error) {
+            console.error('Error accessing localStorage:', error);
+            document.getElementById('statistics-container').innerHTML = `
+                <p>Error accessing statistics. Please ensure you are not in incognito mode or an iframe.</p>
+            `;
+        }
     </script>
 </body>
 
