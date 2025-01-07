@@ -44,7 +44,7 @@ window.addEventListener('load', function () {
         const resetButton = document.querySelector("button[onclick='resetStats()']");
         const exportButton = document.querySelector("button[onclick='exportStats()']");
         if (resetButton) resetButton.classList.add('hidden');
-        if (exportButton) exportButton.classList.add('hidden');
+        if (exportButton) resetButton.classList.add('hidden');
 
         // Hide the course setup container if it exists
         const courseSetup = document.getElementById('course-setup');
@@ -585,6 +585,9 @@ function toggleBackroomVisibility() {
 document.addEventListener('DOMContentLoaded', () => {
     console.log("DOM fully loaded.");
 
+    // Toggle backroom visibility based on URL parameters
+    toggleBackroomVisibility();
+
     // Example: Add listener for the backroom course form
     const courseForm = document.getElementById('backroom-course-form');
     if (courseForm) {
@@ -646,28 +649,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Call the query parameter handling function
     handleQueryParameters();
-    toggleBackroomVisibility();
 });
-
-function toggleBackroomVisibility() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const course = urlParams.get('course');
-    const session = urlParams.get('session');
-
-    console.log("Toggle Backroom Visibility: ", { course, session });
-
-    if (course && session) {
-        const backroom = document.getElementById('backroom');
-        if (backroom) {
-            backroom.classList.add('hidden');
-            console.log("Backroom hidden for player view.");
-        } else {
-            console.warn("Backroom element not found.");
-        }
-
-        const resetButton = document.querySelector("button[onclick='resetStats()']");
-        const exportButton = document.querySelector("button[onclick='exportStats()']");
-        if (resetButton) resetButton.classList.add('hidden');
-        if (exportButton) exportButton.classList.add('hidden');
-    }
-}
