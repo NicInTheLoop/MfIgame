@@ -134,7 +134,26 @@
         </div>
     </div>
     
-    <!-- Load the JavaScript file -->
-    <script src="MfIgame/static/script.js" defer></script>
+    <!-- Dynamically load the JavaScript file -->
+    <script>
+        const isGitHubPages = window.location.hostname === 'nicintheloop.github.io';
+        const basePath = isGitHubPages ? '/MfIgame/static/' : '/static/';
+        document.write(`<script src="${basePath}script.js" defer><\/script>`);
+    </script>
+    <script>
+        window.addEventListener('load', function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const courseCode = urlParams.get('course');
+            const sessionNumber = urlParams.get('session');
+
+            if (courseCode && sessionNumber) {
+                document.getElementById('course-setup').classList.add('hidden');
+                const courseTitle = `Course Session: ${courseCode} (Session ${sessionNumber})`;
+                document.getElementById('course-title').textContent = courseTitle;
+                document.getElementById('course-title').classList.remove('hidden');
+                document.getElementById('game-area').style.display = 'flex';
+            }
+        });
+    </script>
 </body>
 </html>
