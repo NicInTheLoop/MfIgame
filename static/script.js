@@ -584,67 +584,148 @@ function toggleBackroomVisibility() {
 
 document.addEventListener('DOMContentLoaded', () => {
     console.log("DOM fully loaded.");
+    
+    // Ensure backroom visibility logic works
     toggleBackroomVisibility();
 
-    // Example: Add listener for the backroom course form
-    const courseForm = document.getElementById('backroom-course-form');
+    // Initialize form and other event listeners
+    const courseForm = document.getElementById("backroom-course-form");
     if (courseForm) {
-        courseForm.addEventListener('submit', (event) => {
+        courseForm.addEventListener("submit", (event) => {
             event.preventDefault();
-            console.log("Course form submitted.");
-            setCourse(event); // Use your existing setCourse logic
+            setCourse(event);
         });
     } else {
-        console.warn("Course form not found in the DOM.");
+        console.warn("Course form not found.");
     }
 
-    // Ensure the rest of the event listeners only attach to existing elements
-    const submitButton = document.getElementById('submit-button');
+    // Add listeners to game elements
+    initializeGame();
+
+    // Handle query parameters for course/session
+    handleQueryParameters();
+});
+
+/**
+ * Toggles the visibility of the backroom based on query parameters.
+ */
+function toggleBackroomVisibility() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const course = urlParams.get("course");
+    const session = urlParams.get("session");
+
+    const backroom = document.getElementById("backroom");
+    const courseTitleElement = document.getElementById("course-title");
+
+    if (course && session) {
+        if (backroom) {
+            backroom.style.display = "none"; // Hide backroom
+            console.log("Backroom hidden for player view.");
+        } else {
+            console.warn("Backroom element not found.");
+        }
+
+        if (courseTitleElement) {
+            courseTitleElement.textContent = `Course: ${course}, Session: ${session}`;
+            courseTitleElement.classList.remove("hidden"); // Show course/session info
+        } else {
+            console.warn("Course title element not found.");
+        }
+    } else {
+        console.log("No course or session query parameters found.");
+    }
+}
+
+/**
+ * Sets the course name and displays the options for session and link generation.
+ */
+function setCourse(event) {
+    const courseName = document.getElementById("course-name").value.trim();
+    if (!courseName) {
+        alert("Please enter a course name.");
+        return;
+    }
+
+    const currentCourse = document.getElementById("current-course");
+    const selectedCourse = document.getElementById("selected-course");
+    const sessionOptions = document.getElementById("session-options");
+
+    if (currentCourse) {
+        currentCourse.textContent = courseName;
+    }
+    if (selectedCourse) {
+        selectedCourse.classList.remove("hidden");
+    }
+    if (sessionOptions) {
+        sessionOptions.classList.remove("hidden");
+    }
+}
+
+/**
+ * Initializes drag-and-drop and button interactions for the game.
+ */
+function initializeGame() {
+    const submitButton = document.getElementById("submit-button");
+    const nextQuestionButton = document.getElementById("next-question-button");
+
     if (submitButton) {
-        submitButton.addEventListener('click', checkAnswers);
+        submitButton.addEventListener("click", checkAnswers);
     } else {
         console.warn("Submit button not found.");
     }
 
-    const nextQuestionButton = document.getElementById('next-question-button');
     if (nextQuestionButton) {
-        nextQuestionButton.addEventListener('click', nextQuestion);
+        nextQuestionButton.addEventListener("click", nextQuestion);
     } else {
         console.warn("Next question button not found.");
     }
 
-    // Add Listeners for Draggables and Drop Zones
-    const draggables = document.querySelectorAll('.draggable');
-    const dropZones = document.querySelectorAll('.text-box, .quarter');
-    draggables.forEach(draggable => {
-        draggable.addEventListener('dragstart', drag);
-    });
-    dropZones.forEach(zone => {
-        zone.addEventListener('dragover', allowDrop);
-        zone.addEventListener('drop', drop);
+    const draggables = document.querySelectorAll(".draggable");
+    const dropZones = document.querySelectorAll(".text-box, .quarter");
+
+    draggables.forEach((draggable) => {
+        draggable.addEventListener("dragstart", drag);
     });
 
-    // Copy Link Button
-    const copyLinkButton = document.getElementById('copy-link');
-    if (copyLinkButton) {
-        copyLinkButton.addEventListener('click', () => {
-            const linkOutput = document.getElementById('link-output').textContent;
-            navigator.clipboard.writeText(linkOutput)
-                .then(() => {
-                    alert('Link copied to clipboard!');
-                })
-                .catch(err => {
-                    console.error('Failed to copy link: ', err);
-                });
-        });
-    } else {
-        console.warn("Copy link button not found.");
+    dropZones.forEach((zone) => {
+        zone.addEventListener("dragover", allowDrop);
+        zone.addEventListener("drop", drop);
+    });
+}
+
+/**
+ * Handles query parameters to show course/session information.
+ */
+function handleQueryParameters() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const course = urlParams.get("course");
+    const session = urlParams.get("session");
+
+    const courseTitleElement = document.getElementById("course-title");
+    if (course && session && courseTitleElement) {
+        courseTitleElement.textContent = `Course: ${course}, Session: ${session}`;
+        courseTitleElement.classList.remove("hidden");
     }
+}
 
-    // Initial state check
-    checkSubmitButtonState();
-    updateSubmissionTally();
+/**
+ * Drag-and-drop handlers.
+ */
+function allowDrop(event) {
+    event.preventDefault();
+}
 
-    // Call the query parameter handling function
-    handleQueryParameters();
-});
+function drag(event) {
+    event.dataTransfer.setData("text", event.target.id);
+}
+
+function drop(event) {
+    event.preventDefault();
+    const data = event.dataTransfer.getData("text");
+    const draggedElement = document.getElementById(data);
+    const dropZone = event.target.closest(".text-box, .quarter");
+
+    if (draggedElement && dropZone) {
+        dropZone.appendChild(draggedElement);
+    }
+}
