@@ -569,7 +569,7 @@ function toggleBackroomVisibility() {
     if (course && session) {
         const backroom = document.getElementById('backroom');
         if (backroom) {
-            backroom.classList.add('hidden');
+            backroom.style.display = 'none';
             console.log("Backroom hidden for player view.");
         } else {
             console.warn("Backroom element not found.");
@@ -584,8 +584,6 @@ function toggleBackroomVisibility() {
 
 document.addEventListener('DOMContentLoaded', () => {
     console.log("DOM fully loaded.");
-
-    // Toggle backroom visibility based on URL parameters
     toggleBackroomVisibility();
 
     // Example: Add listener for the backroom course form
