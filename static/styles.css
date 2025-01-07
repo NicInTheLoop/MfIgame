@@ -100,7 +100,7 @@
 
 /* Logo */
 #logo {
-    height: 30px; /* Reduce the size of the logo */
+    height: 80px;  /*size of logo */
     width: auto; /* Maintain aspect ratio */
     margin-left: auto; /* Push the logo to the far right */
 }
