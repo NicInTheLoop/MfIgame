@@ -3,7 +3,7 @@ document.getElementById('course-form').addEventListener('submit', function (even
 
     const courseCode = document.getElementById('course-code').value.trim();
     const sessionNumber = document.getElementById('session-number').value.trim();
-    const sessionLink = `${window.location.origin}?course=${encodeURIComponent(courseCode)}&session=${sessionNumber}`;
+    const sessionLink = `${window.location.origin}/MfIgame/?course=${encodeURIComponent(courseCode)}&session=${sessionNumber}`;
 
     document.getElementById('link-output').textContent = sessionLink;
     document.getElementById('session-link').style.display = 'block';
@@ -38,6 +38,9 @@ window.addEventListener('load', function () {
         const courseTitleElement = document.getElementById('course-title');
         courseTitleElement.textContent = courseTitle;
         courseTitleElement.classList.remove('hidden');
+
+        // Show the game area
+        document.getElementById('game-area').style.display = 'flex';
     }
 });
 
@@ -340,9 +343,9 @@ function submitFinalAnswer() {
 
 // Function to view statistics
 function viewStatistics() {
-    //  display statistics within the same page
-    const statisticsContainer = document.getElementById('statistics-container');
-    // statisticsContainer.style.display = 'block';
+    // Open the statistics page in a new tab
+    const statisticsLink = `${window.location.origin}/MfIgame/statistics`;
+    window.open(statisticsLink, '_blank');
 }
 
 // Example function to collect and save statistics
@@ -366,6 +369,3 @@ function collectStatistics() {
 
 // Ensure statistics are saved when the game completes
 document.getElementById('final-submit-button').addEventListener('click', collectStatistics);
-
-
-

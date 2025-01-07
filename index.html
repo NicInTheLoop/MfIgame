@@ -5,12 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Test Your Knowledge</title>
-    <!-- Dynamically set the stylesheet path -->
-    <script>
-        const isGitHubPages = window.location.hostname === 'nicintheloop.github.io';
-        const basePath = isGitHubPages ? '/MfIgame/static/' : '/static/';
-        document.write(`<link rel="stylesheet" href="${basePath}styles.css">`);
-    </script>
+    <!-- Use a static relative URL for the stylesheet -->
+    <link rel="stylesheet" href="MfIgame/static/styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/wordcloud@1.2.2"></script>
@@ -41,7 +37,7 @@
     <header class="header-container">
         <h1 id="main-title">Test Your Knowledge of the Model for Improvement!</h1>
         <p id="course-title" class="hidden"></p>
-        <img id="logo" alt="QIC Learn Logo" class="logo" />
+        <img id="logo" src="MfIgame/static/images/QICLearn_logo.jpg" alt="QIC Learn Logo" class="logo" />
     </header>
 
     <div class="main-container">
@@ -136,20 +132,7 @@
         </div>
     </div>
     
-    <!-- Dynamically load the JavaScript file -->
-    <script>
-        const course = "{{ course|default('') }}";
-        const session = "{{ session|default('') }}";
-    </script>
-    <script>
-        const isGitHubPages = window.location.hostname === 'nicintheloop.github.io';
-        const basePath = isGitHubPages ? '/MfIgame/static/' : '/static/';
-        document.write(`<script src="${basePath}script.js" defer><\/script>`);
-    </script>
-    <script>
-        // Dynamically set the logo source
-        const logoPath = isGitHubPages ? '/MfIgame/static/images/QICLearn_logo.jpg' : '/static/images/QICLearn_logo.jpg';
-        document.getElementById('logo').src = logoPath;
-    </script>
+    <!-- Load the JavaScript file -->
+    <script src="MfIgame/static/script.js" defer></script>
 </body>
 </html>
