@@ -3,18 +3,14 @@ document.getElementById('course-form').addEventListener('submit', function (even
 
     const courseCode = document.getElementById('course-code').value.trim();
     const sessionNumber = document.getElementById('session-number').value.trim();
+    const sessionLink = `${window.location.origin}?course=${encodeURIComponent(courseCode)}&session=${sessionNumber}`;
 
-    // Correct base URL for GitHub Pages
-    const baseUrl = `${window.location.origin}/MfIgame/`;
-    const sessionLink = `${baseUrl}?course=${encodeURIComponent(courseCode)}&session=${encodeURIComponent(sessionNumber)}`;
-
-    // Display the generated link
     document.getElementById('link-output').textContent = sessionLink;
     document.getElementById('session-link').style.display = 'block';
 
     // Store course and session in localStorage for tracking
-    saveToStorage('courseCode', courseCode);
-    saveToStorage('sessionNumber', sessionNumber);
+    localStorage.setItem('courseCode', courseCode);
+    localStorage.setItem('sessionNumber', sessionNumber);
 });
 
 document.getElementById('copy-link').addEventListener('click', function () {
@@ -34,23 +30,14 @@ window.addEventListener('load', function () {
     const sessionNumber = urlParams.get('session');
 
     if (courseCode && sessionNumber) {
-        // Hide the backroom for player view
-        const backroom = document.getElementById('backroom');
-        if (backroom) {
-            backroom.classList.add('hidden');
-        }
+        // Hide the course setup box
+        document.getElementById('course-setup').classList.add('hidden');
 
-        // Hide the reset/export statistics buttons for players
-        const resetButton = document.querySelector("button[onclick='resetStats()']");
-        const exportButton = document.querySelector("button[onclick='exportStats()']");
-        if (resetButton) resetButton.classList.add('hidden');
-        if (exportButton) resetButton.classList.add('hidden');
-
-        // Hide the course setup container if it exists
-        const courseSetup = document.getElementById('course-setup');
-        if (courseSetup) {
-            courseSetup.classList.add('hidden');
-        }
+        // Show the course title
+        const courseTitle = `Course Session: ${courseCode} (Session ${sessionNumber})`;
+        const courseTitleElement = document.getElementById('course-title');
+        courseTitleElement.textContent = courseTitle;
+        courseTitleElement.classList.remove('hidden');
     }
 });
 
@@ -58,20 +45,6 @@ window.addEventListener('load', function () {
 let correctAnswersCount = 0;
 let incorrectGuesses = [];
 let finalQuestionResponse = '';
-
-
-function saveStatsLocally(data) {
-    let stats = JSON.parse(localStorage.getItem('gameStats')) || [];
-    stats.push(data);
-    localStorage.setItem('gameStats', JSON.stringify(stats));
-    console.log('Statistics saved locally:', stats);
-}
-
-function submitGameData(data) {
-    console.log('Saving game data locally:', data);
-    saveStatsLocally(data);
-    alert('Your data has been saved locally!');
-}
 
 // Global Function Definitions
 function checkAnswers() {
@@ -85,41 +58,114 @@ function checkAnswers() {
         quarter4: 'word20'  // Correct answer for Act
     };
 
-    let allCorrect = true;
+    const answerLabels = {
+        word17: 'Aim',
+        word3: 'Measure',
+        word9: 'Change Ideas',
+        word11: 'Plan',
+        word6: 'Do',
+        word10: 'Study',
+        word20: 'Act'
+    };
+
+    function applyRotation(quarterId, element) {
+        if (quarterId === "quarter2") {
+            element.classList.add('rotate-90');
+        } else if (quarterId === "quarter3") {
+            element.classList.add('rotate-180');
+        } else if (quarterId === "quarter4") {
+            element.classList.add('rotate-90-reverse');
+        } else {
+            element.classList.remove('rotate-90', 'rotate-180', 'rotate-90-reverse');
+        }
+    }
 
     Object.keys(correctAnswers).forEach(zoneId => {
         const zone = document.getElementById(zoneId);
-        const draggableChild = zone.querySelector('.draggable');
+        if (!zone) {
+            console.warn(`Zone with ID ${zoneId} not found.`);
+            return;
+        }
 
-        if (!draggableChild || draggableChild.id !== correctAnswers[zoneId]) {
-            allCorrect = false;
-            zone.classList.add('incorrect');
-            zone.classList.remove('correct');
-        } else {
+        // Remove existing correction elements
+        Array.from(zone.querySelectorAll('.correction')).forEach(correction => correction.remove());
+
+        const draggableChild = zone.querySelector('.draggable');
+        console.log(`Zone: ${zoneId}, Found: ${draggableChild ? draggableChild.id : 'None'}, Expected: ${correctAnswers[zoneId]}`);
+
+        if (draggableChild && draggableChild.id === correctAnswers[zoneId]) {
+            console.log(`Correct! Zone: ${zoneId}, Dragged ID: ${draggableChild.id}`);
             zone.classList.add('correct');
             zone.classList.remove('incorrect');
+        } else {
+            console.warn(`Incorrect or empty. Zone: ${zoneId}, Dragged ID: ${draggableChild ? draggableChild.id : 'None'}`);
+            zone.classList.add('incorrect');
+            zone.classList.remove('correct');
+
+            // Add a correction element
+            const correction = document.createElement('div');
+            correction.classList.add('correction');
+
+            const correctText = answerLabels[correctAnswers[zoneId]] || 'Unknown';
+            correction.textContent = draggableChild
+                ? `${draggableChild.textContent} (Correct: ${correctText})`
+                : `Correct: ${correctText}`;
+
+            if (zoneId.startsWith('quarter')) {
+                applyRotation(zoneId, correction);
+            }
+
+            zone.appendChild(correction);
+
+            // Remove the draggable button from the zone
+            if (draggableChild) {
+                draggableChild.remove();
+            }
         }
     });
 
-    if (allCorrect) {
-        document.getElementById('submit-button').disabled = true;
-        document.getElementById('next-question-button').style.display = 'block';
-    } else {
-        alert('Not all answers are correct. Please try again.');
-    }
+    const draggables = document.querySelectorAll('.draggable');
+    draggables.forEach(draggable => {
+        draggable.setAttribute('draggable', 'true');
+        draggable.addEventListener('dragstart', drag);
+    });
+
+    // Hide initial instructions and show next instructions and next question button
+    document.getElementById('initial-instructions').classList.add('hidden');
+    console.log('Initial instructions hidden:', document.getElementById('initial-instructions').classList.contains('hidden'));
+
+    const nextInstructions = document.getElementById('next-instructions');
+    nextInstructions.classList.remove('hidden');
+    nextInstructions.classList.add('visible');
+    nextInstructions.style.display = ''; // Resets to CSS default
+    console.log('Next instructions visible:', nextInstructions.classList.contains('visible'));
+
+    const nextQuestionButton = document.getElementById('next-question-button');
+    nextQuestionButton.classList.remove('hidden');
+    nextQuestionButton.classList.add('visible');
+    nextQuestionButton.style.display = ''; // Resets to CSS default
+    console.log('Next question button visible:', nextQuestionButton.classList.contains('visible'));
+
+    const submitButton = document.getElementById('submit-button');
+    submitButton.disabled = true;
 }
 
 function checkSubmitButtonState() {
-    const dropZones = document.querySelectorAll('.text-box, .quarter'); // Select all drop zones
-    const filledZones = Array.from(dropZones).filter(zone => zone.querySelector('.draggable')).length;
+    const dropZones = document.querySelectorAll('.text-box, .quarter');
+    let hasDraggable = false;
 
+    dropZones.forEach(zone => {
+        // Check if the zone contains at least one draggable element
+        const draggableChild = Array.from(zone.children).some(child => child.classList.contains('draggable'));
+        if (draggableChild) {
+            hasDraggable = true;
+        }
+        console.log(`Checking zone: ${zone.id}, Has draggable: ${draggableChild}`);
+    });
+
+    // Enable or disable the submit button based on presence of draggables
     const submitButton = document.getElementById('submit-button');
-    if (submitButton) {
-        // Enable the button only if at least 3 zones are filled
-        submitButton.disabled = filledZones < 3;
-    }
-
-    console.log(`Filled zones: ${filledZones}/${dropZones.length}`);
+    submitButton.disabled = !hasDraggable;
 }
 
 
@@ -133,27 +179,32 @@ function drag(event) {
 
 function drop(event) {
     event.preventDefault();
-    const draggedId = event.dataTransfer.getData("text");
-    const draggedElement = document.getElementById(draggedId);
-    const dropZone = event.target.closest('.text-box, .quarter');
+    const data = event.dataTransfer.getData("text");
+    const draggedElement = document.getElementById(data);
+    let dropTarget = event.target;
 
-    if (draggedElement && dropZone) {
-        // Append the dragged element to the drop zone
-        dropZone.appendChild(draggedElement);
+    if (
+        dropTarget.classList.contains("text-box") || 
+        dropTarget.classList.contains("quarter") || 
+        dropTarget.parentElement.classList.contains("quarter")
+    ) {
+        if (!dropTarget.classList.contains("quarter") && dropTarget.parentElement.classList.contains("quarter")) {
+            dropTarget = dropTarget.parentElement;
+        }
+        dropTarget.appendChild(draggedElement);
 
-        // Apply rotation based on drop zone ID
-        if (dropZone.id === 'quarter2') {
-            draggedElement.style.transform = 'rotate(-90deg)';
-        } else if (dropZone.id === 'quarter3') {
-            draggedElement.style.transform = 'rotate(180deg)';
-        } else if (dropZone.id === 'quarter4') {
-            draggedElement.style.transform = 'rotate(90deg)';
+        if (dropTarget.id === "quarter2") {
+            draggedElement.style.transform = "rotate(-90deg)";
+        } else if (dropTarget.id === "quarter3") {
+            draggedElement.style.transform = "rotate(180deg)";
+        } else if (dropTarget.id === "quarter4") {
+            draggedElement.style.transform = "rotate(90deg)";
         } else {
-            draggedElement.style.transform = 'rotate(0deg)';
+            draggedElement.style.transform = "rotate(0deg)";
         }
     }
 
-    checkSubmitButtonState(); // Recheck the submit button state
+    checkSubmitButtonState();
 }
 
 // DOMContentLoaded Listener
@@ -161,25 +212,27 @@ document.addEventListener('DOMContentLoaded', function () {
     const submitButton = document.getElementById('submit-button');
     const nextQuestionButton = document.getElementById('next-question-button');
 
-    // Existing logic to set initial state and add event listeners
+    // Set initial state
     submitButton.disabled = true;
+
+    // Add event listeners
     submitButton.addEventListener('click', checkAnswers);
     nextQuestionButton.addEventListener('click', nextQuestion);
 
     const draggables = document.querySelectorAll('.draggable');
     const blanks = document.querySelectorAll('.text-box, .quarter');
+
     draggables.forEach(draggable => {
         draggable.addEventListener('dragstart', drag);
     });
+
     blanks.forEach(blank => {
         blank.addEventListener('dragover', allowDrop);
         blank.addEventListener('drop', drop);
     });
 
-    checkSubmitButtonState(); // Initial state check
-
-    // Call the query parameter handling function
-    handleQueryParameters();
+    // Initial check to disable/enable the submit button
+    checkSubmitButtonState();
 });
 
 // Attach globally accessible functions (if needed by HTML)
@@ -187,28 +240,6 @@ window.submitAnswers = checkAnswers;
 window.allowDrop = allowDrop;
 window.drag = drag;
 window.drop = drop;
-
-function handleQueryParameters() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const course = urlParams.get('course');
-    const session = urlParams.get('session');
-
-    if (course && session) {
-        // Hide the course setup form
-        const courseSetup = document.getElementById('course-setup');
-        if (courseSetup) {
-            courseSetup.classList.add('hidden');
-        }
-
-        // Show course details
-        const courseTitle = `Course: ${course}, Session: ${session}`;
-        const courseTitleElement = document.getElementById('course-title');
-        if (courseTitleElement) {
-            courseTitleElement.textContent = courseTitle;
-            courseTitleElement.classList.remove('hidden');
-        }
-    }
-}
 
 function nextQuestion() {
     // Reset the game area
@@ -289,462 +320,22 @@ function selectFinalOption(option) {
 }
 
 function submitFinalAnswer() {
-    const data = {
-        timestamp: Date.now(),
-        course: getFromStorage('courseCode', 'DefaultCourseCode'),
-        session: getFromStorage('sessionNumber', 'DefaultSessionNumber'),
-        correctAnswers: correctAnswersCount,
-        incorrectGuesses: incorrectGuesses,
-        finalResponse: selectedFinalOption
-    };
+    // Disable the submit button
+    const submitButton = document.getElementById('final-submit-button');
+    submitButton.disabled = true;
 
-    submitGameData(data);
-}
-
-function dragStart(event) {
-    if (event.type === 'touchstart') {
-        event.target.dataset.dragging = 'true';
-    } else {
-        event.dataTransfer.setData("text", event.target.id);
-    }
-}
-
-function dragOver(event) {
-    event.preventDefault(); // Allow dropping
-}
-
-// Add event listeners for both mouse and touch
-function enableDragAndDrop() {
-    const draggables = document.querySelectorAll('.draggable');
-    const dropZones = document.querySelectorAll('.text-box, .quarter');
-
-    draggables.forEach(draggable => {
-        draggable.addEventListener('dragstart', dragStart);
-        draggable.addEventListener('touchstart', dragStart);
-    });
-
-    dropZones.forEach(zone => {
-        zone.addEventListener('dragover', dragOver);
-        zone.addEventListener('drop', drop);
-        zone.addEventListener('touchend', drop);
-    });
-}
-
-// Initialize drag and drop functionality
-document.addEventListener('DOMContentLoaded', enableDragAndDrop);
-
-document.addEventListener('DOMContentLoaded', () => {
-    if (typeof course !== 'undefined' && typeof session !== 'undefined') {
-        const courseTitleElement = document.getElementById('course-title');
-        if (courseTitleElement) {
-            courseTitleElement.textContent = `Course: ${course}, Session: ${session}`;
-            courseTitleElement.classList.remove('hidden');
-        }
-    }
-});
-
-function calculateAndDisplayStats() {
-    const statsContainer = document.getElementById('stats-container');
-    if (!statsContainer) {
-        console.error('Stats container not found in the DOM.');
-        return;
-    }
-    const stats = JSON.parse(localStorage.getItem('gameStats')) || [];
-    const totalGames = stats.length;
-    const totalScore = stats.reduce((sum, game) => sum + (game.correctAnswers || 0), 0);
-    const averageScore = totalGames > 0 ? (totalScore / totalGames).toFixed(2) : 0;
-
-    statsContainer.innerHTML = `
-        <h3>Game Statistics</h3>
-        <p>Total Games Played: ${totalGames}</p>
-        <p>Total Correct Answers: ${totalScore}</p>
-        <p>Average Score: ${averageScore}</p>
-    `;
-}
-
-document.addEventListener('DOMContentLoaded', calculateAndDisplayStats);
-
-function resetStats() {
-    if (confirm('Are you sure you want to reset all statistics?')) {
-        localStorage.removeItem('gameStats');
-        calculateAndDisplayStats();
-        alert('Statistics have been reset.');
-    }
-}
-
-function exportStats() {
-    const stats = JSON.parse(localStorage.getItem('gameStats')) || [];
-    const csvContent = [
-        ['Date', 'Course', 'Session', 'Correct Answers', 'Incorrect Guesses', 'Final Response'],
-        ...stats.map(stat => [
-            new Date(stat.timestamp).toLocaleString(),
-            stat.course,
-            stat.session,
-            stat.correctAnswers,
-            stat.incorrectGuesses?.join('; '),
-            stat.finalResponse,
-        ])
-    ].map(row => row.join(',')).join('\n');
-
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = 'game_statistics.csv';
-    link.click();
-}
-
-function showTab(tabId) {
-    const tabContent = document.getElementById(tabId);
-    if (!tabContent) {
-        console.error(`Tab with ID ${tabId} does not exist.`);
-        return;
-    }
-    document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
-    tabContent.classList.remove('hidden');
-}
-
-function displaySubmissionTally() {
-    const stats = JSON.parse(localStorage.getItem('gameStats')) || [];
-    const tally = stats.length;
-
-    document.getElementById('submission-tally').innerHTML = `
-        <p>Total Submissions: ${tally}</p>
-    `;
-}
-
-showTab('stats-tally');
-displaySubmissionTally();
-
-function createBarChart() {
-    const stats = JSON.parse(localStorage.getItem('gameStats')) || [];
-    const correctCounts = stats.map(stat => stat.correctAnswers);
-
-    const ctx = document.getElementById('bar-chart').getContext('2d');
-    new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: stats.map((_, index) => `Player ${index + 1}`),
-            datasets: [{
-                label: 'Correct Guesses',
-                data: correctCounts,
-                backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                borderColor: 'rgba(54, 162, 235, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
-    });
-}
-
-function createWordCloud() {
-    const stats = JSON.parse(localStorage.getItem('gameStats')) || [];
-    const incorrectGuesses = stats.flatMap(stat => stat.incorrectGuesses || []);
-    const wordCounts = {};
-
-    incorrectGuesses.forEach(word => {
-        wordCounts[word] = (wordCounts[word] || 0) + 1;
-    });
-
-    const wordArray = Object.entries(wordCounts).map(([word, count]) => [word, count]);
-
-    WordCloud(document.getElementById('word-cloud'), { list: wordArray });
-}
-
-function isLocalStorageAvailable() {
-    try {
-        const testKey = 'test';
-        localStorage.setItem(testKey, 'testValue');
-        localStorage.removeItem(testKey);
-        return true;
-    } catch (e) {
-        return false;
-    }
-}
-
-if (isLocalStorageAvailable()) {
-    // Safe to use localStorage
-} else {
-    console.error('LocalStorage is not available in this context.');
-}
-
-function updateSubmissionTally() {
-    const stats = JSON.parse(localStorage.getItem('gameStats')) || [];
-    const tally = {};
-
-    stats.forEach(stat => {
-        const session = stat.session || 'Unknown';
-        tally[session] = (tally[session] || 0) + 1;
-    });
-
-    const tallyList = document.getElementById('submission-tally-list');
-    tallyList.innerHTML = ''; // Clear previous tally
-    Object.keys(tally).forEach(session => {
-        const listItem = document.createElement('li');
-        listItem.textContent = `${session}: ${tally[session]} submissions`;
-        tallyList.appendChild(listItem);
-    });
-}
-
-// Call this whenever stats are updated
-updateSubmissionTally();
-
-function viewStats() {
-    const session = document.getElementById('stats-session-select').value;
-    const stats = JSON.parse(localStorage.getItem('gameStats')) || [];
-    const filteredStats = session === 'all'
-        ? stats
-        : stats.filter(stat => stat.session === session);
-
-    const statsDisplay = document.getElementById('stats-display');
-    statsDisplay.innerHTML = `<h4>Statistics for ${session === 'all' ? 'All Sessions' : `Session ${session}`}</h4>`;
-
-    // Example: Display total correct answers
-    const totalCorrect = filteredStats.reduce((sum, stat) => sum + (stat.correctAnswers || 0), 0);
-    statsDisplay.innerHTML += `<p>Total Correct Answers: ${totalCorrect}</p>`;
-}
-
-function generateLink() {
-    const courseName = document.getElementById('course-name').value.trim();
-    const sessionNumber = document.getElementById('session-number').value;
-
-    if (!courseName) {
-        alert('Please enter a course name.');
-        return;
-    }
-
-    const baseUrl = `${window.location.origin}/MfIgame/`;
-    const sessionLink = `${baseUrl}?course=${encodeURIComponent(courseName)}&session=${encodeURIComponent(sessionNumber)}`;
-
-    const linkOutput = document.getElementById('link-output');
-    linkOutput.textContent = sessionLink;
-
-    const generatedLinkContainer = document.getElementById('generated-link');
-    generatedLinkContainer.classList.remove('hidden');
-}
-
-function copyLink() {
-    const linkOutput = document.getElementById('link-output').textContent;
-    navigator.clipboard.writeText(linkOutput)
-        .then(() => alert('Link copied to clipboard!'))
-        .catch(err => console.error('Failed to copy link:', err));
-}
-
-function setCourse(event) {
-    event.preventDefault();
-    const courseName = document.getElementById('course-name').value.trim();
-    if (!courseName) {
-        alert('Please enter a course name.');
-        return;
-    }
-
-    document.getElementById('current-course').textContent = courseName;
-    document.getElementById('selected-course').classList.remove('hidden');
-    document.getElementById('session-options').classList.remove('hidden');
-    document.getElementById('submission-tally-container').classList.remove('hidden');
-    document.getElementById('stats-view-container').classList.remove('hidden');
-
-    // Generate the session link
-    const sessionNumber = document.getElementById('session-number').value.trim();
-    const baseUrl = `${window.location.origin}/MfIgame/`;
-    const sessionLink = `${baseUrl}?course=${encodeURIComponent(courseName)}&session=${encodeURIComponent(sessionNumber)}`;
-
-    const linkOutput = document.getElementById('link-output');
-    linkOutput.textContent = sessionLink;
-    document.getElementById('session-link').style.display = 'block';
-}
-
-
-const targetNode = document.getElementById('target-element-id');
-if (targetNode) {
-    const observer = new MutationObserver(callbackFunction);
-    observer.observe(targetNode, { attributes: true });
-} else {
-    console.error('Target node for MutationObserver does not exist.');
-}
-
-function toggleBackroomVisibility() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const course = urlParams.get('course');
-    const session = urlParams.get('session');
-
-    console.log("Toggle Backroom Visibility: ", { course, session });
-
-    if (course && session) {
-        const backroom = document.getElementById('backroom');
-        if (backroom) {
-            backroom.style.display = 'none';
-            console.log("Backroom hidden for player view.");
+    // Keep the selected option pink and make unselected options teal
+    const options = document.querySelectorAll('.final-option');
+    options.forEach(option => {
+        if (option === selectedFinalOption) {
+            option.style.backgroundColor = '#E6007E'; // Pink for the chosen answer
         } else {
-            console.warn("Backroom element not found.");
+            option.style.backgroundColor = '#14a19a'; // Teal for unchosen answers
         }
-
-        const resetButton = document.querySelector("button[onclick='resetStats()']");
-        const exportButton = document.querySelector("button[onclick='exportStats()']");
-        if (resetButton) resetButton.classList.add('hidden');
-        if (exportButton) exportButton.classList.add('hidden');
-    }
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-    console.log("DOM fully loaded.");
-    
-    // Ensure backroom visibility logic works
-    toggleBackroomVisibility();
-
-    // Initialize form and other event listeners
-    const courseForm = document.getElementById("backroom-course-form");
-    if (courseForm) {
-        courseForm.addEventListener("submit", (event) => {
-            event.preventDefault();
-            console.log("Course form submitted.");
-            setCourse(event); // Use your existing setCourse logic
-        });
-    } else {
-        console.warn("Course form not found.");
-    }
-
-    // Add listeners to game elements
-    initializeGame();
-
-    // Handle query parameters for course/session
-    handleQueryParameters();
-});
-
-/**
- * Toggles the visibility of the backroom based on query parameters.
- */
-function toggleBackroomVisibility() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const course = urlParams.get("course");
-    const session = urlParams.get("session");
-
-    const backroom = document.getElementById("backroom");
-    const courseTitleElement = document.getElementById("course-title");
-
-    if (course && session) {
-        if (backroom) {
-            backroom.style.display = "none"; // Hide backroom
-            console.log("Backroom hidden for player view.");
-        } else {
-            console.warn("Backroom element not found.");
-        }
-
-        if (courseTitleElement) {
-            courseTitleElement.textContent = `Course: ${course}, Session: ${session}`;
-            courseTitleElement.classList.remove("hidden"); // Show course/session info
-        } else {
-            console.warn("Course title element not found.");
-        }
-    } else {
-        console.log("No course or session query parameters found.");
-    }
-}
-
-/**
- * Sets the course name and displays the options for session and link generation.
- */
-function setCourse(event) {
-    const courseName = document.getElementById("course-name").value.trim();
-    if (!courseName) {
-        alert("Please enter a course name.");
-        return;
-    }
-
-    const currentCourse = document.getElementById("current-course");
-    const selectedCourse = document.getElementById("selected-course");
-    const sessionOptions = document.getElementById("session-options");
-
-    if (currentCourse) {
-        currentCourse.textContent = courseName;
-    }
-    if (selectedCourse) {
-        selectedCourse.classList.remove("hidden");
-    }
-    if (sessionOptions) {
-        sessionOptions.classList.remove("hidden");
-    }
-
-    // Generate the session link
-    const sessionNumber = document.getElementById('session-number').value.trim();
-    const baseUrl = `${window.location.origin}/MfIgame/`;
-    const sessionLink = `${baseUrl}?course=${encodeURIComponent(courseName)}&session=${encodeURIComponent(sessionNumber)}`;
-
-    const linkOutput = document.getElementById('link-output');
-    linkOutput.textContent = sessionLink;
-    document.getElementById('session-link').style.display = 'block';
-}
-
-/**
- * Initializes drag-and-drop and button interactions for the game.
- */
-function initializeGame() {
-    const submitButton = document.getElementById("submit-button");
-    const nextQuestionButton = document.getElementById("next-question-button");
-
-    if (submitButton) {
-        submitButton.addEventListener("click", checkAnswers);
-    } else {
-        console.warn("Submit button not found.");
-    }
-
-    if (nextQuestionButton) {
-        nextQuestionButton.addEventListener("click", nextQuestion);
-    } else {
-        console.warn("Next question button not found.");
-    }
-
-    const draggables = document.querySelectorAll(".draggable");
-    const dropZones = document.querySelectorAll(".text-box, .quarter");
-
-    draggables.forEach((draggable) => {
-        draggable.addEventListener("dragstart", drag);
     });
 
-    dropZones.forEach((zone) => {
-        zone.addEventListener("dragover", allowDrop);
-        zone.addEventListener("drop", drop);
-    });
+    console.log('Final answer submitted:', selectedFinalOption.textContent);
 }
 
-/**
- * Handles query parameters to show course/session information.
- */
-function handleQueryParameters() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const course = urlParams.get("course");
-    const session = urlParams.get("session");
 
-    const courseTitleElement = document.getElementById("course-title");
-    if (course && session && courseTitleElement) {
-        courseTitleElement.textContent = `Course: ${course}, Session: ${session}`;
-        courseTitleElement.classList.remove("hidden");
-    }
-}
 
-/**
- * Drag-and-drop handlers.
- */
-function allowDrop(event) {
-    event.preventDefault();
-}
-
-function drag(event) {
-    event.dataTransfer.setData("text", event.target.id);
-}
-
-function drop(event) {
-    event.preventDefault();
-    const data = event.dataTransfer.getData("text");
-    const draggedElement = document.getElementById(data);
-    const dropZone = event.target.closest(".text-box, .quarter");
-
-    if (draggedElement && dropZone) {
-        dropZone.appendChild(draggedElement);
-    }
-}

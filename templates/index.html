@@ -1,65 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Test Your Knowledge</title>
-    <link rel="stylesheet" href="/MfIgame/static/styles.css">
+    <!-- Link to the main CSS file -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/wordcloud@1.2.2"></script>
-</head>
-<body>
-    <div id="backroom" class="course-setup-container">
-        <h1>Course Organiser Backroom</h1>
-        <form id="backroom-course-form" onsubmit="setCourse(event)">
-            <label for="course-name">Course Name:</label>
-            <input type="text" id="course-name" placeholder="Enter course name" required>
-            <button type="submit">Set Course</button>
-        </form>
-        <div id="selected-course" class="hidden">
-            <h2>Selected Course: <span id="current-course"></span></h2>
-            <div id="session-options" class="hidden">
-                <label for="session-number">Session:</label>
-                <select id="session-number">
-                    <option value="1">Session 1</option>
-                    <option value="2">Session 2</option>
-                    <option value="3">Session 3</option>
-                    <option value="4">Session 4</option>
-                </select>
-                <button onclick="generateLink()">Generate Link</button>
-                <div id="generated-link" class="hidden">
-                    <p>Generated Link:</p>
-                    <span id="link-output"></span>
-                    <button onclick="copyLink()">Copy Link</button>
-                </div>
-            </div>
-        </div>
-        <div id="submission-tally-container" class="hidden">
-            <h3>Live Submission Tally</h3>
-            <ul id="submission-tally-list"></ul>
-        </div>
-        <div id="stats-view-container" class="hidden">
-            <h3>View Statistics</h3>
-            <label for="stats-session-select">Select Session:</label>
-            <select id="stats-session-select" onchange="viewStats()">
-                <option value="all">All Sessions</option>
-                <option value="1">Session 1</option>
-                <option value="2">Session 2</option>
-                <option value="3">Session 3</option>
-                <option value="4">Session 4</option>
-            </select>
-            <div id="stats-display"></div>
-        </div>
-        <button onclick="resetStats()">Reset Statistics</button>
-        <button onclick="exportStats()">Export Statistics</button>
-    </div>
 
-    <header class="header-container">
-        <h1 id="main-title">Test Your Knowledge of the Model for Improvement!</h1>
-        <p id="course-title" class="hidden">{{ course }} - {{ session }}</p>
-        <img src="/MfIgame/static/images/QICLearn_logo.jpg" alt="QIC Learn Logo" class="logo" />
-    </header>
+    <!-- Link to the backup CSS file (commented out for easy use if needed) -->
+    <!--<link rel="stylesheet" href="{{ url_for('static', filename='backups/styles_layout.css') }}"> -->
+</head>
+
+<div id="course-setup" class="course-setup-container">
+    <h2>Setup Course Session</h2>
+    <form id="course-form">
+        <label for="course-code">Course Code:</label>
+        <input type="text" id="course-code" name="course-code" required>
+        <label for="session-number">Session Number:</label>
+        <input type="number" id="session-number" name="session-number" min="1" max="4" required>
+        <button type="submit">Generate Session Link</button>
+    </form>
+    <div id="session-link" class="link-container" style="display: none;">
+        <p>Share this link with learners:</p>
+        <div class="link-box">
+            <span id="link-output"></span>
+            <button id="copy-link" title="Copy Link">📋</button>
+        </div>
+    </div>
+</div>
+
+<header class="header-container">
+    <h1 id="main-title">Test Your Knowledge of the Model for Improvement!</h1>
+    <p id="course-title" class="hidden"></p>
+    <img src="{{ url_for('static', filename='images/QICLearn_logo.jpg') }}" alt="QIC Learn Logo" class="logo" />
+</header>
 
     <div class="main-container">
         <!-- Game Area -->
@@ -89,13 +65,14 @@
                 </div>
             </div>
         </div>
-
+    
+        <!-- Right Container -->
         <div class="right-container">
             <!-- Instructions and Buttons -->
             <div class="instructions-container" id="instructions-container">
                 <div class="instructions" id="initial-instructions">
                     <h2>Get your MfI Score: Drag and drop</h2>
-                    <p>When you've dropped an item into each section click on this button:</p>
+                    <p>When you've dropped an item into each of the sections click on this button:</p>
                     <p>Good luck!</p>
                 </div>
                 <div class="instructions" id="next-instructions" style="display: none;">
@@ -107,11 +84,10 @@
                     <button id="next-question-button" onclick="nextQuestion()" style="display: none;">Next Question</button>
                 </div>
             </div>
-
+    
             <!-- Draggable Buttons -->
             <div class="draggable-container" id="draggable-container">
                 <div id="word-bank">
-                    <!-- Draggable Words -->
                     <div class="draggable" id="word1" draggable="true" ondragstart="drag(event)">Learn</div>
                     <div class="draggable" id="word2" draggable="true" ondragstart="drag(event)">Assess</div>
                     <div class="draggable" id="word3" draggable="true" ondragstart="drag(event)">Measure</div>
@@ -136,13 +112,12 @@
                     <div class="draggable" id="word22" draggable="true" ondragstart="drag(event)">Intervention</div>
                     <div class="draggable" id="word23" draggable="true" ondragstart="drag(event)">Indicator</div>
                     <div class="draggable" id="word24" draggable="true" ondragstart="drag(event)">Agree</div>
-                    <!-- Add other draggable words as needed -->
                 </div>
             </div>
           
             <!-- Final Question -->
             <div class="final-question-container" id="final-question-container" style="display: none;">
-                <h2>How familiar are you with this change method?</h2>
+                <h2>How familiar are you with this change method (from start to finish)?</h2>
                 <div class="final-options">
                     <div class="final-option" onclick="selectFinalOption(this)">1st time I've seen it</div>
                     <div class="final-option" onclick="selectFinalOption(this)">Seen it, tried it or trying it</div>
@@ -153,16 +128,9 @@
             </div>
         </div>
     </div>
-
-    <div id="stats-tally" class="tab-content hidden">
-        <h2>Submission Tally</h2>
-        <div id="submission-tally"></div>
-    </div>
-    <div id="stats-container"></div>
-    <script>
-        const course = "{{ course|default('') }}";
-        const session = "{{ session|default('') }}";
-    </script>
-    <script src="/MfIgame/static/script.js" defer></script>
+    
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <!-- Link to the backup js file (commented out for easy use if needed) -->
+    <!--<script src="{{ url_for('static', filename='backups/script_layout.js') }}"></script>-->
 </body>
 </html>
