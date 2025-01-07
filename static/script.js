@@ -7,12 +7,12 @@ document.getElementById('course-form').addEventListener('submit', function (even
     const basePath = isGitHubPages ? '/MfIgame' : '';
     const sessionLink = `${window.location.origin}${basePath}/?course=${encodeURIComponent(courseCode)}&session=${sessionNumber}`;
 
+    // Update the link output and show the link container
     document.getElementById('link-output').textContent = sessionLink;
     document.getElementById('session-link').style.display = 'block';
 
-    // Update the URL dynamically without reloading the page
-    const params = new URLSearchParams({ course: courseCode, session: sessionNumber });
-    window.history.pushState({}, '', `?${params.toString()}`);
+    // Do not update the URL or hide the course setup
+    console.log('Generated link:', sessionLink); // For debugging
 });
 
 document.getElementById('copy-link').addEventListener('click', function () {
