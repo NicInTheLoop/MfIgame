@@ -585,23 +585,20 @@ function toggleBackroomVisibility() {
 document.addEventListener('DOMContentLoaded', () => {
     console.log("DOM fully loaded.");
 
-    // Check and log the presence of elements
+    // Example: Add listener for the backroom course form
     const courseForm = document.getElementById('backroom-course-form');
-    console.log("Course form:", courseForm);
-
     if (courseForm) {
         courseForm.addEventListener('submit', (event) => {
             event.preventDefault();
             console.log("Course form submitted.");
-            setCourse(event); // Existing setCourse function
+            setCourse(event); // Use your existing setCourse logic
         });
     } else {
-        console.warn("Course form not found.");
+        console.warn("Course form not found in the DOM.");
     }
 
+    // Ensure the rest of the event listeners only attach to existing elements
     const submitButton = document.getElementById('submit-button');
-    console.log("Submit button:", submitButton);
-
     if (submitButton) {
         submitButton.addEventListener('click', checkAnswers);
     } else {
@@ -609,20 +606,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const nextQuestionButton = document.getElementById('next-question-button');
-    console.log("Next question button:", nextQuestionButton);
-
     if (nextQuestionButton) {
         nextQuestionButton.addEventListener('click', nextQuestion);
     } else {
         console.warn("Next question button not found.");
     }
 
-    // Additional logic for drag-and-drop
+    // Add Listeners for Draggables and Drop Zones
     const draggables = document.querySelectorAll('.draggable');
     const dropZones = document.querySelectorAll('.text-box, .quarter');
-    console.log("Draggables:", draggables);
-    console.log("Drop zones:", dropZones);
-
     draggables.forEach(draggable => {
         draggable.addEventListener('dragstart', drag);
     });
@@ -630,7 +622,6 @@ document.addEventListener('DOMContentLoaded', () => {
         zone.addEventListener('dragover', allowDrop);
         zone.addEventListener('drop', drop);
     });
-
 
     // Copy Link Button
     const copyLinkButton = document.getElementById('copy-link');
@@ -655,7 +646,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Call the query parameter handling function
     handleQueryParameters();
-
+    toggleBackroomVisibility();
 });
 
 function toggleBackroomVisibility() {
