@@ -42,9 +42,10 @@ window.addEventListener('load', function () {
 });
 
 
-let correctAnswersCount = 0;
-let incorrectGuesses = [];
-let finalQuestionResponse = '';
+// Global variables for tracking statistics
+let correctAnswersCount = 0; // Example global variable for correct answers
+let incorrectGuesses = []; // To track incorrect guesses
+let finalQuestionResponse = ''; // Response to the final question
 
 // Global Function Definitions
 function checkAnswers() {
@@ -337,5 +338,40 @@ function submitFinalAnswer() {
     console.log('Final answer submitted:', selectedFinalOption.textContent);
 }
 
+// Function to view statistics
+function viewStatistics() {
+    // Open the statistics page in a new tab
+    window.open(`${window.location.origin}/statistics`, '_blank');
+}
 
+// Example function to collect and save statistics
+function collectStatistics() {
+    // Example: Collect data
+    const correctCount = correctAnswersCount;
+    const incorrect = incorrectGuesses;
+    const finalResponse = finalQuestionResponse;
 
+    // Save to local storage or send to a backend
+    const statistics = {
+        correctCount,
+        incorrect,
+        finalResponse,
+    };
+
+    // Save in local storage or send to an API
+    localStorage.setItem('gameStatistics', JSON.stringify(statistics));
+    console.log('Statistics collected:', statistics);
+}
+
+// Ensure statistics are saved when the game completes
+document.getElementById('final-submit-button').addEventListener('click', collectStatistics);
+
+// Example function to update statistics (this should be called at relevant points in your game logic)
+function updateStatistics(correct, incorrect, finalResponse) {
+    correctAnswersCount = correct;
+    incorrectGuesses = incorrect;
+    finalQuestionResponse = finalResponse;
+}
+
+// Example usage of updateStatistics function
+// updateStatistics(5, ['guess1', 'guess2'], 'Know it - used it');
