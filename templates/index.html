@@ -57,7 +57,7 @@
 
     <header class="header-container">
         <h1 id="main-title">Test Your Knowledge of the Model for Improvement!</h1>
-        <p id="course-title" class="hidden"></p>
+        <p id="course-title" class="hidden">{{ course }} - {{ session }}</p>
         <img src="/MfIgame/static/images/QICLearn_logo.jpg" alt="QIC Learn Logo" class="logo" />
     </header>
 
@@ -160,8 +160,8 @@
     </div>
     <div id="stats-container"></div>
     <script>
-        const course = "{{ course|default:'' }}";
-        const session = "{{ session|default:'' }}";
+        const course = "{{ course|default('') }}";
+        const session = "{{ session|default('') }}";
     </script>
     <script src="/MfIgame/static/script.js" defer></script>
 </body>

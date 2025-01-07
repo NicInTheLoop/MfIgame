@@ -160,8 +160,8 @@
     </div>
     <div id="stats-container"></div>
     <script>
-        const course = "{{ course|default:'' }}";
-        const session = "{{ session|default:'' }}";
+        const course = "{{ course|default('') }}";
+        const session = "{{ session|default('') }}";
     </script>
     <script src="/MfIgame/static/script.js" defer></script>
 </body>

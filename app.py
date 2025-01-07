@@ -13,7 +13,7 @@ def mfi_game():
         print(f"Course: {course}, Session: {session}")  # Debug output
         return render_template('index.html', course=course, session=session)
     else:
-        return "Course and session parameters are required.", 400
+        return render_template('index.html', course='', session='')
 
 if __name__ == '__main__':
     app.run(debug=True)
