@@ -3,7 +3,7 @@ document.getElementById('course-form').addEventListener('submit', function (even
 
     const courseCode = document.getElementById('course-code').value.trim();
     const sessionNumber = document.getElementById('session-number').value.trim();
-    const sessionLink = `${window.location.origin}?course=${encodeURIComponent(courseCode)}&session=${sessionNumber}`;
+    const sessionLink = `${window.location.origin}/MfIgame/?course=${encodeURIComponent(courseCode)}&session=${sessionNumber}`;
 
     document.getElementById('link-output').textContent = sessionLink;
     document.getElementById('session-link').style.display = 'block';
@@ -341,7 +341,8 @@ function submitFinalAnswer() {
 // Function to view statistics
 function viewStatistics() {
     // Open the statistics page in a new tab
-    window.open(`${window.location.origin}/statistics`, '_blank');
+    const statisticsLink = `${window.location.origin}/MfIgame/statistics`;
+    window.open(statisticsLink, '_blank');
 }
 
 // Example function to collect and save statistics
