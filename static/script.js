@@ -10,9 +10,9 @@ document.getElementById('course-form').addEventListener('submit', function (even
     document.getElementById('link-output').textContent = sessionLink;
     document.getElementById('session-link').style.display = 'block';
 
-    // Store course and session in localStorage for tracking
-    localStorage.setItem('courseCode', courseCode);
-    localStorage.setItem('sessionNumber', sessionNumber);
+    // Update the URL dynamically without reloading the page
+    const params = new URLSearchParams({ course: courseCode, session: sessionNumber });
+    window.history.pushState({}, '', `?${params.toString()}`);
 });
 
 document.getElementById('copy-link').addEventListener('click', function () {
