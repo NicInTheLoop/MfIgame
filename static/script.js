@@ -548,6 +548,15 @@ function setCourse(event) {
     document.getElementById('session-options').classList.remove('hidden');
     document.getElementById('submission-tally-container').classList.remove('hidden');
     document.getElementById('stats-view-container').classList.remove('hidden');
+
+    // Generate the session link
+    const sessionNumber = document.getElementById('session-number').value.trim();
+    const baseUrl = `${window.location.origin}/MfIgame/`;
+    const sessionLink = `${baseUrl}?course=${encodeURIComponent(courseName)}&session=${encodeURIComponent(sessionNumber)}`;
+
+    const linkOutput = document.getElementById('link-output');
+    linkOutput.textContent = sessionLink;
+    document.getElementById('session-link').style.display = 'block';
 }
 
 
@@ -582,7 +591,7 @@ function toggleBackroomVisibility() {
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener("DOMContentLoaded", () => {
     console.log("DOM fully loaded.");
     
     // Ensure backroom visibility logic works
@@ -593,7 +602,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (courseForm) {
         courseForm.addEventListener("submit", (event) => {
             event.preventDefault();
-            setCourse(event);
+            console.log("Course form submitted.");
+            setCourse(event); // Use your existing setCourse logic
         });
     } else {
         console.warn("Course form not found.");
@@ -659,6 +669,15 @@ function setCourse(event) {
     if (sessionOptions) {
         sessionOptions.classList.remove("hidden");
     }
+
+    // Generate the session link
+    const sessionNumber = document.getElementById('session-number').value.trim();
+    const baseUrl = `${window.location.origin}/MfIgame/`;
+    const sessionLink = `${baseUrl}?course=${encodeURIComponent(courseName)}&session=${encodeURIComponent(sessionNumber)}`;
+
+    const linkOutput = document.getElementById('link-output');
+    linkOutput.textContent = sessionLink;
+    document.getElementById('session-link').style.display = 'block';
 }
 
 /**
