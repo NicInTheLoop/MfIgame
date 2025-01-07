@@ -5,37 +5,45 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Test Your Knowledge</title>
-    <!-- Link to the main CSS file -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <!-- Dynamically set the stylesheet path -->
+    <script>
+        if (typeof isGitHubPages === 'undefined') {
+            const isGitHubPages = window.location.hostname === 'nicintheloop.github.io';
+            const basePath = isGitHubPages ? '/MfIgame/static/' : '/static/';
+            document.write(`<link rel="stylesheet" href="${basePath}styles.css">`);
+        }
+    </script>
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
-
-    <!-- Link to the backup CSS file (commented out for easy use if needed) -->
-    <!--<link rel="stylesheet" href="{{ url_for('static', filename='backups/styles_layout.css') }}"> -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/wordcloud@1.2.2"></script>
 </head>
 
-<div id="course-setup" class="course-setup-container">
-    <h2>Setup Course Session</h2>
-    <form id="course-form">
-        <label for="course-code">Course Code:</label>
-        <input type="text" id="course-code" name="course-code" required>
-        <label for="session-number">Session Number:</label>
-        <input type="number" id="session-number" name="session-number" min="1" max="4" required>
-        <button type="submit">Generate Session Link</button>
-    </form>
-    <div id="session-link" class="link-container" style="display: none;">
-        <p>Share this link with learners:</p>
-        <div class="link-box">
-            <span id="link-output"></span>
-            <button id="copy-link" title="Copy Link">📋</button>
+<body>
+    <div id="course-setup" class="course-setup-container">
+        <h2>Setup Course Session</h2>
+        <form id="course-form">
+            <label for="course-code">Course Code:</label>
+            <input type="text" id="course-code" name="course-code" required>
+            <label for="session-number">Session Number:</label>
+            <input type="number" id="session-number" name="session-number" min="1" max="4" required>
+            <button type="submit">Generate Session Link</button>
+        </form>
+        <div id="session-link" class="link-container" style="display: none;">
+            <p>Share this link with learners:</p>
+            <div class="link-box">
+                <span id="link-output"></span>
+                <button id="copy-link" title="Copy Link">📋</button>
+            </div>
         </div>
+        <!-- New button to view statistics -->
+        <button id="view-statistics" onclick="viewStatistics()">View Statistics</button>
     </div>
-</div>
 
-<header class="header-container">
-    <h1 id="main-title">Test Your Knowledge of the Model for Improvement!</h1>
-    <p id="course-title" class="hidden"></p>
-    <img src="{{ url_for('static', filename='images/QICLearn_logo.jpg') }}" alt="QIC Learn Logo" class="logo" />
-</header>
+    <header class="header-container">
+        <h1 id="main-title">Test Your Knowledge of the Model for Improvement!</h1>
+        <p id="course-title" class="hidden"></p>
+        <img src="{{ url_for('static', filename='images/QICLearn_logo.jpg') }}" alt="QIC Learn Logo" class="logo" />
+    </header>
 
     <div class="main-container">
         <!-- Game Area -->
@@ -129,8 +137,17 @@
         </div>
     </div>
     
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
-    <!-- Link to the backup js file (commented out for easy use if needed) -->
-    <!--<script src="{{ url_for('static', filename='backups/script_layout.js') }}"></script>-->
+    <!-- Dynamically load the JavaScript file -->
+    <script>
+        const course = "{{ course|default('') }}";
+        const session = "{{ session|default('') }}";
+    </script>
+    <script>
+        if (typeof isGitHubPages === 'undefined') {
+            const isGitHubPages = window.location.hostname === 'nicintheloop.github.io';
+            const basePath = isGitHubPages ? '/MfIgame/static/' : '/static/';
+            document.write(`<script src="${basePath}script.js" defer><\/script>`);
+        }
+    </script>
 </body>
 </html>
