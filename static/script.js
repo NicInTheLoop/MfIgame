@@ -10,9 +10,6 @@ document.getElementById('course-form').addEventListener('submit', function (even
     // Update the link output and show the link container
     document.getElementById('link-output').textContent = sessionLink;
     document.getElementById('session-link').style.display = 'block';
-
-    // Do not update the URL or hide the course setup
-    console.log('Generated link:', sessionLink); // For debugging
 });
 
 document.getElementById('copy-link').addEventListener('click', function () {
