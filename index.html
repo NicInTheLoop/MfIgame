@@ -39,7 +39,7 @@
     <header class="header-container">
         <h1 id="main-title">Test Your Knowledge of the Model for Improvement!</h1>
         <p id="course-title" class="hidden"></p>
-        <img id="logo" src="static/images/QICLearn_logo.jpg" alt="QIC Learn Logo" class="logo" />
+        <img id="logo" src="MfIgame/static/images/QICLearn_logo.jpg" alt="QIC Learn Logo" class="logo" />
     </header>
 
     <div class="main-container">
@@ -49,30 +49,96 @@
             <div class="downward-arrow"></div>
             <div class="text-box" id="box2" ondrop="drop(event)" ondragover="allowDrop(event)">B</div>
             <div class="downward-arrow"></div>
-            <!-- Add other game elements as needed -->
+            <div class="text-box" id="box3" ondrop="drop(event)" ondragover="allowDrop(event)">C</div>
+            <div class="downward-arrow"></div>
+            <div class="cycle">
+                <div class="quarter" id="quarter1" ondrop="drop(event)" ondragover="allowDrop(event)">
+                    <span>1</span>
+                    <div class="arrow" id="arrow1"></div>
+                </div>
+                <div class="quarter" id="quarter2" ondrop="drop(event)" ondragover="allowDrop(event)">
+                    <span>2</span>
+                    <div class="arrow" id="arrow2"></div>
+                </div>
+                <div class="quarter" id="quarter3" ondrop="drop(event)" ondragover="allowDrop(event)">
+                    <span>3</span>
+                    <div class="arrow" id="arrow3"></div>
+                </div>
+                <div class="quarter" id="quarter4" ondrop="drop(event)" ondragover="allowDrop(event)">
+                    <span>4</span>
+                    <div class="arrow" id="arrow4"></div>
+                </div>
+            </div>
+        </div>
+    
+        <!-- Right Container -->
+        <div class="right-container">
+            <!-- Instructions and Buttons -->
+            <div class="instructions-container" id="instructions-container">
+                <div class="instructions" id="initial-instructions">
+                    <h2>Get your MfI Score: Drag and drop</h2>
+                    <p>When you've dropped an item into each of the sections click on this button:</p>
+                    <p>Good luck!</p>
+                </div>
+                <div class="instructions" id="next-instructions" style="display: none;">
+                    <h2>Next Steps</h2>
+                    <p>Click to go to the final question</p>
+                </div>
+                <div class="buttons-container">
+                    <button id="submit-button" onclick="submitAnswers()" disabled>Submit</button>
+                    <button id="next-question-button" onclick="nextQuestion()" style="display: none;">Next Question</button>
+                </div>
+            </div>
+    
+            <!-- Draggable Buttons -->
+            <div class="draggable-container" id="draggable-container">
+                <div id="word-bank">
+                    <div class="draggable" id="word1" draggable="true" ondragstart="drag(event)">Learn</div>
+                    <div class="draggable" id="word2" draggable="true" ondragstart="drag(event)">Assess</div>
+                    <div class="draggable" id="word3" draggable="true" ondragstart="drag(event)">Measure</div>
+                    <div class="draggable" id="word4" draggable="true" ondragstart="drag(event)">Goal</div>
+                    <div class="draggable" id="word5" draggable="true" ondragstart="drag(event)">Think</div>
+                    <div class="draggable" id="word6" draggable="true" ondragstart="drag(event)">Do</div>
+                    <div class="draggable" id="word7" draggable="true" ondragstart="drag(event)">Purpose</div>
+                    <div class="draggable" id="word8" draggable="true" ondragstart="drag(event)">Objective</div>
+                    <div class="draggable" id="word9" draggable="true" ondragstart="drag(event)">Change Ideas</div>
+                    <div class="draggable" id="word10" draggable="true" ondragstart="drag(event)">Study</div>
+                    <div class="draggable" id="word11" draggable="true" ondragstart="drag(event)">Plan</div>
+                    <div class="draggable" id="word12" draggable="true" ondragstart="drag(event)">Perform</div>
+                    <div class="draggable" id="word13" draggable="true" ondragstart="drag(event)">Check</div>
+                    <div class="draggable" id="word14" draggable="true" ondragstart="drag(event)">Define</div>
+                    <div class="draggable" id="word15" draggable="true" ondragstart="drag(event)">Test</div>
+                    <div class="draggable" id="word16" draggable="true" ondragstart="drag(event)">Audit</div>
+                    <div class="draggable" id="word17" draggable="true" ondragstart="drag(event)">Aim</div>
+                    <div class="draggable" id="word18" draggable="true" ondragstart="drag(event)">Result</div>
+                    <div class="draggable" id="word19" draggable="true" ondragstart="drag(event)">Research</div>
+                    <div class="draggable" id="word20" draggable="true" ondragstart="drag(event)">Act</div>
+                    <div class="draggable" id="word21" draggable="true" ondragstart="drag(event)">Set</div>
+                    <div class="draggable" id="word22" draggable="true" ondragstart="drag(event)">Intervention</div>
+                    <div class="draggable" id="word23" draggable="true" ondragstart="drag(event)">Indicator</div>
+                    <div class="draggable" id="word24" draggable="true" ondragstart="drag(event)">Agree</div>
+                </div>
+            </div>
+          
+            <!-- Final Question -->
+            <div class="final-question-container" id="final-question-container" style="display: none;">
+                <h2>How familiar are you with this change method (from start to finish)?</h2>
+                <div class="final-options">
+                    <div class="final-option" onclick="selectFinalOption(this)">1st time I've seen it</div>
+                    <div class="final-option" onclick="selectFinalOption(this)">Seen it, tried it or trying it</div>
+                    <div class="final-option" onclick="selectFinalOption(this)">Know it - used it</div>
+                    <div class="final-option" onclick="selectFinalOption(this)">Use it well - want to learn more</div>
+                </div>
+                <button id="final-submit-button" onclick="submitFinalAnswer()" disabled>Submit</button>
+            </div>
         </div>
     </div>
-
+    
     <!-- Dynamically load the JavaScript file -->
     <script>
         const isGitHubPages = window.location.hostname === 'nicintheloop.github.io';
-        const basePath = isGitHubPages ? '/MfIgame/static/' : 'static/';
+        const basePath = isGitHubPages ? '/MfIgame/static/' : '/static/';
         document.write(`<script src="${basePath}script.js" defer><\/script>`);
-    </script>
-    <script>
-        window.addEventListener('load', function () {
-            const urlParams = new URLSearchParams(window.location.search);
-            const courseCode = urlParams.get('course');
-            const sessionNumber = urlParams.get('session');
-
-            if (courseCode && sessionNumber) {
-                document.getElementById('course-setup').classList.add('hidden');
-                const courseTitle = `Course Session: ${courseCode} (Session ${sessionNumber})`;
-                document.getElementById('course-title').textContent = courseTitle;
-                document.getElementById('course-title').classList.remove('hidden');
-                document.getElementById('game-area').style.display = 'flex';
-            }
-        });
     </script>
 </body>
 </html>
