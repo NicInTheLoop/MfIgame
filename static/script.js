@@ -43,6 +43,7 @@ window.addEventListener('load', function () {
     }
 });
 
+
 let correctAnswersCount = 0;
 let incorrectGuesses = [];
 let finalQuestionResponse = '';
