@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Statistics</title>
+    <!-- Use a static relative URL for the stylesheet -->
+    <link rel="stylesheet" href="/MfIgame/static/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <header class="header-container">
+        <h1 id="main-title">Game Statistics</h1>
+    </header>
+
+    <div class="main-container">
+        <div id="statistics-container">
+            <!-- Statistics content will be dynamically inserted here -->
+        </div>
+    </div>
+    <script>
+        try {
+            const stats = JSON.parse(localStorage.getItem('gameStatistics')) || {};
+            document.getElementById('statistics-container').innerHTML = `
+                <p>Correct Answers: ${stats.correctCount || 0}</p>
+                <p>Incorrect Guesses: ${stats.incorrect?.join(', ') || 'None'}</p>
+                <p>Final Question Response: ${stats.finalResponse || 'None'}</p>
+            `;
+        } catch (error) {
+            console.error('Error accessing localStorage:', error);
+            document.getElementById('statistics-container').innerHTML = `
+                <p>Error accessing statistics. Please ensure you are not in incognito mode or an iframe.</p>
+            `;
+        }
+    </script>
+</body>
+
+</html>

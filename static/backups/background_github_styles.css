@@ -132,7 +132,7 @@
 }
 
 #statistics-container {
-    display: block; /* Set to block to ensure visibility */
+    display: none; /* Hidden initially */
     padding: 20px;
     margin: 20px auto;
     background-color: #f4f4f4;

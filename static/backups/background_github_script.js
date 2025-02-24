@@ -172,7 +172,7 @@ function checkSubmitButtonState() {
 
 
 function allowDrop(event) {
-    event.preventDefault(); // Always allow dropping
+    event.preventDefault();
 }
 
 function drag(event) {
@@ -185,55 +185,16 @@ function drop(event) {
     const draggedElement = document.getElementById(data);
     let dropTarget = event.target;
 
-    console.log("Attempting to drop:", draggedElement ? draggedElement.id : "null", "into", dropTarget ? dropTarget.id : "null");
-
-    if (!draggedElement || !dropTarget) {
-        console.warn("Drop event failed: draggedElement or dropTarget is null.");
-        return;
-    }
-
-    // Ensure the dropTarget is a valid drop zone
-    if (dropTarget.classList.contains("text-box") || 
+    if (
+        dropTarget.classList.contains("text-box") || 
         dropTarget.classList.contains("quarter") || 
-        dropTarget.parentElement.classList.contains("quarter")) {
-
+        dropTarget.parentElement.classList.contains("quarter")
+    ) {
         if (!dropTarget.classList.contains("quarter") && dropTarget.parentElement.classList.contains("quarter")) {
             dropTarget = dropTarget.parentElement;
         }
-
-        console.log("Valid drop zone detected:", dropTarget.id);
-
-        // Get the correct draggables container
-        const draggablesContainer = document.getElementById('draggable-container');
-        if (!draggablesContainer) {
-            console.error("draggable-container not found! Ensure it exists in the HTML.");
-            return;
-        }
-
-        // Check if the drop target already has a draggable inside
-        const existingDraggable = dropTarget.querySelector('.draggable');
-        if (existingDraggable) {
-            console.log("Existing draggable found:", existingDraggable.id, "- Moving it back to the draggables container");
-
-            // Reset rotation before returning to draggable-container
-            existingDraggable.style.transform = "rotate(0deg)";
-
-            // Remove it from the drop zone before appending
-            existingDraggable.remove();
-
-            // Append to draggable-container
-            draggablesContainer.appendChild(existingDraggable);
-
-            // Ensure it remains draggable
-            existingDraggable.setAttribute('draggable', 'true');
-            existingDraggable.addEventListener('dragstart', drag);
-        }
-
-        // Append the new draggable to the drop target
         dropTarget.appendChild(draggedElement);
-        console.log("New draggable placed:", draggedElement.id, "in", dropTarget.id);
 
-        // Adjust rotation for quarter zones
         if (dropTarget.id === "quarter2") {
             draggedElement.style.transform = "rotate(-90deg)";
         } else if (dropTarget.id === "quarter3") {
@@ -243,14 +204,10 @@ function drop(event) {
         } else {
             draggedElement.style.transform = "rotate(0deg)";
         }
-    } else {
-        console.warn("Invalid drop target:", dropTarget.id);
     }
 
     checkSubmitButtonState();
 }
-
-
 
 // DOMContentLoaded Listener
 document.addEventListener('DOMContentLoaded', function () {
