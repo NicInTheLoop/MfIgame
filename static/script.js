@@ -1,3 +1,12 @@
+function generateUserId() {
+    let userId = sessionStorage.getItem("userId");
+    if (!userId) {
+        userId = `user-${Math.random().toString(36).substr(2, 9)}`;
+        sessionStorage.setItem("userId", userId);
+    }
+    return userId;
+}
+
 // Firebase configuration
 //const firebaseConfig = {
   //  apiKey: "AIzaSyA821UkL_YsC8jAWeeBlC-TsOE4m7mC6TI",
@@ -36,20 +45,21 @@ async function trackCorrectAnswer() {
         }
 
         const data = docSnap.data();
-        if (!data.completedUsers.includes(userId)) {
+        const completedUsers = data.completedUsers || []; // Ensure the array exists
+
+        if (!completedUsers.includes(userId)) {
             await updateDoc(statsRef, { 
                 correctAnswers: increment(1), 
-                completedUsers: arrayUnion(userId)
+                completedUsers: arrayUnion(userId) // Add unique user
             });
-            console.log(`✅ User ${userId} has completed the first question.`);
+            console.log(`✅ User ${userId} has been added to completedUsers.`);
+        } else {
+            console.log(`⚠️ User ${userId} has already completed the first question.`);
         }
     } catch (error) {
         console.error("❌ Firestore Write Error:", error);
     }
 }
-
-
-
 
 // Function to track Incorrect Guesses
 async function trackIncorrectGuess(guess) {
@@ -73,19 +83,21 @@ async function trackIncorrectGuess(guess) {
         }
 
         const data = docSnap.data();
-        if (!data.completedUsers.includes(userId)) {
+        const completedUsers = data.completedUsers || [];
+
+        if (!completedUsers.includes(userId)) {
             await updateDoc(statsRef, { 
                 incorrectGuesses: arrayUnion(guess),
-                completedUsers: arrayUnion(userId)
+                completedUsers: arrayUnion(userId) // Add unique user
             });
-            console.log(`✅ User ${userId} has completed the first question.`);
+            console.log(`✅ User ${userId} has been added to completedUsers.`);
+        } else {
+            console.log(`⚠️ User ${userId} has already completed the first question.`);
         }
     } catch (error) {
         console.error("❌ Firestore Write Error:", error);
     }
 }
-
-
 
 
 // Function to track responses to the second question
