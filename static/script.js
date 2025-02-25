@@ -546,37 +546,6 @@ function checkAnswers() {
     storeRawScore(correctCount);
 }
 
-async function storeRawScore(finalScore) {
-const urlParams = new URLSearchParams(window.location.search);
-const courseCode = urlParams.get("course");
-const sessionNumber = urlParams.get("session");
-
-if (!courseCode || !sessionNumber) {
-    console.warn("⚠️ No course or session found in URL, cannot log data.");
-    return;
-}
-
-const today = new Date().toISOString().split('T')[0];
-const statsRef = doc(db, "MFIgameStats", `${courseCode}-Session${sessionNumber}-${today}`);
-
-try {
-    const docSnap = await getDoc(statsRef);
-    if (!docSnap.exists()) {
-        await setDoc(statsRef, { rawScores: [] });
-    }
-
-    // Store the player's final score in rawScores
-    await updateDoc(statsRef, { 
-        rawScores: arrayUnion(finalScore) 
-    });
-
-    console.log(`✅ Stored raw score: ${finalScore} for ${courseCode} - Session ${sessionNumber} - ${today}`);
-} catch (error) {
-    console.error("❌ Firestore Write Error:", error);
-}
-}
-
-
 // DOMContentLoaded Listener
 document.addEventListener('DOMContentLoaded', function () {
     const submitButton = document.getElementById('submit-button');
