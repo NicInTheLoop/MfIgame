@@ -31,20 +31,25 @@ async function trackCorrectAnswer() {
     try {
         const docSnap = await getDoc(statsRef);
         if (!docSnap.exists()) {
-            await setDoc(statsRef, { correctAnswers: 0, incorrectGuesses: [], rawScore: 0 });
+            await setDoc(statsRef, { correctAnswers: 0, incorrectGuesses: [], rawScores: [] });
         }
 
-        // Increment rawScore every time someone submits
+        // Fetch existing rawScores array
+        const data = docSnap.data();
+        let userScore = (data.rawScores && data.rawScores.length) ? Math.max(...data.rawScores) + 1 : 1;
+
+        // Store the new score entry
         await updateDoc(statsRef, { 
             correctAnswers: increment(1), 
-            rawScore: increment(1)
+            rawScores: arrayUnion(userScore) 
         });
 
-        console.log(`✅ RAW Score incremented for ${courseCode} - Session ${sessionNumber} - ${today}`);
+        console.log(`✅ A new raw score (${userScore}) was added for ${courseCode} - Session ${sessionNumber} - ${today}`);
     } catch (error) {
         console.error("❌ Firestore Write Error:", error);
     }
 }
+
 
 // Function to track Incorrect Guesses
 async function trackIncorrectGuess(guess) {
@@ -63,15 +68,14 @@ async function trackIncorrectGuess(guess) {
     try {
         const docSnap = await getDoc(statsRef);
         if (!docSnap.exists()) {
-            await setDoc(statsRef, { correctAnswers: 0, incorrectGuesses: [], rawScore: 0 });
+            await setDoc(statsRef, { correctAnswers: 0, incorrectGuesses: [], rawScores: [] });
         }
 
         await updateDoc(statsRef, { 
-            incorrectGuesses: arrayUnion(guess),
-            rawScore: increment(1)  // Add to RAW score when incorrect answers are submitted
+            incorrectGuesses: arrayUnion(guess)
         });
 
-        console.log(`✅ RAW Score incremented for ${courseCode} - Session ${sessionNumber} - ${today}`);
+        console.log(`⚠️ Incorrect guess recorded for ${courseCode} - Session ${sessionNumber} - ${today}`);
     } catch (error) {
         console.error("❌ Firestore Write Error:", error);
     }
