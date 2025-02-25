@@ -25,21 +25,20 @@ async function trackCorrectAnswer() {
         return;
     }
 
-    const statsRef = doc(db, "MFIgameStats", `${courseCode}-Session${sessionNumber}`);
+    const today = new Date().toISOString().split('T')[0];  // Get today's date in YYYY-MM-DD
+    const statsRef = doc(db, "MFIgameStats", `${courseCode}-Session${sessionNumber}-${today}`);
 
     try {
-        // Ensure the document exists before updating
         const docSnap = await getDoc(statsRef);
         if (!docSnap.exists()) {
             await setDoc(statsRef, { correctAnswers: 0, incorrectGuesses: [], firstQuestionResponses: 0 });
         }
 
-        // Increment the correct answer count
         await updateDoc(statsRef, { 
             correctAnswers: increment(1), 
-            firstQuestionResponses: increment(1)  // Track unique responses
+            firstQuestionResponses: increment(1)  
         });
-        console.log(`✅ Correct answer tracked for ${courseCode} - Session ${sessionNumber}!`);
+        console.log(`✅ Correct answer tracked for ${courseCode} - Session ${sessionNumber} - ${today}!`);
     } catch (error) {
         console.error("❌ Firestore Write Error:", error);
     }
@@ -57,22 +56,21 @@ async function trackIncorrectGuess(guess) {
         return;
     }
 
-    const statsRef = doc(db, "MFIgameStats", `${courseCode}-Session${sessionNumber}`);
+    const today = new Date().toISOString().split('T')[0];
+    const statsRef = doc(db, "MFIgameStats", `${courseCode}-Session${sessionNumber}-${today}`);
 
     try {
-        // Ensure the document exists before updating
         const docSnap = await getDoc(statsRef);
         if (!docSnap.exists()) {
             await setDoc(statsRef, { correctAnswers: 0, incorrectGuesses: [], firstQuestionResponses: 0 });
         }
 
-        // Add incorrect guess and count user response
         await updateDoc(statsRef, { 
             incorrectGuesses: arrayUnion(guess),
-            firstQuestionResponses: increment(1)  // Track unique responses
+            firstQuestionResponses: increment(1)  
         });
 
-        console.log(`❌ Incorrect guess recorded for ${courseCode} - Session ${sessionNumber}: ${guess}`);
+        console.log(`❌ Incorrect guess recorded for ${courseCode} - Session ${sessionNumber} - ${today}: ${guess}`);
     } catch (error) {
         console.error("❌ Firestore Write Error:", error);
     }
@@ -91,20 +89,20 @@ async function trackSecondQuestionAnswer(answer) {
         return;
     }
 
-    const statsRef = doc(db, "MFIgameStats", `${courseCode}-Session${sessionNumber}`);
+    const today = new Date().toISOString().split('T')[0];
+    const statsRef = doc(db, "MFIgameStats", `${courseCode}-Session${sessionNumber}-${today}`);
 
     try {
         await updateDoc(statsRef, { 
             secondQuestionAnswers: arrayUnion(answer),
-            secondQuestionResponses: increment(1)  // Track unique second question responses
+            secondQuestionResponses: increment(1)  
         });
 
-        console.log(`✅ Second question answer tracked for ${courseCode} - Session ${sessionNumber}: ${answer}`);
+        console.log(`✅ Second question answer tracked for ${courseCode} - Session ${sessionNumber} - ${today}: ${answer}`);
     } catch (error) {
         console.error("❌ Firestore Write Error:", error);
     }
 }
-
 
 // 🟢 Function to initialize the second question answers in Firestore
 async function initializeSecondQuestionAnswers() {
@@ -132,36 +130,48 @@ async function initializeSecondQuestionAnswers() {
 
 initializeSecondQuestionAnswers();
 
+function toggleStatistics() {
+    const statsDiv = document.getElementById("course-stats");
+    if (statsDiv.style.display === "none") {
+        statsDiv.style.display = "block";
+        updateStatisticsDisplay();  // Fetch latest stats when shown
+    } else {
+        statsDiv.style.display = "none";
+    }
+}
+
+
 // 🟢 Function to fetch and display live statistics for the organiser
 async function updateStatisticsDisplay() {
     const urlParams = new URLSearchParams(window.location.search);
     const courseCode = urlParams.get("course");
     const sessionNumber = urlParams.get("session");
+    const filterType = document.getElementById("stats-filter").value;
+    let statsRef;
 
-    if (!courseCode || !sessionNumber) {
-        console.warn("⚠️ No course or session found in URL, cannot fetch stats.");
-        return;
+    if (filterType === "today") {
+        const today = new Date().toISOString().split('T')[0];
+        statsRef = doc(db, "MFIgameStats", `${courseCode}-Session${sessionNumber}-${today}`);
+    } else if (filterType === "session") {
+        statsRef = doc(db, "MFIgameStats", `${courseCode}-Session${sessionNumber}`);
+    } else {
+        statsRef = doc(db, "MFIgameStats", courseCode);
     }
-
-    const statsRef = doc(db, "MFIgameStats", `${courseCode}-Session${sessionNumber}`);
 
     try {
         const docSnap = await getDoc(statsRef);
         if (docSnap.exists()) {
             const data = docSnap.data();
-            const firstResponses = data.firstQuestionResponses || 0;
-            const secondResponses = data.secondQuestionResponses || 0;
-
-            // 🟢 Display stats on the page
-            document.getElementById("stats-first-question").textContent = `Users who answered first question: ${firstResponses}`;
-            document.getElementById("stats-second-question").textContent = `Users who answered second question: ${secondResponses}`;
+            document.getElementById("stats-first-question").textContent = `Users who answered first question: ${data.firstQuestionResponses || 0}`;
+            document.getElementById("stats-second-question").textContent = `Users who answered second question: ${data.secondQuestionResponses || 0}`;
         } else {
-            console.warn(`⚠️ No stats found for ${courseCode} - Session ${sessionNumber}`);
+            console.warn("⚠️ No stats found");
         }
     } catch (error) {
         console.error("❌ Error fetching stats:", error);
     }
 }
+
 
 // 🟢 Run this function every 5 seconds for live updates
 setInterval(updateStatisticsDisplay, 5000);

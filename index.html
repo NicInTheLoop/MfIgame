@@ -28,14 +28,23 @@
                 <button id="copy-link" title="Copy Link">📋</button>
             </div>
         </div>
-        <div id="course-stats" class="course-stats-container">
+        <button id="toggle-stats" onclick="toggleStatistics()">View Statistics</button>
+        <div id="course-stats" class="course-stats-container" style="display: none;">
             <h3>Live Course Statistics</h3>
             <p id="stats-first-question">Users who answered first question: 0</p>
             <p id="stats-second-question">Users who answered second question: 0</p>
         </div>
+
     
         <!-- New button to view statistics -->
         <button id="view-statistics" onclick="viewStatistics()">View Statistics</button>
+
+        <select id="stats-filter">
+            <option value="today">Today's Stats</option>
+            <option value="session">This Session (All Dates)</option>
+            <option value="course">Full Course (All Sessions & Dates)</option>
+        </select>
+        
     </div>
 
     
