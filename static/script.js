@@ -86,6 +86,7 @@ window.trackIncorrectGuess = trackIncorrectGuess;
 window.trackSecondQuestionAnswer = trackSecondQuestionAnswer;
 
 // DOMContentLoaded Listener
+// DOMContentLoaded Listener
 document.addEventListener("DOMContentLoaded", function () {
     const courseForm = document.getElementById("course-form");
     const sessionLinkContainer = document.getElementById("session-link");
@@ -94,7 +95,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const courseSetup = document.getElementById("course-setup");
     const gameArea = document.getElementById("game-area");
 
-    // Function to generate and redirect to the session link
+    // 🟢 Function to generate and redirect to the session link
     courseForm.addEventListener("submit", function (event) {
         event.preventDefault();
 
@@ -106,35 +107,52 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        // Construct the session link
+        // 🟢 Construct the session link
         const sessionLink = `${window.location.origin}${window.location.pathname}?course=${encodeURIComponent(courseCode)}&session=${encodeURIComponent(sessionNumber)}`;
 
         // Redirect to the new session link
         window.location.href = sessionLink;
     });
 
-    // Function to check for existing session details in URL
+    // 🟢 Function to check for existing session details in URL and update UI
     function checkForExistingSession() {
         const urlParams = new URLSearchParams(window.location.search);
         const courseCode = urlParams.get("course");
         const sessionNumber = urlParams.get("session");
 
         if (courseCode && sessionNumber) {
-            // Hide course setup since session info exists
-            courseSetup.style.display = "none";
+            console.log("🔹 Course detected in URL:", courseCode, "Session:", sessionNumber);
+
+            // Hide course setup form
+            if (courseSetup) {
+                courseSetup.style.display = "none";
+            } else {
+                console.warn("⚠️ Course setup form not found.");
+            }
 
             // Update UI with course/session details
-            courseTitleElement.textContent = `Course Session: ${courseCode} (Session ${sessionNumber})`;
-            courseTitleElement.classList.remove("hidden");
+            if (courseTitleElement) {
+                courseTitleElement.textContent = `Course Session: ${courseCode} (Session ${sessionNumber})`;
+                courseTitleElement.classList.remove("hidden");
+            } else {
+                console.warn("⚠️ Course title element not found.");
+            }
 
             // Show the game area
-            gameArea.style.display = "flex";
+            if (gameArea) {
+                gameArea.style.display = "flex";
+            } else {
+                console.warn("⚠️ Game area not found.");
+            }
+        } else {
+            console.log("ℹ️ No course session found in URL.");
         }
     }
 
-    // Run function on page load to check for session data
-    checkForExistingSession();
+    // 🟢 Run function after ensuring the document is fully loaded
+    setTimeout(checkForExistingSession, 100);
 });
+
 
 let correctAnswersCount = 0;
 let incorrectGuesses = [];
