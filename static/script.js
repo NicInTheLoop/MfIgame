@@ -16,55 +16,85 @@ import { doc, setDoc, getDoc, updateDoc, increment, arrayUnion } from "https://w
 
 // Function to track correct answers
 async function trackCorrectAnswer() {
-    const statsRef = doc(db, "MFIgamestats", "firstQuestion");
+    const urlParams = new URLSearchParams(window.location.search);
+    const courseCode = urlParams.get("course");
+    const sessionNumber = urlParams.get("session");
+
+    if (!courseCode || !sessionNumber) {
+        console.warn("⚠️ No course or session found in URL, cannot log data.");
+        return;
+    }
+
+    const statsRef = doc(db, "MFIgameStats", `${courseCode}-Session${sessionNumber}`);
 
     try {
         // Ensure the document exists before updating
         const docSnap = await getDoc(statsRef);
         if (!docSnap.exists()) {
-            console.warn("📢 'firstQuestion' document not found. Creating it now.");
-            await setDoc(statsRef, { correctAnswers: 0, incorrectGuesses: ["placeholder"] }); // Initialize document
+            console.warn(`📢 Stats document not found for ${courseCode} - Session ${sessionNumber}. Creating it now.`);
+            await setDoc(statsRef, { correctAnswers: 0, incorrectGuesses: [] }); // Initialize document
         }
 
         // Increment the correct answer count
         await updateDoc(statsRef, { correctAnswers: increment(1) });
-        console.log("✅ Correct answer tracked!");
+        console.log(`✅ Correct answer tracked for ${courseCode} - Session ${sessionNumber}!`);
     } catch (error) {
         console.error("❌ Firestore Write Error:", error);
     }
 }
 
+
 // Function to track incorrect guesses
 async function trackIncorrectGuess(guess) {
-    const statsRef = doc(db, "MFIgamestats", "firstQuestion");
+    const urlParams = new URLSearchParams(window.location.search);
+    const courseCode = urlParams.get("course");
+    const sessionNumber = urlParams.get("session");
+
+    if (!courseCode || !sessionNumber) {
+        console.warn("⚠️ No course or session found in URL, cannot log data.");
+        return;
+    }
+
+    const statsRef = doc(db, "MFIgameStats", `${courseCode}-Session${sessionNumber}`);
 
     try {
         // Ensure the document exists before updating
         const docSnap = await getDoc(statsRef);
         if (!docSnap.exists()) {
-            console.warn("📢 'firstQuestion' document not found. Creating it now.");
-            await setDoc(statsRef, { correctAnswers: 0, incorrectGuesses: ["placeholder"] }); // Initialize document
+            console.warn(`📢 Stats document not found for ${courseCode} - Session ${sessionNumber}. Creating it now.`);
+            await setDoc(statsRef, { correctAnswers: 0, incorrectGuesses: [] }); // Initialize document
         }
 
         // Add incorrect guess to Firestore array
         await updateDoc(statsRef, { incorrectGuesses: arrayUnion(guess) });
-        console.log(`❌ Incorrect guess recorded: ${guess}`);
+        console.log(`❌ Incorrect guess recorded for ${courseCode} - Session ${sessionNumber}: ${guess}`);
     } catch (error) {
         console.error("❌ Firestore Write Error:", error);
     }
 }
 
+
 // Function to track responses to the second question
-async function initializeSecondQuestionAnswers() {
-    const statsRef = doc(db, "MFIgamestats", "secondQuestionAnswers");
+async function trackSecondQuestionAnswer(answer) {
+    const urlParams = new URLSearchParams(window.location.search);
+    const courseCode = urlParams.get("course");
+    const sessionNumber = urlParams.get("session");
+
+    if (!courseCode || !sessionNumber) {
+        console.warn("⚠️ No course or session found in URL, cannot log data.");
+        return;
+    }
+
+    const statsRef = doc(db, "MFIgameStats", `${courseCode}-Session${sessionNumber}`);
 
     try {
-        await setDoc(statsRef, { answers: [] });  // Create document with an empty array
-        console.log("✅ Successfully initialized secondQuestionAnswers with an empty array.");
+        await updateDoc(statsRef, { secondQuestionAnswers: arrayUnion(answer) });
+        console.log(`✅ Second question answer tracked for ${courseCode} - Session ${sessionNumber}: ${answer}`);
     } catch (error) {
-        console.error("❌ Firestore Initialization Error:", error);
+        console.error("❌ Firestore Write Error:", error);
     }
 }
+
 
 initializeSecondQuestionAnswers();
 
@@ -92,28 +122,43 @@ document.addEventListener("DOMContentLoaded", function () {
     const courseSetup = document.getElementById("course-setup");
     const gameArea = document.getElementById("game-area");
 
-    // 🟢 Function to generate and show session link (no redirect)
-    courseForm.addEventListener("submit", function (event) {
-        event.preventDefault();
+    // 🟢 Function to generate session link and store session in Firebase
+courseForm.addEventListener("submit", async function (event) {
+    event.preventDefault();
 
-        const courseCode = document.getElementById("course-code").value.trim();
-        const sessionNumber = document.getElementById("session-number").value.trim();
+    const courseCode = document.getElementById("course-code").value.trim();
+    const sessionNumber = document.getElementById("session-number").value.trim();
 
-        if (!courseCode || !sessionNumber) {
-            alert("Please enter both the course code and session number.");
-            return;
-        }
+    if (!courseCode || !sessionNumber) {
+        alert("Please enter both the course code and session number.");
+        return;
+    }
 
-        // 🟢 Store organiser status
-        sessionStorage.setItem("isOrganiser", "true");
+    // 🟢 Store organiser status
+    sessionStorage.setItem("isOrganiser", "true");
 
-        // 🟢 Construct session link
-        const sessionLink = `${window.location.origin}${window.location.pathname}?course=${encodeURIComponent(courseCode)}&session=${encodeURIComponent(sessionNumber)}`;
+    // 🟢 Construct session link
+    const sessionLink = `${window.location.origin}${window.location.pathname}?course=${encodeURIComponent(courseCode)}&session=${encodeURIComponent(sessionNumber)}`;
 
-        // 🟢 Show generated session link instead of redirecting
-        linkOutput.textContent = sessionLink;
-        sessionLinkContainer.style.display = "block";
-    });
+    // 🟢 Show generated session link instead of redirecting
+    linkOutput.textContent = sessionLink;
+    sessionLinkContainer.style.display = "block";
+
+    // 🟢 Store session details in Firebase
+    try {
+        const sessionRef = doc(db, "MFIgameSessions", `${courseCode}-Session${sessionNumber}`);
+        await setDoc(sessionRef, {
+            course: courseCode,
+            session: sessionNumber,
+            createdAt: new Date().toISOString()
+        }, { merge: true });
+
+        console.log(`✅ Session stored in Firebase: ${courseCode} - Session ${sessionNumber}`);
+    } catch (error) {
+        console.error("❌ Error storing session in Firebase:", error);
+    }
+});
+
 
     // 🟢 Function to check for existing session details in URL
     function checkForExistingSession() {
