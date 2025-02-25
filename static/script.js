@@ -31,12 +31,14 @@ async function trackCorrectAnswer() {
         // Ensure the document exists before updating
         const docSnap = await getDoc(statsRef);
         if (!docSnap.exists()) {
-            console.warn(`📢 Stats document not found for ${courseCode} - Session ${sessionNumber}. Creating it now.`);
-            await setDoc(statsRef, { correctAnswers: 0, incorrectGuesses: [] }); // Initialize document
+            await setDoc(statsRef, { correctAnswers: 0, incorrectGuesses: [], firstQuestionResponses: 0 });
         }
 
         // Increment the correct answer count
-        await updateDoc(statsRef, { correctAnswers: increment(1) });
+        await updateDoc(statsRef, { 
+            correctAnswers: increment(1), 
+            firstQuestionResponses: increment(1)  // Track unique responses
+        });
         console.log(`✅ Correct answer tracked for ${courseCode} - Session ${sessionNumber}!`);
     } catch (error) {
         console.error("❌ Firestore Write Error:", error);
@@ -44,7 +46,7 @@ async function trackCorrectAnswer() {
 }
 
 
-// Function to track incorrect guesses
+// Function to track Incorrect Guesses
 async function trackIncorrectGuess(guess) {
     const urlParams = new URLSearchParams(window.location.search);
     const courseCode = urlParams.get("course");
@@ -61,17 +63,21 @@ async function trackIncorrectGuess(guess) {
         // Ensure the document exists before updating
         const docSnap = await getDoc(statsRef);
         if (!docSnap.exists()) {
-            console.warn(`📢 Stats document not found for ${courseCode} - Session ${sessionNumber}. Creating it now.`);
-            await setDoc(statsRef, { correctAnswers: 0, incorrectGuesses: [] }); // Initialize document
+            await setDoc(statsRef, { correctAnswers: 0, incorrectGuesses: [], firstQuestionResponses: 0 });
         }
 
-        // Add incorrect guess to Firestore array
-        await updateDoc(statsRef, { incorrectGuesses: arrayUnion(guess) });
+        // Add incorrect guess and count user response
+        await updateDoc(statsRef, { 
+            incorrectGuesses: arrayUnion(guess),
+            firstQuestionResponses: increment(1)  // Track unique responses
+        });
+
         console.log(`❌ Incorrect guess recorded for ${courseCode} - Session ${sessionNumber}: ${guess}`);
     } catch (error) {
         console.error("❌ Firestore Write Error:", error);
     }
 }
+
 
 
 // Function to track responses to the second question
@@ -88,12 +94,17 @@ async function trackSecondQuestionAnswer(answer) {
     const statsRef = doc(db, "MFIgameStats", `${courseCode}-Session${sessionNumber}`);
 
     try {
-        await updateDoc(statsRef, { secondQuestionAnswers: arrayUnion(answer) });
+        await updateDoc(statsRef, { 
+            secondQuestionAnswers: arrayUnion(answer),
+            secondQuestionResponses: increment(1)  // Track unique second question responses
+        });
+
         console.log(`✅ Second question answer tracked for ${courseCode} - Session ${sessionNumber}: ${answer}`);
     } catch (error) {
         console.error("❌ Firestore Write Error:", error);
     }
 }
+
 
 // 🟢 Function to initialize the second question answers in Firestore
 async function initializeSecondQuestionAnswers() {
@@ -121,10 +132,42 @@ async function initializeSecondQuestionAnswers() {
 
 initializeSecondQuestionAnswers();
 
-// Attach to window to ensure it's accessible globally
-window.trackCorrectAnswer = trackCorrectAnswer;
-window.trackIncorrectGuess = trackIncorrectGuess;
-window.trackSecondQuestionAnswer = trackSecondQuestionAnswer;
+// 🟢 Function to fetch and display live statistics for the organiser
+async function updateStatisticsDisplay() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const courseCode = urlParams.get("course");
+    const sessionNumber = urlParams.get("session");
+
+    if (!courseCode || !sessionNumber) {
+        console.warn("⚠️ No course or session found in URL, cannot fetch stats.");
+        return;
+    }
+
+    const statsRef = doc(db, "MFIgameStats", `${courseCode}-Session${sessionNumber}`);
+
+    try {
+        const docSnap = await getDoc(statsRef);
+        if (docSnap.exists()) {
+            const data = docSnap.data();
+            const firstResponses = data.firstQuestionResponses || 0;
+            const secondResponses = data.secondQuestionResponses || 0;
+
+            // 🟢 Display stats on the page
+            document.getElementById("stats-first-question").textContent = `Users who answered first question: ${firstResponses}`;
+            document.getElementById("stats-second-question").textContent = `Users who answered second question: ${secondResponses}`;
+        } else {
+            console.warn(`⚠️ No stats found for ${courseCode} - Session ${sessionNumber}`);
+        }
+    } catch (error) {
+        console.error("❌ Error fetching stats:", error);
+    }
+}
+
+// 🟢 Run this function every 5 seconds for live updates
+setInterval(updateStatisticsDisplay, 5000);
+
+
+
 
 // DOMContentLoaded Listener
 document.addEventListener("DOMContentLoaded", function () {
@@ -580,6 +623,8 @@ window.submitFinalAnswer = submitFinalAnswer;
 window.allowDrop = allowDrop;
 window.drag = drag;
 window.drop = drop;
+
+
 
 window.testFirestore = async function () {
     try {
