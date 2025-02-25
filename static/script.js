@@ -132,11 +132,15 @@ initializeSecondQuestionAnswers();
 
 function toggleStatistics() {
     const statsDiv = document.getElementById("course-stats");
-    if (statsDiv.style.display === "none") {
-        statsDiv.style.display = "block";
+    const statsButton = document.getElementById("toggle-stats");
+
+    if (statsDiv.classList.contains("hidden")) {
+        statsDiv.classList.remove("hidden");
+        statsButton.textContent = "Hide Statistics";
         updateStatisticsDisplay();  // Fetch latest stats when shown
     } else {
-        statsDiv.style.display = "none";
+        statsDiv.classList.add("hidden");
+        statsButton.textContent = "View Statistics";
     }
 }
 

@@ -28,22 +28,29 @@
                 <button id="copy-link" title="Copy Link">📋</button>
             </div>
         </div>
-        <button id="toggle-stats" onclick="toggleStatistics()">View Statistics</button>
-        <div id="course-stats" class="course-stats-container" style="display: none;">
+        <!-- Statistics Tab -->
+        <button id="toggle-stats" class="stats-tab" onclick="toggleStatistics()">View Statistics</button>
+
+        <!-- Statistics Container (Initially Hidden) -->
+        <div id="course-stats" class="course-stats-container hidden">
             <h3>Live Course Statistics</h3>
+
+            <!-- Dropdown to Select Which Stats to Show -->
+            <label for="stats-filter">Choose Statistics:</label>
+            <select id="stats-filter" onchange="updateStatisticsDisplay()">
+                <option value="today">Today's Stats</option>
+                <option value="session">This Session (All Dates)</option>
+                <option value="course">Full Course (All Sessions & Dates)</option>
+            </select>
+
+            <!-- Stats Display -->
             <p id="stats-first-question">Users who answered first question: 0</p>
             <p id="stats-second-question">Users who answered second question: 0</p>
+
+            <!-- Placeholder for Graphs (To be added later) -->
+            <div id="stats-graphs"></div>
         </div>
 
-    
-        <!-- New button to view statistics -->
-        <button id="view-statistics" onclick="viewStatistics()">View Statistics</button>
-
-        <select id="stats-filter">
-            <option value="today">Today's Stats</option>
-            <option value="session">This Session (All Dates)</option>
-            <option value="course">Full Course (All Sessions & Dates)</option>
-        </select>
         
     </div>
 
