@@ -92,7 +92,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const courseSetup = document.getElementById("course-setup");
     const gameArea = document.getElementById("game-area");
 
-    // 🟢 Function to generate and redirect to the session link
+    // 🟢 Function to generate and show session link (no redirect)
     courseForm.addEventListener("submit", function (event) {
         event.preventDefault();
 
@@ -104,11 +104,15 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        // 🟢 Construct the session link
+        // 🟢 Store organiser status
+        sessionStorage.setItem("isOrganiser", "true");
+
+        // 🟢 Construct session link
         const sessionLink = `${window.location.origin}${window.location.pathname}?course=${encodeURIComponent(courseCode)}&session=${encodeURIComponent(sessionNumber)}`;
 
-        // Redirect to the new session link
-        window.location.href = sessionLink;
+        // 🟢 Show generated session link instead of redirecting
+        linkOutput.textContent = sessionLink;
+        sessionLinkContainer.style.display = "block";
     });
 
     // 🟢 Function to check for existing session details in URL
@@ -116,10 +120,17 @@ document.addEventListener("DOMContentLoaded", function () {
         const urlParams = new URLSearchParams(window.location.search);
         const courseCode = urlParams.get("course");
         const sessionNumber = urlParams.get("session");
+        const isOrganiser = sessionStorage.getItem("isOrganiser") === "true";
 
         if (courseCode && sessionNumber) {
-            // 🟢 Hide course setup since session info exists
-            courseSetup.style.display = "none";
+            console.log("🔹 Course detected in URL:", courseCode, "Session:", sessionNumber);
+
+            // 🟢 Keep course setup visible for organisers
+            if (!isOrganiser) {
+                courseSetup.style.display = "none";
+            } else {
+                sessionLinkContainer.style.display = "block";
+            }
 
             // 🟢 Update UI with course/session details
             courseTitleElement.textContent = `Course Session: ${courseCode} (Session ${sessionNumber})`;
@@ -127,11 +138,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
             // 🟢 Show the game area
             gameArea.style.display = "flex";
+        } else {
+            console.log("ℹ️ No course session found in URL.");
         }
     }
 
-    // 🟢 Run function on page load to check for session data
-    checkForExistingSession();
+    // 🟢 Run function after ensuring the document is fully loaded
+    setTimeout(checkForExistingSession, 500);
 });
 
 
