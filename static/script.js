@@ -1,12 +1,3 @@
-function generateUserId() {
-    let userId = sessionStorage.getItem("userId");
-    if (!userId) {
-        userId = `user-${Math.random().toString(36).substr(2, 9)}`;
-        sessionStorage.setItem("userId", userId);
-    }
-    return userId;
-}
-
 // Firebase configuration
 //const firebaseConfig = {
   //  apiKey: "AIzaSyA821UkL_YsC8jAWeeBlC-TsOE4m7mC6TI",
@@ -36,26 +27,20 @@ async function trackCorrectAnswer() {
 
     const today = new Date().toISOString().split('T')[0];
     const statsRef = doc(db, "MFIgameStats", `${courseCode}-Session${sessionNumber}-${today}`);
-    const userId = sessionStorage.getItem("userId") || generateUserId();
 
     try {
         const docSnap = await getDoc(statsRef);
         if (!docSnap.exists()) {
-            await setDoc(statsRef, { correctAnswers: 0, incorrectGuesses: [], completedUsers: [] });
+            await setDoc(statsRef, { correctAnswers: 0, incorrectGuesses: [], rawScore: 0 });
         }
 
-        const data = docSnap.data();
-        const completedUsers = data.completedUsers || []; // Ensure the array exists
+        // Increment rawScore every time someone submits
+        await updateDoc(statsRef, { 
+            correctAnswers: increment(1), 
+            rawScore: increment(1)
+        });
 
-        if (!completedUsers.includes(userId)) {
-            await updateDoc(statsRef, { 
-                correctAnswers: increment(1), 
-                completedUsers: arrayUnion(userId) // Add unique user
-            });
-            console.log(`✅ User ${userId} has been added to completedUsers.`);
-        } else {
-            console.log(`⚠️ User ${userId} has already completed the first question.`);
-        }
+        console.log(`✅ RAW Score incremented for ${courseCode} - Session ${sessionNumber} - ${today}`);
     } catch (error) {
         console.error("❌ Firestore Write Error:", error);
     }
@@ -74,30 +59,27 @@ async function trackIncorrectGuess(guess) {
 
     const today = new Date().toISOString().split('T')[0];
     const statsRef = doc(db, "MFIgameStats", `${courseCode}-Session${sessionNumber}-${today}`);
-    const userId = sessionStorage.getItem("userId") || generateUserId();
 
     try {
         const docSnap = await getDoc(statsRef);
         if (!docSnap.exists()) {
-            await setDoc(statsRef, { correctAnswers: 0, incorrectGuesses: [], completedUsers: [] });
+            await setDoc(statsRef, { correctAnswers: 0, incorrectGuesses: [], rawScore: 0 });
         }
 
-        const data = docSnap.data();
-        const completedUsers = data.completedUsers || [];
+        await updateDoc(statsRef, { 
+            incorrectGuesses: arrayUnion(guess),
+            rawScore: increment(1)  // Add to RAW score when incorrect answers are submitted
+        });
 
-        if (!completedUsers.includes(userId)) {
-            await updateDoc(statsRef, { 
-                incorrectGuesses: arrayUnion(guess),
-                completedUsers: arrayUnion(userId) // Add unique user
-            });
-            console.log(`✅ User ${userId} has been added to completedUsers.`);
-        } else {
-            console.log(`⚠️ User ${userId} has already completed the first question.`);
-        }
+        console.log(`✅ RAW Score incremented for ${courseCode} - Session ${sessionNumber} - ${today}`);
     } catch (error) {
         console.error("❌ Firestore Write Error:", error);
     }
 }
+
+// If I later want to display the raw score i use
+// const rawScore = data.rawScore || 0;
+
 
 
 // Function to track responses to the second question
