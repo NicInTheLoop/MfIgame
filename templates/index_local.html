@@ -131,20 +131,28 @@
         </div>
     </div>
     
+    <script>
+        // Set the correct logo path for the local version
+        const logoPath = "/static/images/QICLearn_logo.jpg";
+        document.getElementById('logo').src = logoPath;
+    </script>
+    
+
     <!-- Dynamically load the JavaScript file -->
     <script>
         const course = "{{ course|default('') }}";
         const session = "{{ session|default('') }}";
     </script>
-    <script>
-        const isGitHubPages = window.location.hostname === 'nicintheloop.github.io';
-        const basePath = isGitHubPages ? '/MfIgame/static/' : '/static/';
-        document.write(`<script src="${basePath}script.js" defer><\/script>`);
-    </script>
-    <script>
-        // Dynamically set the logo source
-        const logoPath = isGitHubPages ? '/MfIgame/static/images/QICLearn_logo.jpg' : '/static/images/QICLearn_logo.jpg';
-        document.getElementById('logo').src = logoPath;
-    </script>
+
+    <!-- Load Firebase FIRST -->
+<script type="module" src="/static/firebase.js"></script>
+<!--<script src="/static/firebase.js"></script>-->
+
+<!-- Load the main game script AFTER Firebase -->
+<script type="module" src="/static/script.js"></script>
+<!--<script src="/static/script.js"></script>-->
+
+
+     
 </body>
 </html>

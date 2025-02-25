@@ -1,3 +1,90 @@
+// Firebase configuration
+//const firebaseConfig = {
+  //  apiKey: "AIzaSyA821UkL_YsC8jAWeeBlC-TsOE4m7mC6TI",
+  //  authDomain: "mfigame-48c52.firebaseapp.com",
+  //  databaseURL: "https://mfigame-48c52-default-rtdb.europe-west1.firebasedatabase.app",
+  //  projectId: "mfigame-48c52",
+  //  storageBucket: "mfigame-48c52.firebasestorage.app",
+    //messagingSenderId: "924931703532",
+    //appId: "1:924931703532:web:7917661766a1f763b2dbc9",
+    //measurementId: "G-FXBJEP5SP1"
+//};
+
+// Import the existing Firebase instance
+import { doc, setDoc, getDoc, updateDoc, increment, arrayUnion } 
+from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js";
+
+import { db } from "./firebase.js"; // Ensure Firebase is properly imported
+
+// Function to track correct answers
+async function trackCorrectAnswer() {
+    const statsRef = doc(db, "MFIgamestats", "firstQuestion");
+
+    try {
+        // Ensure the document exists before updating
+        const docSnap = await getDoc(statsRef);
+        if (!docSnap.exists()) {
+            console.warn("📢 'firstQuestion' document not found. Creating it now.");
+            await setDoc(statsRef, { correctAnswers: 0, incorrectGuesses: ["placeholder"] }); // Initialize document
+        }
+
+        // Increment the correct answer count
+        await updateDoc(statsRef, { correctAnswers: increment(1) });
+        console.log("✅ Correct answer tracked!");
+    } catch (error) {
+        console.error("❌ Firestore Write Error:", error);
+    }
+}
+
+// Function to track incorrect guesses
+async function trackIncorrectGuess(guess) {
+    const statsRef = doc(db, "MFIgamestats", "firstQuestion");
+
+    try {
+        // Ensure the document exists before updating
+        const docSnap = await getDoc(statsRef);
+        if (!docSnap.exists()) {
+            console.warn("📢 'firstQuestion' document not found. Creating it now.");
+            await setDoc(statsRef, { correctAnswers: 0, incorrectGuesses: ["placeholder"] }); // Initialize document
+        }
+
+        // Add incorrect guess to Firestore array
+        await updateDoc(statsRef, { incorrectGuesses: arrayUnion(guess) });
+        console.log(`❌ Incorrect guess recorded: ${guess}`);
+    } catch (error) {
+        console.error("❌ Firestore Write Error:", error);
+    }
+}
+
+
+// Function to track responses to the second question
+async function initializeSecondQuestionAnswers() {
+    const statsRef = doc(db, "MFIgamestats", "secondQuestionAnswers");
+
+    try {
+        await setDoc(statsRef, { answers: [] });  // Create document with an empty array
+        console.log("✅ Successfully initialized secondQuestionAnswers with an empty array.");
+    } catch (error) {
+        console.error("❌ Firestore Initialization Error:", error);
+    }
+}
+
+initializeSecondQuestionAnswers();
+
+async function trackSecondQuestionAnswer(answer) {
+    try {
+        const statsRef = doc(db, "MFIgamestats", "secondQuestionAnswers");
+        await updateDoc(statsRef, { answers: arrayUnion(answer) });
+        console.log(`✅ Second question answer tracked: ${answer}`);
+    } catch (error) {
+        console.error("❌ Firestore Write Error:", error);
+    }
+}
+
+// Attach to window to ensure it's accessible globally
+
+
+
 document.getElementById('course-form').addEventListener('submit', function (event) {
     event.preventDefault();
 
@@ -99,6 +186,7 @@ function checkAnswers() {
             console.log(`Correct! Zone: ${zoneId}, Dragged ID: ${draggableChild.id}`);
             zone.classList.add('correct');
             zone.classList.remove('incorrect');
+            trackCorrectAnswer(); // Track correct answer
         } else {
             console.warn(`Incorrect or empty. Zone: ${zoneId}, Dragged ID: ${draggableChild ? draggableChild.id : 'None'}`);
             zone.classList.add('incorrect');
@@ -122,6 +210,7 @@ function checkAnswers() {
             // Remove the draggable button from the zone
             if (draggableChild) {
                 draggableChild.remove();
+                trackIncorrectGuess(draggableChild.textContent); // Track incorrect guess
             }
         }
     });
@@ -201,53 +290,58 @@ function drop(event) {
             dropTarget = dropTarget.parentElement;
         }
 
-        console.log("Valid drop zone detected:", dropTarget.id);
-
-        // Get the correct draggables container
-        const draggablesContainer = document.getElementById('draggable-container');
-        if (!draggablesContainer) {
-            console.error("draggable-container not found! Ensure it exists in the HTML.");
-            return;
-        }
-
-        // Check if the drop target already has a draggable inside
-        const existingDraggable = dropTarget.querySelector('.draggable');
-        if (existingDraggable) {
-            console.log("Existing draggable found:", existingDraggable.id, "- Moving it back to the draggables container");
-
-            // Reset rotation before returning to draggable-container
-            existingDraggable.style.transform = "rotate(0deg)";
-
-            // Remove it from the drop zone before appending
-            existingDraggable.remove();
-
-            // Append to draggable-container
-            draggablesContainer.appendChild(existingDraggable);
-
-            // Ensure it remains draggable
-            existingDraggable.setAttribute('draggable', 'true');
-            existingDraggable.addEventListener('dragstart', drag);
-        }
-
-        // Append the new draggable to the drop target
-        dropTarget.appendChild(draggedElement);
-        console.log("New draggable placed:", draggedElement.id, "in", dropTarget.id);
-
-        // Adjust rotation for quarter zones
-        if (dropTarget.id === "quarter2") {
-            draggedElement.style.transform = "rotate(-90deg)";
-        } else if (dropTarget.id === "quarter3") {
-            draggedElement.style.transform = "rotate(180deg)";
-        } else if (dropTarget.id === "quarter4") {
-            draggedElement.style.transform = "rotate(90deg)";
-        } else {
-            draggedElement.style.transform = "rotate(0deg)";
-        }
-    } else {
-        console.warn("Invalid drop target:", dropTarget.id);
+    // ✅ NEW: Ensure text-boxes handle replacing draggables like quarters do
+    if (!dropTarget.classList.contains("text-box") && dropTarget.parentElement.classList.contains("text-box")) {
+        dropTarget = dropTarget.parentElement;
     }
 
-    checkSubmitButtonState();
+    console.log("Valid drop zone detected:", dropTarget.id);
+
+    // Get the correct draggables container
+    const draggablesContainer = document.getElementById('draggable-container');
+    if (!draggablesContainer) {
+        console.error("draggable-container not found! Ensure it exists in the HTML.");
+        return;
+    }
+
+    // Check if the drop target already has a draggable inside (both for text-boxes and quarters)
+    const existingDraggable = dropTarget.querySelector('.draggable');
+    if (existingDraggable) {
+        console.log("Existing draggable found:", existingDraggable.id, "- Moving it back to the draggables container");
+
+        // Reset rotation before returning to draggable-container
+        existingDraggable.style.transform = "rotate(0deg)";
+
+        // Remove it from the drop zone before appending
+        existingDraggable.remove();
+
+        // Append to draggable-container
+        draggablesContainer.appendChild(existingDraggable);
+
+        // Ensure it remains draggable
+        existingDraggable.setAttribute('draggable', 'true');
+        existingDraggable.addEventListener('dragstart', drag);
+    }
+
+    // Append the new draggable to the drop target
+    dropTarget.appendChild(draggedElement);
+    console.log("New draggable placed:", draggedElement.id, "in", dropTarget.id);
+
+    // Adjust rotation for quarter zones
+    if (dropTarget.id === "quarter2") {
+        draggedElement.style.transform = "rotate(-90deg)";
+    } else if (dropTarget.id === "quarter3") {
+        draggedElement.style.transform = "rotate(180deg)";
+    } else if (dropTarget.id === "quarter4") {
+        draggedElement.style.transform = "rotate(90deg)";
+    } else {
+        draggedElement.style.transform = "rotate(0deg)"; // Ensure no rotation for text-boxes
+    }
+} else {
+    console.warn("Invalid drop target:", dropTarget.id);
+}
+
+checkSubmitButtonState();
 }
 
 
@@ -380,6 +474,7 @@ function submitFinalAnswer() {
     });
 
     console.log('Final answer submitted:', selectedFinalOption.textContent);
+    trackSecondQuestionAnswer(selectedFinalOption.textContent); // Track second question answer
 }
 
 // Function to view statistics
@@ -391,24 +486,31 @@ function viewStatistics() {
     window.open(statisticsLink, '_blank');
 }
 
-// Example function to collect and save statistics
-function collectStatistics() {
-    // Example: Collect data
-    const correctCount = correctAnswersCount;
-    const incorrect = incorrectGuesses;
-    const finalResponse = finalQuestionResponse;
-
-    // Save to local storage or send to a backend
-    const statistics = {
-        correctCount,
-        incorrect,
-        finalResponse,
-    };
-
-    // Save in local storage or send to an API
-    localStorage.setItem('gameStatistics', JSON.stringify(statistics));
-    console.log('Statistics collected:', statistics);
-}
-
 // Ensure statistics are saved when the game completes
-document.getElementById('final-submit-button').addEventListener('click', collectStatistics);
+// document.getElementById('final-submit-button').addEventListener('click', collectStatistics);
+
+// Attach functions to window for global access
+window.trackCorrectAnswer = trackCorrectAnswer;
+window.trackIncorrectGuess = trackIncorrectGuess;
+window.trackSecondQuestionAnswer = trackSecondQuestionAnswer;
+window.nextQuestion = nextQuestion;
+window.submitAnswers = checkAnswers;
+window.selectFinalOption = selectFinalOption;
+window.submitFinalAnswer = submitFinalAnswer;
+window.allowDrop = allowDrop;
+window.drag = drag;
+window.drop = drop;
+
+window.testFirestore = async function () {
+    try {
+        const statsRef = doc(db, "gameStats", "firstQuestion");
+        await updateDoc(statsRef, { correctAnswers: increment(1) });
+        console.log("✅ Firestore write successful!");
+    } catch (error) {
+        console.error("❌ Firestore Write Error:", error);
+    }
+};
+
+console.log("✅ testFirestore function is now available globally.");
+console.log("✅ Reached the end of script.js execution.");
+
