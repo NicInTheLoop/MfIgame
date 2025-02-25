@@ -98,16 +98,6 @@ async function trackSecondQuestionAnswer(answer) {
 
 initializeSecondQuestionAnswers();
 
-async function trackSecondQuestionAnswer(answer) {
-    try {
-        const statsRef = doc(db, "MFIgamestats", "secondQuestionAnswers");
-        await updateDoc(statsRef, { answers: arrayUnion(answer) });
-        console.log(`✅ Second question answer tracked: ${answer}`);
-    } catch (error) {
-        console.error("❌ Firestore Write Error:", error);
-    }
-}
-
 // Attach to window to ensure it's accessible globally
 window.trackCorrectAnswer = trackCorrectAnswer;
 window.trackIncorrectGuess = trackIncorrectGuess;
