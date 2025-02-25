@@ -95,6 +95,29 @@ async function trackSecondQuestionAnswer(answer) {
     }
 }
 
+// 🟢 Function to initialize the second question answers in Firestore
+async function initializeSecondQuestionAnswers() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const courseCode = urlParams.get("course");
+    const sessionNumber = urlParams.get("session");
+
+    if (!courseCode || !sessionNumber) {
+        console.warn("⚠️ No course or session found in URL, cannot initialize Firestore.");
+        return;
+    }
+
+    const statsRef = doc(db, "MFIgameStats", `${courseCode}-Session${sessionNumber}`);
+
+    try {
+        const docSnap = await getDoc(statsRef);
+        if (!docSnap.exists()) {
+            await setDoc(statsRef, { secondQuestionAnswers: [] });  // Initialize with an empty array
+            console.log(`✅ Second question tracking initialized for ${courseCode} - Session ${sessionNumber}`);
+        }
+    } catch (error) {
+        console.error("❌ Firestore Initialization Error:", error);
+    }
+}
 
 initializeSecondQuestionAnswers();
 
