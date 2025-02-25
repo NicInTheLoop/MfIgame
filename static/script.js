@@ -130,7 +130,7 @@ async function initializeSecondQuestionAnswers() {
 
 initializeSecondQuestionAnswers();
 
-function toggleStatistics() {
+window.toggleStatistics = function () {
     const statsDiv = document.getElementById("course-stats");
     const statsButton = document.getElementById("toggle-stats");
 
@@ -142,39 +142,58 @@ function toggleStatistics() {
         statsDiv.classList.add("hidden");
         statsButton.textContent = "View Statistics";
     }
-}
+};
+
 
 
 // 🟢 Function to fetch and display live statistics for the organiser
-async function updateStatisticsDisplay() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const courseCode = urlParams.get("course");
-    const sessionNumber = urlParams.get("session");
+window.updateStatisticsDisplay = async function () {
     const filterType = document.getElementById("stats-filter").value;
+    let totalFirst = 0;
+    let totalSecond = 0;
     let statsRef;
 
-    if (filterType === "today") {
-        const today = new Date().toISOString().split('T')[0];
-        statsRef = doc(db, "MFIgameStats", `${courseCode}-Session${sessionNumber}-${today}`);
-    } else if (filterType === "session") {
-        statsRef = doc(db, "MFIgameStats", `${courseCode}-Session${sessionNumber}`);
-    } else {
-        statsRef = doc(db, "MFIgameStats", courseCode);
-    }
-
     try {
-        const docSnap = await getDoc(statsRef);
-        if (docSnap.exists()) {
-            const data = docSnap.data();
-            document.getElementById("stats-first-question").textContent = `Users who answered first question: ${data.firstQuestionResponses || 0}`;
-            document.getElementById("stats-second-question").textContent = `Users who answered second question: ${data.secondQuestionResponses || 0}`;
+        if (filterType === "all") {
+            // Fetch all stats for all courses/sessions
+            const statsQuery = await getDocs(collection(db, "MFIgameStats"));
+
+            statsQuery.forEach((docSnap) => {
+                const data = docSnap.data();
+                totalFirst += data.firstQuestionResponses || 0;
+                totalSecond += data.secondQuestionResponses || 0;
+            });
+
+            document.getElementById("stats-first-question").textContent = `Total Users Who Answered First Question: ${totalFirst}`;
+            document.getElementById("stats-second-question").textContent = `Total Users Who Answered Second Question: ${totalSecond}`;
         } else {
-            console.warn("⚠️ No stats found");
+            // Get course/session-specific statistics
+            const urlParams = new URLSearchParams(window.location.search);
+            const courseCode = urlParams.get("course");
+            const sessionNumber = urlParams.get("session");
+            let docId = courseCode ? `${courseCode}-Session${sessionNumber}` : "all-courses";
+
+            if (filterType === "today") {
+                const today = new Date().toISOString().split("T")[0];
+                docId += `-${today}`;
+            }
+
+            statsRef = doc(db, "MFIgameStats", docId);
+            const docSnap = await getDoc(statsRef);
+
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                document.getElementById("stats-first-question").textContent = `Users who answered first question: ${data.firstQuestionResponses || 0}`;
+                document.getElementById("stats-second-question").textContent = `Users who answered second question: ${data.secondQuestionResponses || 0}`;
+            } else {
+                document.getElementById("stats-first-question").textContent = "No statistics available yet.";
+                document.getElementById("stats-second-question").textContent = "No statistics available yet.";
+            }
         }
     } catch (error) {
         console.error("❌ Error fetching stats:", error);
     }
-}
+};
 
 
 // 🟢 Run this function every 5 seconds for live updates

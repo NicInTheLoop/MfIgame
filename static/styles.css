@@ -133,8 +133,8 @@
 
 /* Style for the Statistics Tab */
 .stats-tab {
-    background-color: #e6007e; /* Pink background */
-    color: white; /* White text */
+    background-color: #e6007e; /* Pink */
+    color: white;
     border: none;
     border-radius: 5px;
     padding: 10px 20px;
@@ -143,31 +143,26 @@
     display: block;
     margin: 20px auto;
     text-align: center;
+    width: 200px;
 }
 
 .stats-tab:hover {
-    background-color: #b60d91; /* Darker pink on hover */
+    background-color: #b60d91; /* Darker pink */
 }
 
 /* Statistics Container */
 .course-stats-container {
-    display: none; /* Hidden by default */
-    background-color: #f8f1f8; /* Light pink background */
+    background-color: #f8f1f8; /* Light pink */
     border: 2px solid #e6007e; /* Pink border */
     border-radius: 5px;
     padding: 20px;
     margin: 20px auto;
-    max-width: 600px; /* Keep it centered */
+    max-width: 600px;
     text-align: center;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-/* Make the container visible when shown */
-.course-stats-container.hidden {
-    display: none;
-}
-
-/* Dropdown styling */
+/* Dropdown Styling */
 .course-stats-container select {
     padding: 10px;
     font-size: 1.1em;
@@ -175,8 +170,6 @@
     border-radius: 5px;
     margin-bottom: 20px;
 }
-
-
 
 /* Main Game styles start */
 body {
