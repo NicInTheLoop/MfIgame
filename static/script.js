@@ -134,13 +134,6 @@ document.addEventListener("DOMContentLoaded", function () {
     checkForExistingSession();
 });
 
-// Ensure drag-and-drop functions are globally accessible
-window.allowDrop = allowDrop;
-window.drag = drag;
-window.drop = drop;
-window.submitAnswers = checkAnswers;
-window.selectFinalOption = selectFinalOption;
-window.submitFinalAnswer = submitFinalAnswer;
 
 // Function to allow drop
 function allowDrop(event) {
@@ -354,10 +347,6 @@ function checkAnswers() {
 }
 
 
-function allowDrop(event) {
-    event.preventDefault(); // Always allow dropping
-}
-
 function drag(event) {
     event.dataTransfer.setData("text", event.target.id);
 }
@@ -469,10 +458,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 // Attach globally accessible functions (if needed by HTML)
-window.submitAnswers = checkAnswers;
-window.allowDrop = allowDrop;
-window.drag = drag;
-window.drop = drop;
+
 
 function nextQuestion() {
     // Reset the game area
