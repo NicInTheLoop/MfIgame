@@ -283,33 +283,35 @@ courseForm.addEventListener("submit", async function (event) {
 });
 
 
+
     // 🟢 Function to check for existing session details in URL
     function checkForExistingSession() {
         const urlParams = new URLSearchParams(window.location.search);
         const courseCode = urlParams.get("course");
         const sessionNumber = urlParams.get("session");
-        const isOrganiser = sessionStorage.getItem("isOrganiser") === "true";
-
+    
         if (courseCode && sessionNumber) {
             console.log("🔹 Course detected in URL:", courseCode, "Session:", sessionNumber);
-
-            // 🟢 Keep course setup visible for organisers
-            if (!isOrganiser) {
+    
+            // 🟢 Ensure course setup is hidden for participants
+            if (!sessionStorage.getItem("isOrganiser")) {
                 courseSetup.style.display = "none";
             } else {
                 sessionLinkContainer.style.display = "block";
             }
-
+    
             // 🟢 Update UI with course/session details
             courseTitleElement.textContent = `Course Session: ${courseCode} (Session ${sessionNumber})`;
             courseTitleElement.classList.remove("hidden");
-
+    
             // 🟢 Show the game area
             gameArea.style.display = "flex";
         } else {
             console.log("ℹ️ No course session found in URL.");
         }
     }
+    
+    
 
     // 🟢 Run function after ensuring the document is fully loaded
     setTimeout(checkForExistingSession, 500);
