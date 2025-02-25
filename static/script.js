@@ -147,6 +147,18 @@ document.addEventListener("DOMContentLoaded", function () {
     setTimeout(checkForExistingSession, 500);
 });
 
+// 🟢 Function to copy the generated link to clipboard
+document.getElementById("copy-link").addEventListener("click", function () {
+    const linkOutput = document.getElementById("link-output").textContent;
+
+    navigator.clipboard.writeText(linkOutput)
+        .then(() => {
+            alert("✅ Link copied to clipboard!");
+        })
+        .catch(err => {
+            console.error("❌ Failed to copy link:", err);
+        });
+});
 
 // Function to allow drop
 function allowDrop(event) {
