@@ -353,23 +353,6 @@ function checkAnswers() {
     submitButton.disabled = true;
 }
 
-function checkSubmitButtonState() {
-    const dropZones = document.querySelectorAll('.text-box, .quarter');
-    let hasDraggable = false;
-
-    dropZones.forEach(zone => {
-        // Check if the zone contains at least one draggable element
-        const draggableChild = Array.from(zone.children).some(child => child.classList.contains('draggable'));
-        if (draggableChild) {
-            hasDraggable = true;
-        }
-        console.log(`Checking zone: ${zone.id}, Has draggable: ${draggableChild}`);
-    });
-
-    // Enable or disable the submit button based on presence of draggables
-    const submitButton = document.getElementById('submit-button');
-    submitButton.disabled = !hasDraggable;
-}
 
 function allowDrop(event) {
     event.preventDefault(); // Always allow dropping
