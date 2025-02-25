@@ -25,24 +25,30 @@ async function trackCorrectAnswer() {
         return;
     }
 
-    const today = new Date().toISOString().split('T')[0];  // Get today's date in YYYY-MM-DD
+    const today = new Date().toISOString().split('T')[0];
     const statsRef = doc(db, "MFIgameStats", `${courseCode}-Session${sessionNumber}-${today}`);
+    const userId = sessionStorage.getItem("userId") || generateUserId();
 
     try {
         const docSnap = await getDoc(statsRef);
         if (!docSnap.exists()) {
-            await setDoc(statsRef, { correctAnswers: 0, incorrectGuesses: [], firstQuestionResponses: 0 });
+            await setDoc(statsRef, { correctAnswers: 0, incorrectGuesses: [], completedUsers: [] });
         }
 
-        await updateDoc(statsRef, { 
-            correctAnswers: increment(1), 
-            firstQuestionResponses: increment(1)  
-        });
-        console.log(`✅ Correct answer tracked for ${courseCode} - Session ${sessionNumber} - ${today}!`);
+        const data = docSnap.data();
+        if (!data.completedUsers.includes(userId)) {
+            await updateDoc(statsRef, { 
+                correctAnswers: increment(1), 
+                completedUsers: arrayUnion(userId)
+            });
+            console.log(`✅ User ${userId} has completed the first question.`);
+        }
     } catch (error) {
         console.error("❌ Firestore Write Error:", error);
     }
 }
+
+
 
 
 // Function to track Incorrect Guesses
@@ -58,23 +64,27 @@ async function trackIncorrectGuess(guess) {
 
     const today = new Date().toISOString().split('T')[0];
     const statsRef = doc(db, "MFIgameStats", `${courseCode}-Session${sessionNumber}-${today}`);
+    const userId = sessionStorage.getItem("userId") || generateUserId();
 
     try {
         const docSnap = await getDoc(statsRef);
         if (!docSnap.exists()) {
-            await setDoc(statsRef, { correctAnswers: 0, incorrectGuesses: [], firstQuestionResponses: 0 });
+            await setDoc(statsRef, { correctAnswers: 0, incorrectGuesses: [], completedUsers: [] });
         }
 
-        await updateDoc(statsRef, { 
-            incorrectGuesses: arrayUnion(guess),
-            firstQuestionResponses: increment(1)  
-        });
-
-        console.log(`❌ Incorrect guess recorded for ${courseCode} - Session ${sessionNumber} - ${today}: ${guess}`);
+        const data = docSnap.data();
+        if (!data.completedUsers.includes(userId)) {
+            await updateDoc(statsRef, { 
+                incorrectGuesses: arrayUnion(guess),
+                completedUsers: arrayUnion(userId)
+            });
+            console.log(`✅ User ${userId} has completed the first question.`);
+        }
     } catch (error) {
         console.error("❌ Firestore Write Error:", error);
     }
 }
+
 
 
 
@@ -149,25 +159,23 @@ window.toggleStatistics = function () {
 // 🟢 Function to fetch and display live statistics for the organiser
 window.updateStatisticsDisplay = async function () {
     const filterType = document.getElementById("stats-filter").value;
-    let totalFirst = 0;
+    let totalUsers = 0;
     let totalSecond = 0;
     let statsRef;
 
     try {
         if (filterType === "all") {
-            // Fetch all stats for all courses/sessions
             const statsQuery = await getDocs(collection(db, "MFIgameStats"));
 
             statsQuery.forEach((docSnap) => {
                 const data = docSnap.data();
-                totalFirst += data.firstQuestionResponses || 0;
+                totalUsers += (data.completedUsers ? data.completedUsers.length : 0);
                 totalSecond += data.secondQuestionResponses || 0;
             });
 
-            document.getElementById("stats-first-question").textContent = `Total Users Who Answered First Question: ${totalFirst}`;
-            document.getElementById("stats-second-question").textContent = `Total Users Who Answered Second Question: ${totalSecond}`;
+            document.getElementById("stats-first-question").textContent = `Users Who Completed First Question: ${totalUsers}`;
+            document.getElementById("stats-second-question").textContent = `Users Who Answered Second Question: ${totalSecond}`;
         } else {
-            // Get course/session-specific statistics
             const urlParams = new URLSearchParams(window.location.search);
             const courseCode = urlParams.get("course");
             const sessionNumber = urlParams.get("session");
@@ -183,8 +191,8 @@ window.updateStatisticsDisplay = async function () {
 
             if (docSnap.exists()) {
                 const data = docSnap.data();
-                document.getElementById("stats-first-question").textContent = `Users who answered first question: ${data.firstQuestionResponses || 0}`;
-                document.getElementById("stats-second-question").textContent = `Users who answered second question: ${data.secondQuestionResponses || 0}`;
+                document.getElementById("stats-first-question").textContent = `Users Who Completed First Question: ${data.completedUsers ? data.completedUsers.length : 0}`;
+                document.getElementById("stats-second-question").textContent = `Users Who Answered Second Question: ${data.secondQuestionResponses || 0}`;
             } else {
                 document.getElementById("stats-first-question").textContent = "No statistics available yet.";
                 document.getElementById("stats-second-question").textContent = "No statistics available yet.";
@@ -194,6 +202,7 @@ window.updateStatisticsDisplay = async function () {
         console.error("❌ Error fetching stats:", error);
     }
 };
+
 
 
 // 🟢 Run this function every 5 seconds for live updates
