@@ -34,21 +34,17 @@ async function trackCorrectAnswer() {
             await setDoc(statsRef, { correctAnswers: 0, incorrectGuesses: [], rawScores: [] });
         }
 
-        // Fetch existing rawScores array
-        const data = docSnap.data();
-        let userScore = (data.rawScores && data.rawScores.length) ? Math.max(...data.rawScores) + 1 : 1;
-
-        // Store the new score entry
+        // Increment correctAnswers for this game session
         await updateDoc(statsRef, { 
-            correctAnswers: increment(1), 
-            rawScores: arrayUnion(userScore) 
+            correctAnswers: increment(1) 
         });
 
-        console.log(`✅ A new raw score (${userScore}) was added for ${courseCode} - Session ${sessionNumber} - ${today}`);
+        console.log(`✅ Correct answer recorded for ${courseCode} - Session ${sessionNumber} - ${today}`);
     } catch (error) {
         console.error("❌ Firestore Write Error:", error);
     }
 }
+
 
 
 // Function to track Incorrect Guesses
@@ -76,6 +72,37 @@ async function trackIncorrectGuess(guess) {
         });
 
         console.log(`⚠️ Incorrect guess recorded for ${courseCode} - Session ${sessionNumber} - ${today}`);
+    } catch (error) {
+        console.error("❌ Firestore Write Error:", error);
+    }
+}
+
+// Add a function to store the final score in Firestore
+async function storeRawScore(finalScore) {
+    const urlParams = new URLSearchParams(window.location.search);
+    const courseCode = urlParams.get("course");
+    const sessionNumber = urlParams.get("session");
+
+    if (!courseCode || !sessionNumber) {
+        console.warn("⚠️ No course or session found in URL, cannot log data.");
+        return;
+    }
+
+    const today = new Date().toISOString().split('T')[0];
+    const statsRef = doc(db, "MFIgameStats", `${courseCode}-Session${sessionNumber}-${today}`);
+
+    try {
+        const docSnap = await getDoc(statsRef);
+        if (!docSnap.exists()) {
+            await setDoc(statsRef, { rawScores: [] });
+        }
+
+        // Store the player's final score in rawScores
+        await updateDoc(statsRef, { 
+            rawScores: arrayUnion(finalScore) 
+        });
+
+        console.log(`✅ Stored raw score: ${finalScore} for ${courseCode} - Session ${sessionNumber} - ${today}`);
     } catch (error) {
         console.error("❌ Firestore Write Error:", error);
     }
@@ -440,6 +467,8 @@ function checkAnswers() {
         }
     }
 
+    let correctCount = 0;
+
     Object.keys(correctAnswers).forEach(zoneId => {
         const zone = document.getElementById(zoneId);
         if (!zone) {
@@ -510,7 +539,41 @@ function checkAnswers() {
 
     const submitButton = document.getElementById('submit-button');
     submitButton.disabled = true;
+
+    // Store the raw score
+    storeRawScore(correctCount);
 }
+
+async function storeRawScore(finalScore) {
+const urlParams = new URLSearchParams(window.location.search);
+const courseCode = urlParams.get("course");
+const sessionNumber = urlParams.get("session");
+
+if (!courseCode || !sessionNumber) {
+    console.warn("⚠️ No course or session found in URL, cannot log data.");
+    return;
+}
+
+const today = new Date().toISOString().split('T')[0];
+const statsRef = doc(db, "MFIgameStats", `${courseCode}-Session${sessionNumber}-${today}`);
+
+try {
+    const docSnap = await getDoc(statsRef);
+    if (!docSnap.exists()) {
+        await setDoc(statsRef, { rawScores: [] });
+    }
+
+    // Store the player's final score in rawScores
+    await updateDoc(statsRef, { 
+        rawScores: arrayUnion(finalScore) 
+    });
+
+    console.log(`✅ Stored raw score: ${finalScore} for ${courseCode} - Session ${sessionNumber} - ${today}`);
+} catch (error) {
+    console.error("❌ Firestore Write Error:", error);
+}
+}
+
 
 // DOMContentLoaded Listener
 document.addEventListener('DOMContentLoaded', function () {
