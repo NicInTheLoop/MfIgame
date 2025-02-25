@@ -56,6 +56,7 @@ async function trackIncorrectGuess(guess) {
     }
 }
 
+
 // Function to track responses to the second question
 async function initializeSecondQuestionAnswers() {
     const statsRef = doc(db, "MFIgamestats", "secondQuestionAnswers");
@@ -81,60 +82,54 @@ async function trackSecondQuestionAnswer(answer) {
 }
 
 // Attach to window to ensure it's accessible globally
-window.trackCorrectAnswer = trackCorrectAnswer;
-window.trackIncorrectGuess = trackIncorrectGuess;
-window.trackSecondQuestionAnswer = trackSecondQuestionAnswer;
 
-// DOMContentLoaded Listener
-document.addEventListener("DOMContentLoaded", function () {
-    const courseForm = document.getElementById("course-form");
-    const sessionLinkContainer = document.getElementById("session-link");
-    const linkOutput = document.getElementById("link-output");
-    const courseTitleElement = document.getElementById("course-title");
-    const courseSetup = document.getElementById("course-setup");
-    const gameArea = document.getElementById("game-area");
 
-    // Function to generate and redirect to the session link
-    courseForm.addEventListener("submit", function (event) {
-        event.preventDefault();
 
-        const courseCode = document.getElementById("course-code").value.trim();
-        const sessionNumber = document.getElementById("session-number").value.trim();
+document.getElementById('course-form').addEventListener('submit', function (event) {
+    event.preventDefault();
 
-        if (!courseCode || !sessionNumber) {
-            alert("Please enter both the course code and session number.");
-            return;
-        }
+    const courseCode = document.getElementById('course-code').value.trim();
+    const sessionNumber = document.getElementById('session-number').value.trim();
+    const isGitHubPages = window.location.hostname === 'nicintheloop.github.io';
+    const basePath = isGitHubPages ? '/MfIgame' : '';
+    const sessionLink = `${window.location.origin}${basePath}/?course=${encodeURIComponent(courseCode)}&session=${sessionNumber}`;
 
-        // Construct the session link
-        const sessionLink = `${window.location.origin}${window.location.pathname}?course=${encodeURIComponent(courseCode)}&session=${encodeURIComponent(sessionNumber)}`;
-
-        // Redirect to the new session link
-        window.location.href = sessionLink;
-    });
-
-    // Function to check for existing session details in URL
-    function checkForExistingSession() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const courseCode = urlParams.get("course");
-        const sessionNumber = urlParams.get("session");
-
-        if (courseCode && sessionNumber) {
-            // Hide course setup since session info exists
-            courseSetup.style.display = "none";
-
-            // Update UI with course/session details
-            courseTitleElement.textContent = `Course Session: ${courseCode} (Session ${sessionNumber})`;
-            courseTitleElement.classList.remove("hidden");
-
-            // Show the game area
-            gameArea.style.display = "flex";
-        }
-    }
-
-    // Run function on page load to check for session data
-    checkForExistingSession();
+    // Update the link output and show the link container
+    document.getElementById('link-output').textContent = sessionLink;
+    document.getElementById('session-link').style.display = 'block';
 });
+
+document.getElementById('copy-link').addEventListener('click', function () {
+    const linkOutput = document.getElementById('link-output').textContent;
+    navigator.clipboard.writeText(linkOutput)
+        .then(() => {
+            alert('Link copied to clipboard!');
+        })
+        .catch(err => {
+            console.error('Failed to copy link: ', err);
+        });
+});
+
+window.addEventListener('load', function () {
+    const urlParams = new URLSearchParams(window.location.search);
+    const courseCode = urlParams.get('course');
+    const sessionNumber = urlParams.get('session');
+
+    if (courseCode && sessionNumber) {
+        // Hide the course setup box
+        document.getElementById('course-setup').classList.add('hidden');
+
+        // Show the course title
+        const courseTitle = `Course Session: ${courseCode} (Session ${sessionNumber})`;
+        const courseTitleElement = document.getElementById('course-title');
+        courseTitleElement.textContent = courseTitle;
+        courseTitleElement.classList.remove('hidden');
+
+        // Show the game area
+        document.getElementById('game-area').style.display = 'flex';
+    }
+});
+
 
 let correctAnswersCount = 0;
 let incorrectGuesses = [];
@@ -263,6 +258,7 @@ function checkSubmitButtonState() {
     const submitButton = document.getElementById('submit-button');
     submitButton.disabled = !hasDraggable;
 }
+
 
 function allowDrop(event) {
     event.preventDefault(); // Always allow dropping
