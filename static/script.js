@@ -11,10 +11,8 @@
 //};
 
 // Import the existing Firebase instance
-import { doc, setDoc, getDoc, updateDoc, increment, arrayUnion } 
-from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js";
-
-import { db } from "./firebase.js"; // Ensure Firebase is properly imported
+import { db } from "./firebase.js";
+import { doc, setDoc, getDoc, updateDoc, increment, arrayUnion } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js";
 
 // Function to track correct answers
 async function trackCorrectAnswer() {
@@ -86,7 +84,6 @@ window.trackIncorrectGuess = trackIncorrectGuess;
 window.trackSecondQuestionAnswer = trackSecondQuestionAnswer;
 
 // DOMContentLoaded Listener
-// DOMContentLoaded Listener
 document.addEventListener("DOMContentLoaded", function () {
     const courseForm = document.getElementById("course-form");
     const sessionLinkContainer = document.getElementById("session-link");
@@ -114,45 +111,137 @@ document.addEventListener("DOMContentLoaded", function () {
         window.location.href = sessionLink;
     });
 
-    // 🟢 Function to check for existing session details in URL and update UI
+    // 🟢 Function to check for existing session details in URL
     function checkForExistingSession() {
         const urlParams = new URLSearchParams(window.location.search);
         const courseCode = urlParams.get("course");
         const sessionNumber = urlParams.get("session");
 
         if (courseCode && sessionNumber) {
-            console.log("🔹 Course detected in URL:", courseCode, "Session:", sessionNumber);
+            // 🟢 Hide course setup since session info exists
+            courseSetup.style.display = "none";
 
-            // Hide course setup form
-            if (courseSetup) {
-                courseSetup.style.display = "none";
-            } else {
-                console.warn("⚠️ Course setup form not found.");
-            }
+            // 🟢 Update UI with course/session details
+            courseTitleElement.textContent = `Course Session: ${courseCode} (Session ${sessionNumber})`;
+            courseTitleElement.classList.remove("hidden");
 
-            // Update UI with course/session details
-            if (courseTitleElement) {
-                courseTitleElement.textContent = `Course Session: ${courseCode} (Session ${sessionNumber})`;
-                courseTitleElement.classList.remove("hidden");
-            } else {
-                console.warn("⚠️ Course title element not found.");
-            }
-
-            // Show the game area
-            if (gameArea) {
-                gameArea.style.display = "flex";
-            } else {
-                console.warn("⚠️ Game area not found.");
-            }
-        } else {
-            console.log("ℹ️ No course session found in URL.");
+            // 🟢 Show the game area
+            gameArea.style.display = "flex";
         }
     }
 
-    // 🟢 Run function after ensuring the document is fully loaded
-    setTimeout(checkForExistingSession, 100);
+    // 🟢 Run function on page load to check for session data
+    checkForExistingSession();
 });
 
+// Ensure drag-and-drop functions are globally accessible
+window.allowDrop = allowDrop;
+window.drag = drag;
+window.drop = drop;
+window.submitAnswers = checkAnswers;
+window.selectFinalOption = selectFinalOption;
+window.submitFinalAnswer = submitFinalAnswer;
+
+// Function to allow drop
+function allowDrop(event) {
+    event.preventDefault(); // Always allow dropping
+}
+
+// Function to handle drag event
+function drag(event) {
+    event.dataTransfer.setData("text", event.target.id);
+}
+
+// Function to handle drop event
+function drop(event) {
+    event.preventDefault();
+    const data = event.dataTransfer.getData("text");
+    const draggedElement = document.getElementById(data);
+    let dropTarget = event.target;
+
+    console.log("Attempting to drop:", draggedElement ? draggedElement.id : "null", "into", dropTarget ? dropTarget.id : "null");
+
+    if (!draggedElement || !dropTarget) {
+        console.warn("Drop event failed: draggedElement or dropTarget is null.");
+        return;
+    }
+
+    // Ensure the dropTarget is a valid drop zone
+    if (dropTarget.classList.contains("text-box") || 
+        dropTarget.classList.contains("quarter") || 
+        dropTarget.parentElement.classList.contains("quarter")) {
+
+        if (!dropTarget.classList.contains("quarter") && dropTarget.parentElement.classList.contains("quarter")) {
+            dropTarget = dropTarget.parentElement;
+        }
+
+        console.log("Valid drop zone detected:", dropTarget.id);
+
+        // Get the correct draggables container
+        const draggablesContainer = document.getElementById('draggable-container');
+        if (!draggablesContainer) {
+            console.error("draggable-container not found! Ensure it exists in the HTML.");
+            return;
+        }
+
+        // Check if the drop target already has a draggable inside (both for text-boxes and quarters)
+        const existingDraggable = dropTarget.querySelector('.draggable');
+        if (existingDraggable) {
+            console.log("Existing draggable found:", existingDraggable.id, "- Moving it back to the draggables container");
+
+            // Reset rotation before returning to draggable-container
+            existingDraggable.style.transform = "rotate(0deg)";
+
+            // Remove it from the drop zone before appending
+            existingDraggable.remove();
+
+            // Append to draggable-container
+            draggablesContainer.appendChild(existingDraggable);
+
+            // Ensure it remains draggable
+            existingDraggable.setAttribute('draggable', 'true');
+            existingDraggable.addEventListener('dragstart', drag);
+        }
+
+        // Append the new draggable to the drop target
+        dropTarget.appendChild(draggedElement);
+        console.log("New draggable placed:", draggedElement.id, "in", dropTarget.id);
+
+        // Adjust rotation for quarter zones
+        if (dropTarget.id === "quarter2") {
+            draggedElement.style.transform = "rotate(-90deg)";
+        } else if (dropTarget.id === "quarter3") {
+            draggedElement.style.transform = "rotate(180deg)";
+        } else if (dropTarget.id === "quarter4") {
+            draggedElement.style.transform = "rotate(90deg)";
+        } else {
+            draggedElement.style.transform = "rotate(0deg)"; // Ensure no rotation for text-boxes
+        }
+    } else {
+        console.warn("Invalid drop target:", dropTarget.id);
+    }
+
+    checkSubmitButtonState();
+}
+
+// Function to check the state of the submit button
+function checkSubmitButtonState() {
+    const dropZones = document.querySelectorAll('.text-box, .quarter');
+    let hasDraggable = false;
+
+    dropZones.forEach(zone => {
+        // Check if the zone contains at least one draggable element
+        const draggableChild = Array.from(zone.children).some(child => child.classList.contains('draggable'));
+        if (draggableChild) {
+            hasDraggable = true;
+        }
+        console.log(`Checking zone: ${zone.id}, Has draggable: ${draggableChild}`);
+    });
+
+    // Enable or disable the submit button based on presence of draggables
+    const submitButton = document.getElementById('submit-button');
+    submitButton.disabled = !hasDraggable;
+}
 
 let correctAnswersCount = 0;
 let incorrectGuesses = [];
