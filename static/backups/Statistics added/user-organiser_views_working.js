@@ -1,3 +1,15 @@
+// Firebase configuration
+//const firebaseConfig = {
+  //  apiKey: "AIzaSyA821UkL_YsC8jAWeeBlC-TsOE4m7mC6TI",
+  //  authDomain: "mfigame-48c52.firebaseapp.com",
+  //  databaseURL: "https://mfigame-48c52-default-rtdb.europe-west1.firebasedatabase.app",
+  //  projectId: "mfigame-48c52",
+  //  storageBucket: "mfigame-48c52.firebasestorage.app",
+    //messagingSenderId: "924931703532",
+    //appId: "1:924931703532:web:7917661766a1f763b2dbc9",
+    //measurementId: "G-FXBJEP5SP1"
+//};
+
 // Import the existing Firebase instance
 import { db } from "./firebase.js";
 import { doc, setDoc, getDoc, updateDoc, increment, arrayUnion } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js";
@@ -32,6 +44,8 @@ async function trackCorrectAnswer() {
         console.error("❌ Firestore Write Error:", error);
     }
 }
+
+
 
 // Function to track Incorrect Guesses
 async function trackIncorrectGuess(guess) {
@@ -93,6 +107,11 @@ async function storeRawScore(finalScore) {
         console.error("❌ Firestore Write Error:", error);
     }
 }
+
+// If I later want to display the raw score i use
+// const rawScore = data.rawScore || 0;
+
+
 
 // Function to track responses to the second question
 async function trackSecondQuestionAnswer(answer) {
@@ -160,6 +179,8 @@ window.toggleStatistics = function () {
     }
 };
 
+
+
 // 🟢 Function to fetch and display live statistics for the organiser
 window.updateStatisticsDisplay = async function () {
     const filterType = document.getElementById("stats-filter").value;
@@ -207,8 +228,13 @@ window.updateStatisticsDisplay = async function () {
     }
 };
 
+
+
 // 🟢 Run this function every 5 seconds for live updates
 setInterval(updateStatisticsDisplay, 5000);
+
+
+
 
 // DOMContentLoaded Listener
 document.addEventListener("DOMContentLoaded", function () {
@@ -220,68 +246,72 @@ document.addEventListener("DOMContentLoaded", function () {
     const gameArea = document.getElementById("game-area");
 
     // 🟢 Function to generate session link and store session in Firebase
-    courseForm.addEventListener("submit", async function (event) {
-        event.preventDefault();
+courseForm.addEventListener("submit", async function (event) {
+    event.preventDefault();
 
-        const courseCode = document.getElementById("course-code").value.trim();
-        const sessionNumber = document.getElementById("session-number").value.trim();
+    const courseCode = document.getElementById("course-code").value.trim();
+    const sessionNumber = document.getElementById("session-number").value.trim();
 
-        if (!courseCode || !sessionNumber) {
-            alert("Please enter both the course code and session number.");
-            return;
-        }
+    if (!courseCode || !sessionNumber) {
+        alert("Please enter both the course code and session number.");
+        return;
+    }
 
-        // 🟢 Store organiser status
-        sessionStorage.setItem("isOrganiser", "true");
+    // 🟢 Store organiser status
+    sessionStorage.setItem("isOrganiser", "true");
 
-        // 🟢 Construct session link
-        const sessionLink = `${window.location.origin}${window.location.pathname}?course=${encodeURIComponent(courseCode)}&session=${encodeURIComponent(sessionNumber)}`;
+    // 🟢 Construct session link
+    const sessionLink = `${window.location.origin}${window.location.pathname}?course=${encodeURIComponent(courseCode)}&session=${encodeURIComponent(sessionNumber)}`;
 
-        // 🟢 Show generated session link instead of redirecting
-        linkOutput.textContent = sessionLink;
-        sessionLinkContainer.style.display = "block";
+    // 🟢 Show generated session link instead of redirecting
+    linkOutput.textContent = sessionLink;
+    sessionLinkContainer.style.display = "block";
 
-        // 🟢 Store session details in Firebase
-        try {
-            const sessionRef = doc(db, "MFIgameSessions", `${courseCode}-Session${sessionNumber}`);
-            await setDoc(sessionRef, {
-                course: courseCode,
-                session: sessionNumber,
-                createdAt: new Date().toISOString()
-            }, { merge: true });
+    // 🟢 Store session details in Firebase
+    try {
+        const sessionRef = doc(db, "MFIgameSessions", `${courseCode}-Session${sessionNumber}`);
+        await setDoc(sessionRef, {
+            course: courseCode,
+            session: sessionNumber,
+            createdAt: new Date().toISOString()
+        }, { merge: true });
 
-            console.log(`✅ Session stored in Firebase: ${courseCode} - Session ${sessionNumber}`);
-        } catch (error) {
-            console.error("❌ Error storing session in Firebase:", error);
-        }
-    });
+        console.log(`✅ Session stored in Firebase: ${courseCode} - Session ${sessionNumber}`);
+    } catch (error) {
+        console.error("❌ Error storing session in Firebase:", error);
+    }
+});
+
+
 
     // 🟢 Function to check for existing session details in URL
     function checkForExistingSession() {
         const urlParams = new URLSearchParams(window.location.search);
         const courseCode = urlParams.get("course");
         const sessionNumber = urlParams.get("session");
-
+    
         if (courseCode && sessionNumber) {
             console.log("🔹 Course detected in URL:", courseCode, "Session:", sessionNumber);
-
+    
             // 🟢 Ensure course setup is hidden for participants
             if (!sessionStorage.getItem("isOrganiser")) {
                 courseSetup.style.display = "none";
             } else {
                 sessionLinkContainer.style.display = "block";
             }
-
+    
             // 🟢 Update UI with course/session details
             courseTitleElement.textContent = `Course Session: ${courseCode} (Session ${sessionNumber})`;
             courseTitleElement.classList.remove("hidden");
-
+    
             // 🟢 Show the game area
             gameArea.style.display = "flex";
         } else {
             console.log("ℹ️ No course session found in URL.");
         }
     }
+    
+    
 
     // 🟢 Run function after ensuring the document is fully loaded
     setTimeout(checkForExistingSession, 500);
@@ -459,7 +489,6 @@ function checkAnswers() {
             zone.classList.add('correct');
             zone.classList.remove('incorrect');
             trackCorrectAnswer(); // Track correct answer
-            correctCount++; // Increment correct count
         } else {
             console.warn(`Incorrect or empty. Zone: ${zoneId}, Dragged ID: ${draggableChild ? draggableChild.id : 'None'}`);
             zone.classList.add('incorrect');
@@ -668,6 +697,8 @@ window.submitFinalAnswer = submitFinalAnswer;
 window.allowDrop = allowDrop;
 window.drag = drag;
 window.drop = drop;
+
+
 
 window.testFirestore = async function () {
     try {
