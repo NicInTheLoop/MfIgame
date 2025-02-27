@@ -23,15 +23,19 @@ async function trackCorrectAnswer(correctCount) {
         }
 
         // ✅ Fix double counting: Update `correctAnswers` by exact `correctCount`
-        await updateDoc(statsRef, {
-            correctAnswers: increment(correctCount),  // ✅ Only increase by the total correct answers once
-            firstQuestionResponses: increment(1)  // ✅ Only count each submission once
-        });
+        const data = docSnap.data();
+        if (!data.trackedThisSession) {
+            await updateDoc(statsRef, {
+                correctAnswers: increment(correctCount),
+                firstQuestionResponses: increment(1),
+                trackedThisSession: true // ✅ Ensures this session is only tracked once
+            });
+        }
 
         console.log(`✅ Correct answers updated by ${correctCount}. First question responses incremented.`);
-    } catch (error) {
-        console.error("❌ Firestore Write Error:", error);
-    }
+        } catch (error) {
+            console.error("❌ Firestore Write Error:", error);
+        }
 }
 
 
@@ -534,7 +538,9 @@ function checkAnswers() {
     submitButton.disabled = true;
 
     // ✅ Save correct answers and raw score once after checking all zones
-    trackCorrectAnswer(correctCount);  // 🟢 Updates Firestore correctly
+    if (correctCount > 0) {
+        trackCorrectAnswer(correctCount); // ✅ Only call if at least 1 correct answer
+    }
     storeRawScore(correctCount);       // 🟢 Stores the player's raw score
 }
 
