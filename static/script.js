@@ -729,7 +729,6 @@ function viewStatistics() {
 // document.getElementById('final-submit-button').addEventListener('click', collectStatistics);
 
 // Attach functions to window for global access
-window.checkAnswers = checkAnswers;
 window.trackIncorrectGuess = trackIncorrectGuess;
 window.trackSecondQuestionAnswer = trackSecondQuestionAnswer;
 window.nextQuestion = nextQuestion;
