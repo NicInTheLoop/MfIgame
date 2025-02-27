@@ -438,8 +438,9 @@ let correctAnswersCount = 0;
 let incorrectGuesses = [];
 let finalQuestionResponse = '';
 
-// Global Function Definitions
-function checkAnswers() {
+async function checkAnswers() {
+    await ensureStatsDocumentExists();  // ✅ Ensures the document is created ONCE
+
     const correctAnswers = {
         box1: 'word17', // Correct answer for Aim
         box2: 'word3',  // Correct answer for Measure
@@ -490,7 +491,7 @@ function checkAnswers() {
         if (draggableChild && draggableChild.id === correctAnswers[zoneId]) {
             zone.classList.add('correct');
             zone.classList.remove('incorrect');
-            correctCount++;  // ✅ Only increase the count, do NOT call trackCorrectAnswer() here
+            correctCount++;  // ✅ Increase score for each correct answer
         } else {
             console.warn(`Incorrect or empty. Zone: ${zoneId}, Dragged ID: ${draggableChild ? draggableChild.id : 'None'}`);
             zone.classList.add('incorrect');
@@ -511,18 +512,16 @@ function checkAnswers() {
 
             zone.appendChild(correction);
 
-            // Remove the draggable button from the zone
-            if (draggableChild) {
-                if (draggableChild.id !== correctAnswers[zoneId]) {
-                    draggableChild.remove(); // ✅ Only remove if it's incorrect
-                    trackIncorrectGuess(draggableChild.textContent); // ✅ Only track incorrect guesses
-                }
+            // Remove the draggable button from the zone if it's incorrect
+            if (draggableChild && draggableChild.id !== correctAnswers[zoneId]) {
+                draggableChild.remove(); // ✅ Only remove incorrect ones
+                trackIncorrectGuess(draggableChild.textContent); // ✅ Only track incorrect guesses
             }
         }           
     });
 
-    const draggables = document.querySelectorAll('.draggable');
-    draggables.forEach(draggable => {
+    // Re-enable drag-and-drop functionality
+    document.querySelectorAll('.draggable').forEach(draggable => {
         draggable.setAttribute('draggable', 'true');
         draggable.addEventListener('dragstart', drag);
     });
@@ -543,15 +542,15 @@ function checkAnswers() {
     nextQuestionButton.style.display = ''; // Resets to CSS default
     console.log('Next question button visible:', nextQuestionButton.classList.contains('visible'));
 
-    const submitButton = document.getElementById('submit-button');
-    submitButton.disabled = true;
+    document.getElementById('submit-button').disabled = true;
 
     // ✅ Save correct answers and raw score once after checking all zones
     if (correctCount > 0) {
-        trackCorrectAnswer(correctCount); // ✅ Only update if at least one correct answer
+        await trackCorrectAnswer(correctCount); // ✅ Only update if at least one correct answer
     }
-    storeRawScore(correctCount);       // ✅ Always store raw score
+    await storeRawScore(correctCount);       // ✅ Always store raw score
 }
+
 
 // DOMContentLoaded Listener
 document.addEventListener('DOMContentLoaded', function () {
