@@ -18,9 +18,14 @@ async function trackCorrectAnswer(correctCount) {
 
     try {
         const docSnap = await getDoc(statsRef);
+
+        if (!docSnap.exists()) {
+            await setDoc(statsRef, { correctAnswers: 0, firstQuestionResponses: 0, rawScores: [], secondQuestionAnswers: {}, secondQuestionResponses: 0 });
+            console.log(`✅ Created new stats document for ${courseCode} - Session ${sessionNumber}`);
+        }
+
         let data = docSnap.exists() ? docSnap.data() : {};
 
-        // ✅ Ensure correctAnswers is only counted ONCE per submission
         if (!data.trackedThisSession) {
             await updateDoc(statsRef, {
                 correctAnswers: increment(correctCount),
@@ -34,7 +39,6 @@ async function trackCorrectAnswer(correctCount) {
         console.error("❌ Firestore Write Error:", error);
     }
 }
-
 
 
 // Function to track Incorrect Guesses
@@ -83,13 +87,18 @@ async function storeRawScore(finalScore) {
 
     try {
         const docSnap = await getDoc(statsRef);
+
+        if (!docSnap.exists()) {
+            await setDoc(statsRef, { rawScores: [], firstQuestionResponses: 0 });
+            console.log(`✅ Created new stats document for ${courseCode} - Session ${sessionNumber}`);
+        }
+
         let data = docSnap.exists() ? docSnap.data() : {};
 
-        // ✅ Ensure firstQuestionResponses is only counted ONCE per submission
         if (!data.trackedSubmission) {
             await updateDoc(statsRef, { 
                 rawScores: arrayUnion(finalScore), 
-                firstQuestionResponses: increment(1),  // ✅ Move firstQuestionResponses tracking here
+                firstQuestionResponses: increment(1),  // ✅ Ensure first question responses only track once
                 trackedSubmission: true // ✅ Prevents duplicate submissions
             });
             console.log(`✅ Stored raw score: ${finalScore}. First question responses incremented.`);
@@ -118,14 +127,15 @@ async function trackSecondQuestionAnswer(answerText) {
 
     try {
         const docSnap = await getDoc(statsRef);
+
         if (!docSnap.exists()) {
             await setDoc(statsRef, { secondQuestionResponses: 0, secondQuestionAnswers: {} });
+            console.log(`✅ Created new stats document for ${courseCode} - Session ${sessionNumber}`);
         }
 
-        const currentData = docSnap.data();
-        let answerCounts = currentData.secondQuestionAnswers || {};
+        let data = docSnap.exists() ? docSnap.data() : {};
+        let answerCounts = data.secondQuestionAnswers || {};
 
-        // ✅ Ensure the answer is counted properly
         if (answerText in answerCounts) {
             answerCounts[answerText] += 1;
         } else {
@@ -133,8 +143,8 @@ async function trackSecondQuestionAnswer(answerText) {
         }
 
         await updateDoc(statsRef, {
-            secondQuestionResponses: increment(1), // ✅ Track the total number of responses
-            secondQuestionAnswers: answerCounts // ✅ Store the number of times each answer was selected
+            secondQuestionResponses: increment(1), // ✅ Track total second question responses
+            secondQuestionAnswers: answerCounts // ✅ Store how many times each answer was chosen
         });
 
         console.log(`✅ Stored second question answer: "${answerText}".`);
@@ -142,6 +152,7 @@ async function trackSecondQuestionAnswer(answerText) {
         console.error("❌ Firestore Write Error:", error);
     }
 }
+
 
 
 // 🟢 Function to initialize the second question answers in Firestore
