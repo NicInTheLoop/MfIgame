@@ -501,15 +501,14 @@ async function checkAnswers() {
             console.warn(`Incorrect or empty. Zone: ${zoneId}, Dragged ID: ${draggableChild ? draggableChild.id : 'None'}`);
             zone.classList.add('incorrect');
             zone.classList.remove('correct');
-        
+
             // ✅ Track incorrect guesses properly
             if (draggableChild && draggableChild.id !== correctAnswers[zoneId]) {
-                trackIncorrectGuess(draggableChild.textContent);  //  Track incorrect word
-                draggableChild.remove();  //  Only remove incorrect ones
+                trackIncorrectGuess(draggableChild.textContent);  // ✅ Track incorrect word
+                draggableChild.remove();  // ✅ Only remove incorrect ones
             }
-        }   
 
-            // Add a correction element
+            // ✅ Add a correction element
             const correction = document.createElement('div');
             correction.classList.add('correction');
 
@@ -523,14 +522,37 @@ async function checkAnswers() {
             }
 
             zone.appendChild(correction);
-
-            // Remove the draggable button from the zone if it's incorrect
-            if (draggableChild && draggableChild.id !== correctAnswers[zoneId]) {
-                draggableChild.remove(); // ✅ Only remove incorrect ones
-                trackIncorrectGuess(draggableChild.textContent); // ✅ Only track incorrect guesses
-            }
         }           
     });
+
+    // ✅ Re-enable drag-and-drop functionality
+    document.querySelectorAll('.draggable').forEach(draggable => {
+        draggable.setAttribute('draggable', 'true');
+        draggable.addEventListener('dragstart', drag);
+    });
+
+    // ✅ Hide initial instructions and show next instructions and next question button
+    document.getElementById('initial-instructions').classList.add('hidden');
+    console.log('Initial instructions hidden:', document.getElementById('initial-instructions').classList.contains('hidden'));
+
+    const nextInstructions = document.getElementById('next-instructions');
+    nextInstructions.classList.remove('hidden');
+    nextInstructions.classList.add('visible');
+    nextInstructions.style.display = ''; // Resets to CSS default
+    console.log('Next instructions visible:', nextInstructions.classList.contains('visible'));
+
+    const nextQuestionButton = document.getElementById('next-question-button');
+    nextQuestionButton.classList.remove('hidden');
+    nextQuestionButton.classList.add('visible');
+    nextQuestionButton.style.display = ''; // Resets to CSS default
+    console.log('Next question button visible:', nextQuestionButton.classList.contains('visible'));
+
+    document.getElementById('submit-button').disabled = true;
+
+    // ✅ Save raw score once after checking all zones
+    await storeRawScore(correctCount);
+}
+
 
     // Re-enable drag-and-drop functionality
     document.querySelectorAll('.draggable').forEach(draggable => {
