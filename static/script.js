@@ -35,47 +35,6 @@ async function ensureStatsDocumentExists() {
 }
 
 
-// Function to track correct answers
-async function trackCorrectAnswer(correctCount) {
-    const urlParams = new URLSearchParams(window.location.search);
-    const courseCode = urlParams.get("course");
-    const sessionNumber = urlParams.get("session");
-
-    if (!courseCode || !sessionNumber) {
-        console.warn("⚠️ No course or session found in URL, cannot log data.");
-        return;
-    }
-
-    const today = new Date().toISOString().split('T')[0];
-    const statsRef = doc(db, "MFIgameStats", `${courseCode}-Session${sessionNumber}-${today}`);
-
-    try {
-        const docSnap = await getDoc(statsRef);
-        let data = docSnap.exists() ? docSnap.data() : {};
-
-        // ✅ Check BEFORE updating to prevent multiple executions
-        if (data.trackedThisAttempt === true) {
-            console.log(`⚠️ Already tracked this attempt. Skipping duplicate count.`);
-            return;
-        }
-
-        // ✅ Mark the attempt as tracked BEFORE updating Firestore
-        await updateDoc(statsRef, {
-            trackedThisAttempt: true
-        });
-
-        await updateDoc(statsRef, {
-            correctAnswers: increment(correctCount),
-            firstQuestionResponses: increment(1)
-        });
-
-        console.log(`✅ Correct answers updated by ${correctCount}. First question responses incremented.`);
-    } catch (error) {
-        console.error("❌ Firestore Write Error:", error);
-    }
-}
-
-
 
 // Function to track Incorrect Guesses
 async function trackIncorrectGuess(guess) {
@@ -93,19 +52,29 @@ async function trackIncorrectGuess(guess) {
 
     try {
         const docSnap = await getDoc(statsRef);
+        let data = docSnap.exists() ? docSnap.data() : {};
+
         if (!docSnap.exists()) {
-            await setDoc(statsRef, { correctAnswers: 0, incorrectGuesses: [], rawScores: [] });
+            await setDoc(statsRef, { incorrectGuesses: {} });
+            console.log(`✅ Created new stats document for ${courseCode} - Session ${sessionNumber}`);
         }
 
+        let incorrectGuesses = data.incorrectGuesses || {};
+
+        // ✅ Increase the count for this incorrect guess
+        incorrectGuesses[guess] = (incorrectGuesses[guess] || 0) + 1;
+
         await updateDoc(statsRef, { 
-            incorrectGuesses: arrayUnion(guess)
+            incorrectGuesses: incorrectGuesses // ✅ Store updated incorrect guesses
         });
 
-        console.log(`⚠️ Incorrect guess recorded for ${courseCode} - Session ${sessionNumber} - ${today}`);
+        console.log(`✅ Tracked incorrect guess: "${guess}" - now guessed ${incorrectGuesses[guess]} times.`);
     } catch (error) {
         console.error("❌ Firestore Write Error:", error);
     }
 }
+
+
 
 // Add a function to store the final score in Firestore
 async function storeRawScore(finalScore) {
@@ -532,6 +501,13 @@ async function checkAnswers() {
             console.warn(`Incorrect or empty. Zone: ${zoneId}, Dragged ID: ${draggableChild ? draggableChild.id : 'None'}`);
             zone.classList.add('incorrect');
             zone.classList.remove('correct');
+        
+            // ✅ Track incorrect guesses properly
+            if (draggableChild && draggableChild.id !== correctAnswers[zoneId]) {
+                trackIncorrectGuess(draggableChild.textContent);  //  Track incorrect word
+                draggableChild.remove();  //  Only remove incorrect ones
+            }
+        }   
 
             // Add a correction element
             const correction = document.createElement('div');
@@ -580,11 +556,8 @@ async function checkAnswers() {
 
     document.getElementById('submit-button').disabled = true;
 
-    // ✅ Save correct answers and raw score once after checking all zones
-    if (correctCount > 0) {
-        await trackCorrectAnswer(correctCount); // ✅ Ensures correct answers are updated ONCE per attempt
-    }
-    await storeRawScore(correctCount);  // ✅ Always store the raw score per attempt
+    // ✅ Save raw score once after checking all zones
+        await storeRawScore(correctCount);  // ✅ Always store the raw score per attempt
     
 }
 
@@ -730,7 +703,6 @@ function viewStatistics() {
 // document.getElementById('final-submit-button').addEventListener('click', collectStatistics);
 
 // Attach functions to window for global access
-window.trackCorrectAnswer = trackCorrectAnswer;
 window.trackIncorrectGuess = trackIncorrectGuess;
 window.trackSecondQuestionAnswer = trackSecondQuestionAnswer;
 window.nextQuestion = nextQuestion;
