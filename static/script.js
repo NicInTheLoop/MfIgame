@@ -3,7 +3,7 @@ import { db } from "./firebase.js";
 import { doc, setDoc, getDoc, updateDoc, increment, arrayUnion } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js";
 
 // Function to track correct answers
-async function trackCorrectAnswer() {
+async function trackCorrectAnswer(correctCount) {
     const urlParams = new URLSearchParams(window.location.search);
     const courseCode = urlParams.get("course");
     const sessionNumber = urlParams.get("session");
@@ -19,19 +19,20 @@ async function trackCorrectAnswer() {
     try {
         const docSnap = await getDoc(statsRef);
         if (!docSnap.exists()) {
-            await setDoc(statsRef, { correctAnswers: 0, incorrectGuesses: [], rawScores: [] });
+            await setDoc(statsRef, { correctAnswers: 0 });
         }
 
-        // Increment correctAnswers for this game session
+        // ✅ Increase correct answers ONCE based on final count
         await updateDoc(statsRef, { 
-            correctAnswers: increment(1) 
+            correctAnswers: increment(correctCount)
         });
 
-        console.log(`✅ Correct answer recorded for ${courseCode} - Session ${sessionNumber} - ${today}`);
+        console.log(`✅ Correct answers updated by ${correctCount} for ${courseCode} - Session ${sessionNumber} - ${today}`);
     } catch (error) {
         console.error("❌ Firestore Write Error:", error);
     }
 }
+
 
 // Function to track Incorrect Guesses
 async function trackIncorrectGuess(guess) {
@@ -80,19 +81,21 @@ async function storeRawScore(finalScore) {
     try {
         const docSnap = await getDoc(statsRef);
         if (!docSnap.exists()) {
-            await setDoc(statsRef, { rawScores: [] });
+            await setDoc(statsRef, { rawScores: [], firstQuestionResponses: 0 });
         }
 
-        // Store the player's final score in rawScores
+        // ✅ Store each game attempt separately
         await updateDoc(statsRef, { 
-            rawScores: arrayUnion(finalScore) 
+            rawScores: arrayUnion(finalScore), 
+            firstQuestionResponses: increment(1)  // ✅ Track number of submits
         });
 
-        console.log(`✅ Stored raw score: ${finalScore} for ${courseCode} - Session ${sessionNumber} - ${today}`);
+        console.log(`✅ Stored raw score: ${finalScore}, Total Submissions: ${docSnap.exists() ? docSnap.data().firstQuestionResponses + 1 : 1}`);
     } catch (error) {
         console.error("❌ Firestore Write Error:", error);
     }
 }
+
 
 // Function to track responses to the second question
 async function trackSecondQuestionAnswer(answer) {
@@ -455,12 +458,10 @@ function checkAnswers() {
         console.log(`Zone: ${zoneId}, Found: ${draggableChild ? draggableChild.id : 'None'}, Expected: ${correctAnswers[zoneId]}`);
 
         if (draggableChild && draggableChild.id === correctAnswers[zoneId]) {
-            console.log(`Correct! Zone: ${zoneId}, Dragged ID: ${draggableChild.id}`);
             zone.classList.add('correct');
             zone.classList.remove('incorrect');
-            trackCorrectAnswer(); // Track correct answer
-            correctCount++; // Increment correct count
-        } else {
+            correctCount++;  // ✅ Only increase the count, do NOT call trackCorrectAnswer() here
+        }else {
             console.warn(`Incorrect or empty. Zone: ${zoneId}, Dragged ID: ${draggableChild ? draggableChild.id : 'None'}`);
             zone.classList.add('incorrect');
             zone.classList.remove('correct');
@@ -482,10 +483,11 @@ function checkAnswers() {
 
             // Remove the draggable button from the zone
             if (draggableChild) {
-                draggableChild.remove();
-                trackIncorrectGuess(draggableChild.textContent); // Track incorrect guess
-            }
-        }
+                if (draggableChild.id !== correctAnswers[zoneId]) {
+                    draggableChild.remove(); // ✅ Only remove if it's incorrect
+                    trackIncorrectGuess(draggableChild.textContent); // ✅ Only track incorrect guesses
+                }
+            }            
     });
 
     const draggables = document.querySelectorAll('.draggable');
@@ -513,8 +515,10 @@ function checkAnswers() {
     const submitButton = document.getElementById('submit-button');
     submitButton.disabled = true;
 
-    // Store the raw score
-    storeRawScore(correctCount);
+    // ✅ Save correct answers and raw score once after checking all zones
+    trackCorrectAnswer(correctCount);  // 🟢 Updates Firestore correctly
+    storeRawScore(correctCount);       // 🟢 Stores the player's raw score
+
 }
 
 // DOMContentLoaded Listener
