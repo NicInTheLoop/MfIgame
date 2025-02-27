@@ -73,6 +73,8 @@ async function trackIncorrectGuess(guess) {
     }
 }
 
+// ✅ Ensure the function is accessible globally
+window.trackIncorrectGuess = trackIncorrectGuess;
 
 
 // Add a function to store the final score in Firestore
@@ -724,6 +726,7 @@ function viewStatistics() {
 // document.getElementById('final-submit-button').addEventListener('click', collectStatistics);
 
 // Attach functions to window for global access
+window.checkAnswers = checkAnswers;
 window.trackIncorrectGuess = trackIncorrectGuess;
 window.trackSecondQuestionAnswer = trackSecondQuestionAnswer;
 window.nextQuestion = nextQuestion;
