@@ -526,6 +526,9 @@ async function checkAnswers() {
         }           
     });
 
+    window.checkAnswers = checkAnswers;
+
+
     // ✅ Re-enable drag-and-drop functionality
     document.querySelectorAll('.draggable').forEach(draggable => {
         draggable.setAttribute('draggable', 'true');
