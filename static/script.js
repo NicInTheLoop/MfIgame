@@ -33,8 +33,6 @@ async function ensureStatsDocumentExists() {
     }
 }
 
-
-
 // Function to track Incorrect Guesses
 async function trackIncorrectGuess(guess) {
     const urlParams = new URLSearchParams(window.location.search);
@@ -73,7 +71,120 @@ async function trackIncorrectGuess(guess) {
     }
 }
 
+// Function to check answers
+async function checkAnswers() {
+    await ensureStatsDocumentExists();  // ✅ Ensures the document is created ONCE
 
+    const correctAnswers = {
+        box1: 'word17', // Correct answer for Aim
+        box2: 'word3',  // Correct answer for Measure
+        box3: 'word9',  // Correct answer for Change Ideas
+        quarter1: 'word11', // Correct answer for Plan
+        quarter2: 'word6',  // Correct answer for Do
+        quarter3: 'word10', // Correct answer for Study
+        quarter4: 'word20'  // Correct answer for Act
+    };
+
+    const answerLabels = {
+        word17: 'Aim',
+        word3: 'Measure',
+        word9: 'Change Ideas',
+        word11: 'Plan',
+        word6: 'Do',
+        word10: 'Study',
+        word20: 'Act'
+    };
+
+    function applyRotation(quarterId, element) {
+        if (quarterId === "quarter2") {
+            element.classList.add('rotate-90');
+        } else if (quarterId === "quarter3") {
+            element.classList.add('rotate-180');
+        } else if (quarterId === "quarter4") {
+            element.classList.add('rotate-90-reverse');
+        } else {
+            element.classList.remove('rotate-90', 'rotate-180', 'rotate-90-reverse');
+        }
+    }
+
+    let correctCount = 0;
+
+    Object.keys(correctAnswers).forEach(zoneId => {
+        const zone = document.getElementById(zoneId);
+        if (!zone) {
+            console.warn(`Zone with ID ${zoneId} not found.`);
+            return;
+        }
+
+        // Remove existing correction elements
+        Array.from(zone.querySelectorAll('.correction')).forEach(correction => correction.remove());
+
+        const draggableChild = zone.querySelector('.draggable');
+        console.log(`Zone: ${zoneId}, Found: ${draggableChild ? draggableChild.id : 'None'}, Expected: ${correctAnswers[zoneId]}`);
+
+        if (draggableChild && draggableChild.id === correctAnswers[zoneId]) {
+            zone.classList.add('correct');
+            zone.classList.remove('incorrect');
+            correctCount++;  // ✅ Increase score for each correct answer
+        } else {
+            console.warn(`Incorrect or empty. Zone: ${zoneId}, Dragged ID: ${draggableChild ? draggableChild.id : 'None'}`);
+            zone.classList.add('incorrect');
+            zone.classList.remove('correct');
+
+            // ✅ Track incorrect guesses properly
+            if (draggableChild && draggableChild.id !== correctAnswers[zoneId]) {
+                trackIncorrectGuess(draggableChild.textContent);  // ✅ Track incorrect word
+                draggableChild.remove();  // ✅ Only remove incorrect ones
+            }
+
+            // ✅ Add a correction element
+            const correction = document.createElement('div');
+            correction.classList.add('correction');
+
+            const correctText = answerLabels[correctAnswers[zoneId]] || 'Unknown';
+            correction.textContent = draggableChild
+                ? `${draggableChild.textContent} (Correct: ${correctText})`
+                : `Correct: ${correctText}`;
+
+            if (zoneId.startsWith('quarter')) {
+                applyRotation(zoneId, correction);
+            }
+
+            zone.appendChild(correction);
+        }           
+    });
+
+    const draggables = document.querySelectorAll('.draggable');
+    draggables.forEach(draggable => {
+        draggable.setAttribute('draggable', 'true');
+        draggable.addEventListener('dragstart', drag);
+    });
+
+    // Hide initial instructions and show next instructions and next question button
+    document.getElementById('initial-instructions').classList.add('hidden');
+    console.log('Initial instructions hidden:', document.getElementById('initial-instructions').classList.contains('hidden'));
+
+    const nextInstructions = document.getElementById('next-instructions');
+    nextInstructions.classList.remove('hidden');
+    nextInstructions.classList.add('visible');
+    nextInstructions.style.display = ''; // Resets to CSS default
+    console.log('Next instructions visible:', nextInstructions.classList.contains('visible'));
+
+    const nextQuestionButton = document.getElementById('next-question-button');
+    nextQuestionButton.classList.remove('hidden');
+    nextQuestionButton.classList.add('visible');
+    nextQuestionButton.style.display = ''; // Resets to CSS default
+    console.log('Next question button visible:', nextQuestionButton.classList.contains('visible'));
+
+    const submitButton = document.getElementById('submit-button');
+    submitButton.disabled = true;
+
+    // ✅ Save correct answers and raw score once after checking all zones
+    if (correctCount > 0) {
+        trackCorrectAnswer(correctCount); // ✅ Only update if at least one correct answer
+    }
+    await storeRawScore(correctCount);       // ✅ Always store raw score
+}
 
 // Add a function to store the final score in Firestore
 async function storeRawScore(finalScore) {
@@ -113,7 +224,6 @@ async function storeRawScore(finalScore) {
         console.error("❌ Firestore Write Error:", error);
     }
 }
-
 
 // Function to track responses to the second question
 async function trackSecondQuestionAnswer(answerText) {
