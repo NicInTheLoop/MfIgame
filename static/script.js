@@ -53,26 +53,24 @@ async function trackCorrectAnswer(correctCount) {
         const docSnap = await getDoc(statsRef);
         let data = docSnap.exists() ? docSnap.data() : {};
 
-        // Ensure the document exists
-        if (!docSnap.exists()) {
-            await setDoc(statsRef, { correctAnswers: 0, firstQuestionResponses: 0, rawScores: [], trackedThisSession: false });
-            console.log(`✅ Created new stats document for ${courseCode} - Session ${sessionNumber}`);
+        // ✅ Ensure tracking only applies per game attempt (not just per session)
+        if (data.trackedThisAttempt) {
+            console.log(`⚠️ Already tracked this attempt. Skipping duplicate count.`);
+            return;
         }
 
-        // Fix double-counting issue by checking `trackedThisSession`
-        if (!data.trackedThisSession) {
-            await updateDoc(statsRef, {
-                correctAnswers: increment(correctCount),
-                trackedThisSession: true // Ensures we only update once per game session
-            });
-            console.log(`✅ Correct answers updated by ${correctCount} for ${courseCode} - Session ${sessionNumber} - ${today}`);
-        } else {
-            console.log(`⚠️ Already tracked this session. Skipping duplicate count.`);
-        }
+        await updateDoc(statsRef, {
+            correctAnswers: increment(correctCount),
+            firstQuestionResponses: increment(1),  // ✅ Now counts per attempt, not session
+            trackedThisAttempt: true  // ✅ Ensures it only runs ONCE per game attempt
+        });
+
+        console.log(`✅ Correct answers updated by ${correctCount} and firstQuestionResponses incremented.`);
     } catch (error) {
         console.error("❌ Firestore Write Error:", error);
     }
 }
+
 
 // Function to track Incorrect Guesses
 async function trackIncorrectGuess(guess) {
@@ -122,27 +120,23 @@ async function storeRawScore(finalScore) {
         const docSnap = await getDoc(statsRef);
         let data = docSnap.exists() ? docSnap.data() : {};
 
-        // Ensure the document exists
-        if (!docSnap.exists()) {
-            await setDoc(statsRef, { rawScores: [], firstQuestionResponses: 0, trackedSubmission: false });
-            console.log(`✅ Created new stats document for ${courseCode} - Session ${sessionNumber}`);
+        // ✅ Ensure tracking only applies per game attempt
+        if (data.trackedThisAttempt) {
+            console.log(`⚠️ Already tracked this attempt. Skipping duplicate count.`);
+            return;
         }
 
-        // Fix firstQuestionResponses being counted multiple times
-        if (!data.trackedSubmission) {
-            await updateDoc(statsRef, { 
-                rawScores: arrayUnion(finalScore), 
-                firstQuestionResponses: increment(1),  // Only track once per game session
-                trackedSubmission: true // Ensures this is only updated once
-            });
-            console.log(`✅ Stored raw score: ${finalScore}. First question responses incremented.`);
-        } else {
-            console.log(`⚠️ Already tracked this submission. Skipping duplicate count.`);
-        }
+        await updateDoc(statsRef, { 
+            rawScores: arrayUnion(finalScore), 
+            trackedThisAttempt: true  // ✅ Ensures tracking happens per attempt, not per session
+        });
+
+        console.log(`✅ Stored raw score: ${finalScore}`);
     } catch (error) {
         console.error("❌ Firestore Write Error:", error);
     }
 }
+
 
 // Function to track responses to the second question
 async function trackSecondQuestionAnswer(answerText) {
@@ -579,9 +573,10 @@ async function checkAnswers() {
 
     // ✅ Save correct answers and raw score once after checking all zones
     if (correctCount > 0) {
-        await trackCorrectAnswer(correctCount); // ✅ Only update if at least one correct answer
+        await trackCorrectAnswer(correctCount); // ✅ Ensures correct answers are updated ONCE per attempt
     }
-    await storeRawScore(correctCount);       // ✅ Always store raw score
+    await storeRawScore(correctCount);  // ✅ Always store the raw score per attempt
+    
 }
 
 
