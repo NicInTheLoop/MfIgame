@@ -488,7 +488,7 @@ function checkAnswers() {
                     trackIncorrectGuess(draggableChild.textContent); // ✅ Only track incorrect guesses
                 }
             }            
-    };
+    });
 
     const draggables = document.querySelectorAll('.draggable');
     draggables.forEach(draggable => {
@@ -518,7 +518,6 @@ function checkAnswers() {
     // ✅ Save correct answers and raw score once after checking all zones
     trackCorrectAnswer(correctCount);  // 🟢 Updates Firestore correctly
     storeRawScore(correctCount);       // 🟢 Stores the player's raw score
-
 }
 
 // DOMContentLoaded Listener
