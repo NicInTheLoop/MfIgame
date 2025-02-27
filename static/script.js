@@ -19,15 +19,16 @@ async function trackCorrectAnswer(correctCount) {
     try {
         const docSnap = await getDoc(statsRef);
         if (!docSnap.exists()) {
-            await setDoc(statsRef, { correctAnswers: 0 });
+            await setDoc(statsRef, { correctAnswers: 0, firstQuestionResponses: 0 });
         }
 
-        // ✅ Increase correct answers ONCE based on final count
-        await updateDoc(statsRef, { 
-            correctAnswers: increment(correctCount)
+        // ✅ Fix double counting: Update `correctAnswers` by exact `correctCount`
+        await updateDoc(statsRef, {
+            correctAnswers: increment(correctCount),  // ✅ Only increase by the total correct answers once
+            firstQuestionResponses: increment(1)  // ✅ Only count each submission once
         });
 
-        console.log(`✅ Correct answers updated by ${correctCount} for ${courseCode} - Session ${sessionNumber} - ${today}`);
+        console.log(`✅ Correct answers updated by ${correctCount}. First question responses incremented.`);
     } catch (error) {
         console.error("❌ Firestore Write Error:", error);
     }
@@ -98,7 +99,7 @@ async function storeRawScore(finalScore) {
 
 
 // Function to track responses to the second question
-async function trackSecondQuestionAnswer(answer) {
+async function trackSecondQuestionAnswer(answerText) {
     const urlParams = new URLSearchParams(window.location.search);
     const courseCode = urlParams.get("course");
     const sessionNumber = urlParams.get("session");
@@ -112,16 +113,32 @@ async function trackSecondQuestionAnswer(answer) {
     const statsRef = doc(db, "MFIgameStats", `${courseCode}-Session${sessionNumber}-${today}`);
 
     try {
-        await updateDoc(statsRef, { 
-            secondQuestionAnswers: arrayUnion(answer),
-            secondQuestionResponses: increment(1)  
+        const docSnap = await getDoc(statsRef);
+        if (!docSnap.exists()) {
+            await setDoc(statsRef, { secondQuestionResponses: 0, secondQuestionAnswers: {} });
+        }
+
+        const currentData = docSnap.data();
+        let answerCounts = currentData.secondQuestionAnswers || {};
+
+        // ✅ Ensure the answer is counted properly
+        if (answerText in answerCounts) {
+            answerCounts[answerText] += 1;
+        } else {
+            answerCounts[answerText] = 1;
+        }
+
+        await updateDoc(statsRef, {
+            secondQuestionResponses: increment(1), // ✅ Track the total number of responses
+            secondQuestionAnswers: answerCounts // ✅ Store the number of times each answer was selected
         });
 
-        console.log(`✅ Second question answer tracked for ${courseCode} - Session ${sessionNumber} - ${today}: ${answer}`);
+        console.log(`✅ Stored second question answer: "${answerText}".`);
     } catch (error) {
         console.error("❌ Firestore Write Error:", error);
     }
 }
+
 
 // 🟢 Function to initialize the second question answers in Firestore
 async function initializeSecondQuestionAnswers() {
