@@ -488,7 +488,7 @@ function checkAnswers() {
                     trackIncorrectGuess(draggableChild.textContent); // ✅ Only track incorrect guesses
                 }
             }            
-    });
+    };
 
     const draggables = document.querySelectorAll('.draggable');
     draggables.forEach(draggable => {
