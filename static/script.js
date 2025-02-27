@@ -2,6 +2,39 @@
 import { db } from "./firebase.js";
 import { doc, setDoc, getDoc, updateDoc, increment, arrayUnion } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js";
 
+async function ensureStatsDocumentExists() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const courseCode = urlParams.get("course");
+    const sessionNumber = urlParams.get("session");
+
+    if (!courseCode || !sessionNumber) {
+        console.warn("⚠️ No course or session found in URL, cannot create document.");
+        return;
+    }
+
+    const today = new Date().toISOString().split('T')[0];
+    const statsRef = doc(db, "MFIgameStats", `${courseCode}-Session${sessionNumber}-${today}`);
+
+    try {
+        const docSnap = await getDoc(statsRef);
+        if (!docSnap.exists()) {
+            await setDoc(statsRef, { 
+                correctAnswers: 0, 
+                firstQuestionResponses: 0, 
+                rawScores: [], 
+                secondQuestionAnswers: {}, 
+                secondQuestionResponses: 0,
+                trackedThisSession: false,
+                trackedSubmission: false
+            });
+            console.log(`✅ Created new stats document ONCE for ${courseCode} - Session ${sessionNumber}`);
+        }
+    } catch (error) {
+        console.error("❌ Firestore Write Error: Could not create document", error);
+    }
+}
+
+
 // Function to track correct answers
 async function trackCorrectAnswer(correctCount) {
     const urlParams = new URLSearchParams(window.location.search);
