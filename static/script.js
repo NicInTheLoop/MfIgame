@@ -10,7 +10,6 @@ async function ensureStatsDocumentExists() {
     if (!courseCode || !sessionNumber) {
         console.warn("⚠️ No course or session found in URL, cannot create document.");
         return;
-    }
 
     const today = new Date().toISOString().split('T')[0];
     const statsRef = doc(db, "MFIgameStats", `${courseCode}-Session${sessionNumber}-${today}`);
