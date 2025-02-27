@@ -487,7 +487,8 @@ function checkAnswers() {
                     draggableChild.remove(); // ✅ Only remove if it's incorrect
                     trackIncorrectGuess(draggableChild.textContent); // ✅ Only track incorrect guesses
                 }
-            }            
+            }
+        }           
     });
 
     const draggables = document.querySelectorAll('.draggable');
