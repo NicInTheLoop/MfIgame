@@ -53,23 +53,28 @@ async function trackCorrectAnswer(correctCount) {
         const docSnap = await getDoc(statsRef);
         let data = docSnap.exists() ? docSnap.data() : {};
 
-        // ✅ Ensure tracking only applies per game attempt (not just per session)
-        if (data.trackedThisAttempt) {
+        // ✅ Check BEFORE updating to prevent multiple executions
+        if (data.trackedThisAttempt === true) {
             console.log(`⚠️ Already tracked this attempt. Skipping duplicate count.`);
             return;
         }
 
+        // ✅ Mark the attempt as tracked BEFORE updating Firestore
         await updateDoc(statsRef, {
-            correctAnswers: increment(correctCount),
-            firstQuestionResponses: increment(1),  // ✅ Now counts per attempt, not session
-            trackedThisAttempt: true  // ✅ Ensures it only runs ONCE per game attempt
+            trackedThisAttempt: true
         });
 
-        console.log(`✅ Correct answers updated by ${correctCount} and firstQuestionResponses incremented.`);
+        await updateDoc(statsRef, {
+            correctAnswers: increment(correctCount),
+            firstQuestionResponses: increment(1)
+        });
+
+        console.log(`✅ Correct answers updated by ${correctCount}. First question responses incremented.`);
     } catch (error) {
         console.error("❌ Firestore Write Error:", error);
     }
 }
+
 
 
 // Function to track Incorrect Guesses
@@ -120,15 +125,19 @@ async function storeRawScore(finalScore) {
         const docSnap = await getDoc(statsRef);
         let data = docSnap.exists() ? docSnap.data() : {};
 
-        // ✅ Ensure tracking only applies per game attempt
-        if (data.trackedThisAttempt) {
+        // ✅ Check BEFORE updating to prevent multiple executions
+        if (data.trackedThisAttempt === true) {
             console.log(`⚠️ Already tracked this attempt. Skipping duplicate count.`);
             return;
         }
 
+        // ✅ Mark the attempt as tracked BEFORE updating Firestore
+        await updateDoc(statsRef, {
+            trackedThisAttempt: true
+        });
+
         await updateDoc(statsRef, { 
-            rawScores: arrayUnion(finalScore), 
-            trackedThisAttempt: true  // ✅ Ensures tracking happens per attempt, not per session
+            rawScores: arrayUnion(finalScore)
         });
 
         console.log(`✅ Stored raw score: ${finalScore}`);
