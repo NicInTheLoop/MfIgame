@@ -73,8 +73,6 @@ async function trackIncorrectGuess(guess) {
     }
 }
 
-// ✅ Ensure the function is accessible globally
-window.trackIncorrectGuess = trackIncorrectGuess;
 
 
 // Add a function to store the final score in Firestore
@@ -597,8 +595,17 @@ document.addEventListener('DOMContentLoaded', function () {
     submitButton.disabled = true;
 
     // Add event listeners
-    submitButton.addEventListener('click', checkAnswers);
-    nextQuestionButton.addEventListener('click', nextQuestion);
+    if (submitButton) {
+        submitButton.addEventListener('click', checkAnswers);
+    } else {
+        console.error("❌ Submit button not found!");
+    }
+
+    if (nextQuestionButton) {
+        nextQuestionButton.addEventListener('click', nextQuestion);
+    } else {
+        console.error("❌ Next question button not found!");
+    }
 
     const draggables = document.querySelectorAll('.draggable');
     const blanks = document.querySelectorAll('.text-box, .quarter');
@@ -728,16 +735,7 @@ function viewStatistics() {
 // Ensure statistics are saved when the game completes
 // document.getElementById('final-submit-button').addEventListener('click', collectStatistics);
 
-// Attach functions to window for global access
-window.trackIncorrectGuess = trackIncorrectGuess;
-window.trackSecondQuestionAnswer = trackSecondQuestionAnswer;
-window.nextQuestion = nextQuestion;
-window.submitAnswers = checkAnswers;
-window.selectFinalOption = selectFinalOption;
-window.submitFinalAnswer = submitFinalAnswer;
-window.allowDrop = allowDrop;
-window.drag = drag;
-window.drop = drop;
+
 
 window.testFirestore = async function () {
     try {
@@ -752,3 +750,14 @@ window.testFirestore = async function () {
 console.log("✅ testFirestore function is now available globally.");
 console.log("✅ Reached the end of script.js execution.");
 
+// Attach functions to window for global access
+window.trackIncorrectGuess = trackIncorrectGuess;
+window.trackSecondQuestionAnswer = trackSecondQuestionAnswer;
+window.nextQuestion = nextQuestion;
+window.submitAnswers = checkAnswers;
+window.checkAnswers = checkAnswers;
+window.selectFinalOption = selectFinalOption;
+window.submitFinalAnswer = submitFinalAnswer;
+window.allowDrop = allowDrop;
+window.drag = drag;
+window.drop = drop;
