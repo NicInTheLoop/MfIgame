@@ -634,9 +634,6 @@ async function checkAnswers() {
         }           
     });
 
-    window.checkAnswers = checkAnswers;
-
-
     // ✅ Re-enable drag-and-drop functionality
     document.querySelectorAll('.draggable').forEach(draggable => {
         draggable.setAttribute('draggable', 'true');
@@ -698,23 +695,10 @@ async function checkAnswers() {
 
 // DOMContentLoaded Listener
 document.addEventListener('DOMContentLoaded', function () {
-    const submitButton = document.getElementById('submit-button');
     const nextQuestionButton = document.getElementById('next-question-button');
-
-    // Set initial state
-    submitButton.disabled = true;
-
-    // Add event listeners
-    if (submitButton) {
-        submitButton.addEventListener('click', checkAnswers);
-    } else {
-        console.error("❌ Submit button not found!");
-    }
 
     if (nextQuestionButton) {
         nextQuestionButton.addEventListener('click', nextQuestion);
-    } else {
-        console.error("❌ Next question button not found!");
     }
 
     const draggables = document.querySelectorAll('.draggable');
@@ -732,8 +716,6 @@ document.addEventListener('DOMContentLoaded', function () {
     // Initial check to disable/enable the submit button
     checkSubmitButtonState();
 });
-
-// Attach globally accessible functions (if needed by HTML)
 
 
 function nextQuestion() {
@@ -864,7 +846,6 @@ console.log("✅ Reached the end of script.js execution.");
 window.trackIncorrectGuess = trackIncorrectGuess;
 window.trackSecondQuestionAnswer = trackSecondQuestionAnswer;
 window.nextQuestion = nextQuestion;
-window.submitAnswers = checkAnswers;
 window.checkAnswers = checkAnswers;
 window.selectFinalOption = selectFinalOption;
 window.submitFinalAnswer = submitFinalAnswer;
