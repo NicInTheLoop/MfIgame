@@ -20,17 +20,17 @@ async function trackCorrectAnswer(correctCount) {
         const docSnap = await getDoc(statsRef);
         let data = docSnap.exists() ? docSnap.data() : {};
 
-        // ✅ Ensure the document exists
+        // Ensure the document exists
         if (!docSnap.exists()) {
             await setDoc(statsRef, { correctAnswers: 0, firstQuestionResponses: 0, rawScores: [], trackedThisSession: false });
             console.log(`✅ Created new stats document for ${courseCode} - Session ${sessionNumber}`);
         }
 
-        // ✅ Fix double-counting issue by checking `trackedThisSession`
+        // Fix double-counting issue by checking `trackedThisSession`
         if (!data.trackedThisSession) {
             await updateDoc(statsRef, {
                 correctAnswers: increment(correctCount),
-                trackedThisSession: true // ✅ Ensures we only update once per game session
+                trackedThisSession: true // Ensures we only update once per game session
             });
             console.log(`✅ Correct answers updated by ${correctCount} for ${courseCode} - Session ${sessionNumber} - ${today}`);
         } else {
@@ -40,9 +40,6 @@ async function trackCorrectAnswer(correctCount) {
         console.error("❌ Firestore Write Error:", error);
     }
 }
-
-
-
 
 // Function to track Incorrect Guesses
 async function trackIncorrectGuess(guess) {
@@ -92,18 +89,18 @@ async function storeRawScore(finalScore) {
         const docSnap = await getDoc(statsRef);
         let data = docSnap.exists() ? docSnap.data() : {};
 
-        // ✅ Ensure the document exists
+        // Ensure the document exists
         if (!docSnap.exists()) {
             await setDoc(statsRef, { rawScores: [], firstQuestionResponses: 0, trackedSubmission: false });
             console.log(`✅ Created new stats document for ${courseCode} - Session ${sessionNumber}`);
         }
 
-        // ✅ Fix firstQuestionResponses being counted multiple times
+        // Fix firstQuestionResponses being counted multiple times
         if (!data.trackedSubmission) {
             await updateDoc(statsRef, { 
                 rawScores: arrayUnion(finalScore), 
-                firstQuestionResponses: increment(1),  // ✅ Only track once per game session
-                trackedSubmission: true // ✅ Ensures this is only updated once
+                firstQuestionResponses: increment(1),  // Only track once per game session
+                trackedSubmission: true // Ensures this is only updated once
             });
             console.log(`✅ Stored raw score: ${finalScore}. First question responses incremented.`);
         } else {
@@ -113,7 +110,6 @@ async function storeRawScore(finalScore) {
         console.error("❌ Firestore Write Error:", error);
     }
 }
-
 
 // Function to track responses to the second question
 async function trackSecondQuestionAnswer(answerText) {
@@ -147,8 +143,8 @@ async function trackSecondQuestionAnswer(answerText) {
         }
 
         await updateDoc(statsRef, {
-            secondQuestionResponses: increment(1), // ✅ Track total second question responses
-            secondQuestionAnswers: answerCounts // ✅ Store how many times each answer was chosen
+            secondQuestionResponses: increment(1), // Track total second question responses
+            secondQuestionAnswers: answerCounts // Store how many times each answer was chosen
         });
 
         console.log(`✅ Stored second question answer: "${answerText}".`);
@@ -157,9 +153,7 @@ async function trackSecondQuestionAnswer(answerText) {
     }
 }
 
-
-
-// 🟢 Function to initialize the second question answers in Firestore
+// Function to initialize the second question answers in Firestore
 async function initializeSecondQuestionAnswers() {
     const urlParams = new URLSearchParams(window.location.search);
     const courseCode = urlParams.get("course");
@@ -199,7 +193,7 @@ window.toggleStatistics = function () {
     }
 };
 
-// 🟢 Function to fetch and display live statistics for the organiser
+// Function to fetch and display live statistics for the organiser
 window.updateStatisticsDisplay = async function () {
     const filterType = document.getElementById("stats-filter").value;
     let totalUsers = 0;
@@ -246,7 +240,7 @@ window.updateStatisticsDisplay = async function () {
     }
 };
 
-// 🟢 Run this function every 5 seconds for live updates
+// Run this function every 5 seconds for live updates
 setInterval(updateStatisticsDisplay, 5000);
 
 // DOMContentLoaded Listener
@@ -258,7 +252,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const courseSetup = document.getElementById("course-setup");
     const gameArea = document.getElementById("game-area");
 
-    // 🟢 Function to generate session link and store session in Firebase
+    // Function to generate session link and store session in Firebase
     courseForm.addEventListener("submit", async function (event) {
         event.preventDefault();
 
@@ -270,17 +264,17 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        // 🟢 Store organiser status
+        // Store organiser status
         sessionStorage.setItem("isOrganiser", "true");
 
-        // 🟢 Construct session link
+        // Construct session link
         const sessionLink = `${window.location.origin}${window.location.pathname}?course=${encodeURIComponent(courseCode)}&session=${encodeURIComponent(sessionNumber)}`;
 
-        // 🟢 Show generated session link instead of redirecting
+        // Show generated session link instead of redirecting
         linkOutput.textContent = sessionLink;
         sessionLinkContainer.style.display = "block";
 
-        // 🟢 Store session details in Firebase
+        // Store session details in Firebase
         try {
             const sessionRef = doc(db, "MFIgameSessions", `${courseCode}-Session${sessionNumber}`);
             await setDoc(sessionRef, {
@@ -295,7 +289,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    // 🟢 Function to check for existing session details in URL
+    // Function to check for existing session details in URL
     function checkForExistingSession() {
         const urlParams = new URLSearchParams(window.location.search);
         const courseCode = urlParams.get("course");
@@ -304,29 +298,29 @@ document.addEventListener("DOMContentLoaded", function () {
         if (courseCode && sessionNumber) {
             console.log("🔹 Course detected in URL:", courseCode, "Session:", sessionNumber);
 
-            // 🟢 Ensure course setup is hidden for participants
+            // Ensure course setup is hidden for participants
             if (!sessionStorage.getItem("isOrganiser")) {
                 courseSetup.style.display = "none";
             } else {
                 sessionLinkContainer.style.display = "block";
             }
 
-            // 🟢 Update UI with course/session details
+            // Update UI with course/session details
             courseTitleElement.textContent = `Course Session: ${courseCode} (Session ${sessionNumber})`;
             courseTitleElement.classList.remove("hidden");
 
-            // 🟢 Show the game area
+            // Show the game area
             gameArea.style.display = "flex";
         } else {
             console.log("ℹ️ No course session found in URL.");
         }
     }
 
-    // 🟢 Run function after ensuring the document is fully loaded
+    // Run function after ensuring the document is fully loaded
     setTimeout(checkForExistingSession, 500);
 });
 
-// 🟢 Function to copy the generated link to clipboard
+// Function to copy the generated link to clipboard
 document.getElementById("copy-link").addEventListener("click", function () {
     const linkOutput = document.getElementById("link-output").textContent;
 
@@ -497,7 +491,7 @@ function checkAnswers() {
             zone.classList.add('correct');
             zone.classList.remove('incorrect');
             correctCount++;  // ✅ Only increase the count, do NOT call trackCorrectAnswer() here
-        }else {
+        } else {
             console.warn(`Incorrect or empty. Zone: ${zoneId}, Dragged ID: ${draggableChild ? draggableChild.id : 'None'}`);
             zone.classList.add('incorrect');
             zone.classList.remove('correct');
