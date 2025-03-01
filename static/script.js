@@ -2,7 +2,6 @@
 import { db } from "./firebase.js";
 import { doc, setDoc, getDoc, updateDoc, increment, arrayUnion } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js";
 
-// ✅ Function to check if a course session exists in URL and update UI accordingly
 function checkForExistingSession() {
     const urlParams = new URLSearchParams(window.location.search);
     const courseCode = urlParams.get("course");
@@ -11,23 +10,49 @@ function checkForExistingSession() {
     if (courseCode && sessionNumber) {
         console.log(`🔹 Course detected in URL: ${courseCode}, Session: ${sessionNumber}`);
 
-        // Hide course setup for participants, show for organisers
-        if (!sessionStorage.getItem("isOrganiser")) {
-            courseSetup.style.display = "none";
-        } else {
-            sessionLinkContainer.style.display = "block";
+        // Hide course setup form (for participants)
+        const courseSetup = document.getElementById("course-setup");
+        if (courseSetup) {
+            courseSetup.style.display = "none"; 
+            console.log("✅ Course setup hidden for participant view.");
         }
 
-        // Update UI with session details
-        courseTitleElement.textContent = `Course Session: ${courseCode} (Session ${sessionNumber})`;
-        courseTitleElement.classList.remove("hidden");
+        // Show game area
+        const gameArea = document.getElementById("game-area");
+        if (gameArea) {
+            gameArea.style.display = "flex";
+            console.log("✅ Game area displayed.");
+        }
 
-        // Show the game area
-        gameArea.style.display = "flex";
+        // Update the title
+        const courseTitleElement = document.getElementById("course-title");
+        if (courseTitleElement) {
+            courseTitleElement.textContent = `Course Session: ${courseCode} (Session ${sessionNumber})`;
+            courseTitleElement.classList.remove("hidden");
+        }
+
+        // ✅ Mark participant view in sessionStorage (Prevents them from seeing setup on reload)
+        sessionStorage.setItem("isParticipant", "true");
+
+        // ✅ Ensure Firestore initializes properly
+        initializeSecondQuestionAnswers();  
+        ensureStatsDocumentExists();  
     } else {
         console.log("ℹ️ No course session found in URL.");
     }
 }
+checkForExistingSession(); // ✅ Run it immediately
+
+document.addEventListener("DOMContentLoaded", function () {
+    // If participant, ensure setup stays hidden
+    if (sessionStorage.getItem("isParticipant") === "true") {
+        const courseSetup = document.getElementById("course-setup");
+        if (courseSetup) {
+            courseSetup.style.display = "none";
+        }
+    }
+});
+
 
 async function ensureStatsDocumentExists() {
     const urlParams = new URLSearchParams(window.location.search);
@@ -60,6 +85,7 @@ async function ensureStatsDocumentExists() {
         console.error("❌ Firestore Write Error: Could not create document", error);
     }
 }
+
 
 // Function to copy the generated link to clipboard
 document.getElementById("copy-link").addEventListener("click", function () {
