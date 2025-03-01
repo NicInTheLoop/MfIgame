@@ -63,7 +63,7 @@ async function ensureStatsDocumentExists() {
 
 // Function to copy the generated link to clipboard
 document.getElementById("copy-link").addEventListener("click", function () {
-    const linkOutput = document.getElementById("link-output").value;  // ✅ Use .value instead of .textContent
+    const linkOutput = document.getElementById("link-output").textContent;  
 
     if (!linkOutput) {
         console.warn("⚠️ No session link available to copy.");
