@@ -309,7 +309,7 @@ async function checkAnswers() {
     }
 
     let correctCount = 0;
-    let incorrectWords = []; 
+    let incorrectWords = [];
 
     Object.keys(correctAnswers).forEach(zoneId => {
         const zone = document.getElementById(zoneId);
@@ -318,7 +318,7 @@ async function checkAnswers() {
             return;
         }
 
-        // Remove existing correction elements
+        // ✅ Remove existing correction elements
         Array.from(zone.querySelectorAll('.correction-container')).forEach(correction => correction.remove());
 
         const draggableChild = zone.querySelector('.draggable');
@@ -327,6 +327,9 @@ async function checkAnswers() {
             correctCount++;
         } else if (draggableChild) {
             incorrectWords.push(draggableChild.textContent);  
+
+            // ✅ Turn the text box/quarter grey
+            zone.classList.add("incorrect-box");
 
             // ✅ Keep incorrect draggable pink
             draggableChild.classList.add("incorrect-draggable");
@@ -388,6 +391,7 @@ async function checkAnswers() {
 }
     
 window.checkAnswers = checkAnswers;
+
 
 
 function nextQuestion() {
