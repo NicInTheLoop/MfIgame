@@ -465,13 +465,13 @@ button {
 
 /* Incorrect text boxes & quarters */
 .incorrect-box {
-    background-color: grey !important;
+    background-color: grey 
 }
 
 /* Incorrect draggable buttons */
 .incorrect-draggable {
-    background-color: grey !important;
-    border: 2px solid #E6007E !important; /* Pink outline */
+    background-color: grey 
+    border: 2px solid #E6007E; /* Pink outline */
 }
 
 /* Correction text */

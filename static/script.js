@@ -297,6 +297,18 @@ async function checkAnswers() {
         word20: 'Act'
     };
 
+    function applyRotation(quarterId, element) {
+        if (quarterId === "quarter2") {
+            element.style.transform = "rotate(-90deg)";
+        } else if (quarterId === "quarter3") {
+            element.style.transform = "rotate(180deg)";
+        } else if (quarterId === "quarter4") {
+            element.style.transform = "rotate(90deg)";
+        } else {
+            element.style.transform = "rotate(0deg)";
+        }
+    }
+
     let correctCount = 0;
     let incorrectWords = []; // Track incorrect guesses
 
@@ -321,11 +333,14 @@ async function checkAnswers() {
             zone.classList.add("incorrect-box");
             draggableChild.classList.add("incorrect-draggable");
 
-            // ✅ Add a correction element below incorrect answers
+            // ✅ Create a correction draggable
             const correction = document.createElement('div');
-            correction.classList.add('correction');
-            const correctText = answerLabels[correctAnswers[zoneId]] || 'Unknown';
-            correction.textContent = `Correct: ${correctText}`;
+            correction.classList.add('draggable', 'correction-draggable');
+            correction.textContent = answerLabels[correctAnswers[zoneId]] || 'Unknown';
+            correction.setAttribute("draggable", "false"); // Correction should not be draggable
+
+            // ✅ Rotate correction in quarters
+            applyRotation(zoneId, correction);
 
             zone.appendChild(correction);
         }
