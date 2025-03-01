@@ -268,6 +268,16 @@ window.trackCorrectAnswer = trackCorrectAnswer;
 async function checkAnswers() {
     await ensureStatsDocumentExists();  // ✅ Ensures the document is created ONCE
 
+    // ✅ Retrieve courseCode and sessionNumber from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const courseCode = urlParams.get("course");
+    const sessionNumber = urlParams.get("session");
+
+    if (!courseCode || !sessionNumber) {
+        console.error("❌ Error: courseCode or sessionNumber is missing.");
+        return;
+    }
+
     const correctAnswers = {
         box1: 'word17', // Correct answer for Aim
         box2: 'word3',  // Correct answer for Measure
