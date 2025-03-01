@@ -244,6 +244,25 @@ let correctAnswersCount = 0;
 let incorrectGuesses = [];
 let finalQuestionResponse = '';
 
+// ✅ Function to handle correct answers in the game
+function trackCorrectAnswer(element) {
+    if (!element) {
+        console.warn("⚠️ No element provided for trackCorrectAnswer.");
+        return;
+    }
+
+    // Add the 'correct' class to visually indicate correctness
+    element.classList.add("correct");
+    element.classList.remove("incorrect");
+
+    console.log(`✅ Marked ${element.id} as correct.`);
+}
+
+// ✅ Make it globally accessible
+window.trackCorrectAnswer = trackCorrectAnswer;
+
+
+
 // Function to check answers
 async function checkAnswers() {
     await ensureStatsDocumentExists();  // ✅ Ensures the document is created ONCE
@@ -303,6 +322,9 @@ async function checkAnswers() {
             console.warn(`Incorrect or empty. Zone: ${zoneId}, Dragged ID: ${draggableChild ? draggableChild.id : 'None'}`);
             zone.classList.add('incorrect');
             zone.classList.remove('correct');
+
+            // ✅ Restore function usage to mark correct answers
+            trackCorrectAnswer(draggableChild);
 
             // ✅ Track incorrect guesses properly
             if (draggableChild && draggableChild.id !== correctAnswers[zoneId]) {
