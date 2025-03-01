@@ -73,6 +73,13 @@ async function trackIncorrectGuess(guess) {
 
 window.trackIncorrectGuess = trackIncorrectGuess;
 
+// Function to handle drag event
+function drag(event) {
+    event.dataTransfer.setData("text", event.target.id);
+}
+window.drag = drag; // ✅ Attach to window immediately
+
+
 // Function to check answers
 async function checkAnswers() {
     await ensureStatsDocumentExists();  // ✅ Ensures the document is created ONCE
@@ -157,10 +164,15 @@ async function checkAnswers() {
     });
 
     const draggables = document.querySelectorAll('.draggable');
-    draggables.forEach(draggable => {
-        draggable.setAttribute('draggable', 'true');
-        draggable.addEventListener('dragstart', drag);
-    });
+draggables.forEach(draggable => {
+    draggable.setAttribute('draggable', 'true');
+    if (typeof drag === "function") {  
+        draggable.addEventListener('dragstart', drag);  // ✅ Works only if drag exists
+    } else {
+        console.warn("drag function is not yet defined.");
+    }
+});
+
 
     // Hide initial instructions and show next instructions and next question button
     document.getElementById('initial-instructions').classList.add('hidden');
@@ -459,12 +471,6 @@ function allowDrop(event) {
 }
 window.allowDrop = allowDrop;
 
-// Function to handle drag event
-function drag(event) {
-    event.dataTransfer.setData("text", event.target.id);
-}
-
-window.drag = drag;
 
 // Function to handle drop event
 function drop(event) {
