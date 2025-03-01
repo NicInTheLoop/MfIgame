@@ -71,6 +71,8 @@ async function trackIncorrectGuess(guess) {
     }
 }
 
+window.trackIncorrectGuess = trackIncorrectGuess;
+
 // Function to check answers
 async function checkAnswers() {
     await ensureStatsDocumentExists();  // ✅ Ensures the document is created ONCE
@@ -185,6 +187,8 @@ async function checkAnswers() {
     }
     await storeRawScore(correctCount);       // ✅ Always store raw score
 }
+window.checkAnswers = checkAnswers;
+
 
 // Add a function to store the final score in Firestore
 async function storeRawScore(finalScore) {
@@ -266,6 +270,8 @@ async function trackSecondQuestionAnswer(answerText) {
         console.error("❌ Firestore Write Error:", error);
     }
 }
+
+window.trackSecondQuestionAnswer = trackSecondQuestionAnswer;
 
 // Function to initialize the second question answers in Firestore
 async function initializeSecondQuestionAnswers() {
@@ -451,11 +457,14 @@ document.getElementById("copy-link").addEventListener("click", function () {
 function allowDrop(event) {
     event.preventDefault(); // Always allow dropping
 }
+window.allowDrop = allowDrop;
 
 // Function to handle drag event
 function drag(event) {
     event.dataTransfer.setData("text", event.target.id);
 }
+
+window.drag = drag;
 
 // Function to handle drop event
 function drop(event) {
@@ -528,6 +537,7 @@ function drop(event) {
 
     checkSubmitButtonState();
 }
+window.drop = drop;
 
 // Function to check the state of the submit button
 function checkSubmitButtonState() {
@@ -780,6 +790,7 @@ function nextQuestion() {
 }
 
 let selectedFinalOption = null; // Track the selected answer
+window.nextQuestion = nextQuestion;
 
 function selectFinalOption(option) {
     // Deselect any previously selected option
@@ -795,6 +806,7 @@ function selectFinalOption(option) {
     const submitButton = document.getElementById('final-submit-button');
     submitButton.disabled = false;
 }
+window.selectFinalOption = selectFinalOption;
 
 function submitFinalAnswer() {
     // Disable the submit button
@@ -814,6 +826,7 @@ function submitFinalAnswer() {
     console.log('Final answer submitted:', selectedFinalOption.textContent);
     trackSecondQuestionAnswer(selectedFinalOption.textContent); // Track second question answer
 }
+window.submitFinalAnswer = submitFinalAnswer;
 
 // Function to view statistics
 function viewStatistics() {
@@ -843,12 +856,11 @@ console.log("✅ testFirestore function is now available globally.");
 console.log("✅ Reached the end of script.js execution.");
 
 // Attach functions to window for global access
-window.trackIncorrectGuess = trackIncorrectGuess;
-window.trackSecondQuestionAnswer = trackSecondQuestionAnswer;
-window.nextQuestion = nextQuestion;
-window.checkAnswers = checkAnswers;
-window.selectFinalOption = selectFinalOption;
-window.submitFinalAnswer = submitFinalAnswer;
-window.allowDrop = allowDrop;
-window.drag = drag;
-window.drop = drop;
+
+
+
+
+
+
+
+
