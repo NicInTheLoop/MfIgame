@@ -339,7 +339,9 @@ async function checkAnswers() {
             correctionText.textContent = `Correct: ${answerLabels[correctAnswers[zoneId]] || 'Unknown'}`;
             
             // ✅ Apply rotation for corrections inside quarters
-            applyRotation(zoneId, correctionText);
+            if (zone.classList.contains('quarter')) {
+                applyRotation(zoneId, correctionText);
+            }
             
             correctionContainer.appendChild(correctionText);
             zone.appendChild(correctionContainer);
