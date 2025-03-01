@@ -337,12 +337,13 @@ async function checkAnswers() {
             const correctionText = document.createElement('div');
             correctionText.classList.add('correction-text');
             correctionText.textContent = `Correct: ${answerLabels[correctAnswers[zoneId]] || 'Unknown'}`;
-
-            // ✅ Apply rotation inside quarters
+            
+            // ✅ Apply rotation for corrections inside quarters
             applyRotation(zoneId, correctionText);
-
+            
             correctionContainer.appendChild(correctionText);
             zone.appendChild(correctionContainer);
+            
         }
     });
 
@@ -397,6 +398,7 @@ window.checkAnswers = checkAnswers;
 
 // Function to handle the final question
 function nextQuestion() {
+    // Reset the game area
     const correctAnswers = {
         box1: 'Aim',
         box2: 'Measure',
@@ -408,13 +410,14 @@ function nextQuestion() {
     };
 
     const zones = document.querySelectorAll('.text-box, .quarter');
-
+    
     zones.forEach(zone => {
         // ✅ Reset background to lime green
         zone.style.backgroundColor = '#BCCF04';
-
+    
         // ✅ Remove all correction elements
         Array.from(zone.querySelectorAll('.correction-container')).forEach(correction => correction.remove());
+    });    
 
         // ✅ Remove all non-arrow child elements
         Array.from(zone.children).forEach(child => {
