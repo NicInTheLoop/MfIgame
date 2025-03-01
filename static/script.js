@@ -263,7 +263,7 @@ window.trackCorrectAnswer = trackCorrectAnswer;
 
 
 
-/// Function to check answers
+// Function to check answers
 async function checkAnswers() {
     await ensureStatsDocumentExists();  // ✅ Ensures the document is created ONCE
 
@@ -297,6 +297,18 @@ async function checkAnswers() {
         word20: 'Act'
     };
 
+    function applyRotation(quarterId, element) {
+        if (quarterId === "quarter2") {
+            element.classList.add('rotate-90');
+        } else if (quarterId === "quarter3") {
+            element.classList.add('rotate-180');
+        } else if (quarterId === "quarter4") {
+            element.classList.add('rotate-90-reverse');
+        } else {
+            element.classList.remove('rotate-90', 'rotate-180', 'rotate-90-reverse');
+        }
+    }
+
     let correctCount = 0;
     let incorrectWords = []; // Track incorrect guesses
 
@@ -319,7 +331,7 @@ async function checkAnswers() {
             correctCount++;
         } else if (draggableChild) {
             incorrectWords.push(draggableChild.textContent);  // ✅ Collect all incorrect words
-            zone.classList.add('incorrect');
+            zone.classList.add('incorrect'); // ✅ Restore incorrect answer highlighting
             zone.classList.remove('correct');
         }
     });
@@ -351,9 +363,29 @@ async function checkAnswers() {
     } catch (error) {
         console.error("❌ Firestore Update Error:", error);
     }
+
+    // ✅ Restore Next Question Transition
+    document.getElementById('initial-instructions').classList.add('hidden');
+    console.log('Initial instructions hidden:', document.getElementById('initial-instructions').classList.contains('hidden'));
+
+    const nextInstructions = document.getElementById('next-instructions');
+    nextInstructions.classList.remove('hidden');
+    nextInstructions.classList.add('visible');
+    nextInstructions.style.display = ''; // Resets to CSS default
+    console.log('Next instructions visible:', nextInstructions.classList.contains('visible'));
+
+    const nextQuestionButton = document.getElementById('next-question-button');
+    nextQuestionButton.classList.remove('hidden');
+    nextQuestionButton.classList.add('visible');
+    nextQuestionButton.style.display = ''; // Resets to CSS default
+    console.log('Next question button visible:', nextQuestionButton.classList.contains('visible'));
+
+    const submitButton = document.getElementById('submit-button');
+    submitButton.disabled = true;
 }
     
 window.checkAnswers = checkAnswers;
+
 
 function nextQuestion() {
     // Reset the game area
