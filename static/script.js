@@ -310,6 +310,7 @@ async function checkAnswers() {
     }
 
     let correctCount = 0;
+    let incorrectWords = []; // Track incorrect guesses
 
     Object.keys(correctAnswers).forEach(zoneId => {
         const zone = document.getElementById(zoneId);
@@ -340,13 +341,10 @@ async function checkAnswers() {
             zone.classList.add('incorrect');
             zone.classList.remove('correct');
 
-            // ✅ Restore function usage to mark correct answers
-            trackCorrectAnswer(draggableChild);
-
             // ✅ Track incorrect guesses properly
             if (draggableChild && draggableChild.id !== correctAnswers[zoneId]) {
-                trackIncorrectGuess(draggableChild.textContent);  // ✅ Track incorrect word
-                draggableChild.remove();  // ✅ Only remove incorrect ones
+                incorrectWords.push(draggableChild.textContent);  // ✅ Collect incorrect words
+                draggableChild.remove();  // ✅ Remove incorrect ones
             }
 
             // ✅ Add a correction element
@@ -367,15 +365,14 @@ async function checkAnswers() {
     });
 
     const draggables = document.querySelectorAll('.draggable');
-draggables.forEach(draggable => {
-    draggable.setAttribute('draggable', 'true');
-    if (typeof drag === "function") {  
-        draggable.addEventListener('dragstart', drag);  // ✅ Works only if drag exists
-    } else {
-        console.warn("drag function is not yet defined.");
-    }
-});
-
+    draggables.forEach(draggable => {
+        draggable.setAttribute('draggable', 'true');
+        if (typeof drag === "function") {  
+            draggable.addEventListener('dragstart', drag);  // ✅ Works only if drag exists
+        } else {
+            console.warn("drag function is not yet defined.");
+        }
+    });
 
     // Hide initial instructions and show next instructions and next question button
     document.getElementById('initial-instructions').classList.add('hidden');
@@ -396,28 +393,34 @@ draggables.forEach(draggable => {
     const submitButton = document.getElementById('submit-button');
     submitButton.disabled = true;
 
-    // ✅ Save correct answers and raw score once after checking all zones
-    if (correctCount > 0) {
-        try {
-            const today = new Date().toISOString().split('T')[0];
-            const statsRef = doc(db, "MFIgameStats", `${courseCode}-Session${sessionNumber}-${today}`);
-    
+    // ✅ Always update Firestore, even if all answers are wrong
+    const today = new Date().toISOString().split('T')[0];
+    const statsRef = doc(db, "MFIgameStats", `${courseCode}-Session${sessionNumber}-${today}`);
+
+    try {
+        await updateDoc(statsRef, {
+            firstQuestionResponses: increment(1)  // ✅ Always count response
+        });
+
+        console.log(`✅ Updated Firestore: +1 first question response.`);
+
+        // ✅ Store raw score correctly (even if it's 0)
+        await storeRawScore(correctCount);
+
+        // ✅ Track all incorrect guesses
+        for (let word of incorrectWords) {
             await updateDoc(statsRef, {
-                firstQuestionResponses: increment(1),  // ✅ Always count response, even if wrong
-            });            
-    
-            console.log(`✅ Updated Firestore: +1 first question response.`);
-    
-            // ✅ Store raw score correctly
-            await storeRawScore(correctCount);
-    
-        } catch (error) {
-            console.error("❌ Firestore Update Error:", error);
+                [`incorrectGuesses.${word}`]: increment(1)
+            });
         }
-    }    
+
+    } catch (error) {
+        console.error("❌ Firestore Update Error:", error);
+    }
 }
     
 window.checkAnswers = checkAnswers;
+
 
 function nextQuestion() {
     // Reset the game area
