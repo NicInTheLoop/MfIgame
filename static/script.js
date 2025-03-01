@@ -402,6 +402,7 @@ draggables.forEach(draggable => {
             console.error("❌ Firestore Update Error:", error);
         }
     }
+}
     
 window.checkAnswers = checkAnswers;
 
