@@ -468,27 +468,31 @@ button {
     background-color: grey !important;
 }
 
-/* Incorrect draggable buttons */
+/* Incorrect draggable buttons stay pink */
 .incorrect-draggable {
-    background-color: grey !important;
-    border: 2px solid #E6007E !important; /* Pink outline */
+    background-color: #E6007E !important;
+    color: white !important;
+    border: 2px solid #8A8B8D !important;
 }
 
-/* Correction draggable */
-.correction-draggable {
+/* Correction box */
+.correction-container {
     background-color: grey !important;
-    color: white !important;
     border: 2px solid #E6007E !important; /* Pink outline */
-    padding: 10px;
-    font-size: 1em;
+    padding: 5px;
     border-radius: 5px;
     text-align: center;
-    user-select: none;
+    display: inline-block;
+    margin-top: 5px;
 }
 
-/* Show next question button */
-#next-question-button.visible {
-    display: block !important;
+/* Correction text inside the correction box */
+.correction-text {
+    color: white !important;
+    font-size: 1em;
+    padding: 5px;
+    font-weight: bold;
+    text-align: center;
 }
 
 .final-question-container {

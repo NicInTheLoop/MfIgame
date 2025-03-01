@@ -267,7 +267,6 @@ window.trackCorrectAnswer = trackCorrectAnswer;
 async function checkAnswers() {
     await ensureStatsDocumentExists();  // ✅ Ensures the document is created ONCE
 
-    // ✅ Retrieve courseCode and sessionNumber from URL
     const urlParams = new URLSearchParams(window.location.search);
     const courseCode = urlParams.get("course");
     const sessionNumber = urlParams.get("session");
@@ -278,13 +277,13 @@ async function checkAnswers() {
     }
 
     const correctAnswers = {
-        box1: 'word17', // Correct answer for Aim
-        box2: 'word3',  // Correct answer for Measure
-        box3: 'word9',  // Correct answer for Change Ideas
-        quarter1: 'word11', // Correct answer for Plan
-        quarter2: 'word6',  // Correct answer for Do
-        quarter3: 'word10', // Correct answer for Study
-        quarter4: 'word20'  // Correct answer for Act
+        box1: 'word17', // Aim
+        box2: 'word3',  // Measure
+        box3: 'word9',  // Change Ideas
+        quarter1: 'word11', // Plan
+        quarter2: 'word6',  // Do
+        quarter3: 'word10', // Study
+        quarter4: 'word20'  // Act
     };
 
     const answerLabels = {
@@ -310,7 +309,7 @@ async function checkAnswers() {
     }
 
     let correctCount = 0;
-    let incorrectWords = []; // Track incorrect guesses
+    let incorrectWords = []; 
 
     Object.keys(correctAnswers).forEach(zoneId => {
         const zone = document.getElementById(zoneId);
@@ -320,47 +319,47 @@ async function checkAnswers() {
         }
 
         // Remove existing correction elements
-        Array.from(zone.querySelectorAll('.correction')).forEach(correction => correction.remove());
+        Array.from(zone.querySelectorAll('.correction-container')).forEach(correction => correction.remove());
 
         const draggableChild = zone.querySelector('.draggable');
 
         if (draggableChild && draggableChild.id === correctAnswers[zoneId]) {
             correctCount++;
         } else if (draggableChild) {
-            incorrectWords.push(draggableChild.textContent);  // ✅ Collect all incorrect words
+            incorrectWords.push(draggableChild.textContent);  
 
-            // ✅ Change colors: text-box turns grey, draggable turns grey + pink outline
-            zone.classList.add("incorrect-box");
+            // ✅ Keep incorrect draggable pink
             draggableChild.classList.add("incorrect-draggable");
 
-            // ✅ Create a correction draggable
-            const correction = document.createElement('div');
-            correction.classList.add('draggable', 'correction-draggable');
-            correction.textContent = answerLabels[correctAnswers[zoneId]] || 'Unknown';
-            correction.setAttribute("draggable", "false"); // Correction should not be draggable
+            // ✅ Create correction container
+            const correctionContainer = document.createElement('div');
+            correctionContainer.classList.add('correction-container');
 
-            // ✅ Rotate correction in quarters
-            applyRotation(zoneId, correction);
+            // ✅ Add correction text
+            const correctionText = document.createElement('div');
+            correctionText.classList.add('correction-text');
+            correctionText.textContent = `Correct: ${answerLabels[correctAnswers[zoneId]] || 'Unknown'}`;
 
-            zone.appendChild(correction);
+            // ✅ Rotate correction if in a quarter
+            applyRotation(zoneId, correctionText);
+
+            correctionContainer.appendChild(correctionText);
+            zone.appendChild(correctionContainer);
         }
     });
 
-    // ✅ Always update Firestore, even if all answers are wrong
     const today = new Date().toISOString().split('T')[0];
     const statsRef = doc(db, "MFIgameStats", `${courseCode}-Session${sessionNumber}-${today}`);
 
     try {
         await updateDoc(statsRef, {
-            firstQuestionResponses: increment(1)  // ✅ Always count response, even if wrong
+            firstQuestionResponses: increment(1)  
         });
 
         console.log(`✅ Updated Firestore: +1 first question response.`);
 
-        // ✅ Store raw score correctly (even if it's 0)
         await storeRawScore(correctCount);
 
-        // ✅ Track all incorrect guesses properly
         if (incorrectWords.length > 0) {
             let incorrectUpdate = {};
             incorrectWords.forEach(word => {
@@ -374,7 +373,6 @@ async function checkAnswers() {
         console.error("❌ Firestore Update Error:", error);
     }
 
-    // ✅ Show the next question button after submission
     document.getElementById('initial-instructions').classList.add('hidden');
 
     const nextInstructions = document.getElementById('next-instructions');
@@ -386,12 +384,10 @@ async function checkAnswers() {
     nextQuestionButton.classList.add('visible');
 
     const submitButton = document.getElementById('submit-button');
-    submitButton.classList.add('hidden'); // ✅ Hide submit after clicking
+    submitButton.classList.add('hidden'); 
 }
     
 window.checkAnswers = checkAnswers;
-
-
 
 
 function nextQuestion() {
@@ -407,26 +403,31 @@ function nextQuestion() {
     };
 
     const zones = document.querySelectorAll('.text-box, .quarter');
+    
     zones.forEach(zone => {
-        zone.style.backgroundColor = '#BCCF04'; // Reset to lime green
+        // ✅ Reset background to lime green
+        zone.style.backgroundColor = '#BCCF04';
 
-        // Remove all non-arrow child elements
+        // ✅ Remove all correction elements
+        Array.from(zone.querySelectorAll('.correction-container')).forEach(correction => correction.remove());
+
+        // ✅ Remove all non-arrow child elements
         Array.from(zone.children).forEach(child => {
             if (!child.classList.contains('arrow')) {
                 zone.removeChild(child);
             }
         });
 
-        // Clear any existing text content
-        zone.textContent = ''; // Completely remove existing text like A, B, C
+        // ✅ Clear any existing text content
+        zone.textContent = ''; 
 
-        // Add the correct answer text
+        // ✅ Add the correct answer text
         const answerText = document.createElement('span');
         answerText.textContent = correctAnswers[zone.id] || '';
         answerText.style.textAlign = 'center';
         zone.appendChild(answerText);
 
-        // Re-add arrows for quarters
+        // ✅ Ensure arrows are re-added in all quarters
         if (zone.classList.contains('quarter') && !zone.querySelector('.arrow')) {
             const arrow = document.createElement('div');
             arrow.classList.add('arrow');
@@ -438,22 +439,23 @@ function nextQuestion() {
         }
     });
 
-    // Hide game-related elements
+    // ✅ Hide previous game elements
     document.getElementById('instructions-container').classList.add('hidden');
     document.getElementById('draggable-container').classList.add('hidden');
     document.getElementById('submit-button').classList.add('hidden');
     document.getElementById('next-question-button').classList.add('hidden');
 
-    // Show the final question
+    // ✅ Show the final question
     const finalQuestionContainer = document.getElementById('final-question-container');
-    finalQuestionContainer.style.display = 'block'; // Ensure visibility
+    finalQuestionContainer.style.display = 'block'; 
     finalQuestionContainer.classList.remove('hidden');
     finalQuestionContainer.classList.add('visible');
 
-    // Ensure the final submit button is disabled initially
+    // ✅ Ensure the final submit button is disabled initially
     const finalSubmitButton = document.getElementById('final-submit-button');
     finalSubmitButton.disabled = true;
 }
+
 
 let selectedFinalOption = null; // Track the selected answer
 window.nextQuestion = nextQuestion;
