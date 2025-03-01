@@ -296,6 +296,18 @@ async function checkAnswers() {
         word20: 'Act'
     };
 
+    function applyRotation(quarterId, element) {
+        if (quarterId === "quarter2") {
+            element.style.transform = "rotate(-90deg)";
+        } else if (quarterId === "quarter3") {
+            element.style.transform = "rotate(180deg)";
+        } else if (quarterId === "quarter4") {
+            element.style.transform = "rotate(90deg)";
+        } else {
+            element.style.transform = "rotate(0deg)";
+        }
+    }
+
     let correctCount = 0;
     let incorrectWords = [];
 
@@ -325,6 +337,9 @@ async function checkAnswers() {
             const correctionText = document.createElement('div');
             correctionText.classList.add('correction-text');
             correctionText.textContent = `Correct: ${answerLabels[correctAnswers[zoneId]] || 'Unknown'}`;
+
+            // ✅ Apply rotation inside quarters
+            applyRotation(zoneId, correctionText);
 
             correctionContainer.appendChild(correctionText);
             zone.appendChild(correctionContainer);
@@ -359,31 +374,29 @@ async function checkAnswers() {
     // ✅ Hide initial instructions
     document.getElementById('initial-instructions').classList.add('hidden');
 
-    // ✅ Show next instructions (styled with your existing CSS)
+    // ✅ Show next instructions
     const nextInstructions = document.getElementById('next-instructions');
     nextInstructions.classList.remove('hidden');
     nextInstructions.classList.add('visible');
-    nextInstructions.style.display = 'block'; // ✅ Ensures it appears with existing styles
+    nextInstructions.style.display = 'block'; 
 
-    // ✅ Show "Next Question" button (styled with your existing CSS)
+    // ✅ Show "Next Question" button
     const nextQuestionButton = document.getElementById('next-question-button');
     nextQuestionButton.classList.remove('hidden');
     nextQuestionButton.classList.add('visible');
-    nextQuestionButton.style.display = 'inline-block'; // ✅ Ensures it appears properly
+    nextQuestionButton.style.display = 'inline-block'; 
 
     // ✅ Disable & hide Submit button after clicking
     const submitButton = document.getElementById('submit-button');
     submitButton.disabled = true;
-    submitButton.classList.add('hidden'); // ✅ Ensures it is hidden after submission
+    submitButton.classList.add('hidden'); 
 }
     
 window.checkAnswers = checkAnswers;
 
 
-
-
+// Function to handle the final question
 function nextQuestion() {
-    // Reset the game area
     const correctAnswers = {
         box1: 'Aim',
         box2: 'Measure',
@@ -395,7 +408,7 @@ function nextQuestion() {
     };
 
     const zones = document.querySelectorAll('.text-box, .quarter');
-    
+
     zones.forEach(zone => {
         // ✅ Reset background to lime green
         zone.style.backgroundColor = '#BCCF04';
