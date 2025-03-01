@@ -63,7 +63,13 @@ async function ensureStatsDocumentExists() {
 
 // Function to copy the generated link to clipboard
 document.getElementById("copy-link").addEventListener("click", function () {
-    const linkOutput = document.getElementById("link-output").textContent;
+    const linkOutput = document.getElementById("link-output").value;  // ✅ Use .value instead of .textContent
+
+    if (!linkOutput) {
+        console.warn("⚠️ No session link available to copy.");
+        alert("⚠️ No session link found. Please generate a session first.");
+        return;
+    }
 
     navigator.clipboard.writeText(linkOutput)
         .then(() => {
@@ -73,6 +79,7 @@ document.getElementById("copy-link").addEventListener("click", function () {
             console.error("❌ Failed to copy link:", err);
         });
 });
+
 
 // Function to toggle statistics panel visibility
 window.toggleStatistics = function () { 
