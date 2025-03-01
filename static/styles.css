@@ -237,6 +237,11 @@ body {
     text-align: left; /* Align text to the left */
 }
 
+/* Ensure "Next Instructions" appear when needed */
+#next-instructions.visible {
+    display: block !important;
+}
+
 .buttons-container {
     display: flex; /* Arrange buttons horizontally */
     align-items: center; /* Vertically align buttons */
@@ -280,6 +285,11 @@ button {
     border-radius: 5px; /* Rounded corners */
     display: inline-block; /* Consistent display behavior */
     align-self: center; /* Align buttons vertically */
+}
+
+/* Ensure "Next Question" button appears when needed */
+#next-question-button.visible {
+    display: inline-block !important;
 }
 
 /* Draggable buttons */v

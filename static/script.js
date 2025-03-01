@@ -296,18 +296,6 @@ async function checkAnswers() {
         word20: 'Act'
     };
 
-    function applyRotation(quarterId, element) {
-        if (quarterId === "quarter2") {
-            element.style.transform = "rotate(-90deg)";
-        } else if (quarterId === "quarter3") {
-            element.style.transform = "rotate(180deg)";
-        } else if (quarterId === "quarter4") {
-            element.style.transform = "rotate(90deg)";
-        } else {
-            element.style.transform = "rotate(0deg)";
-        }
-    }
-
     let correctCount = 0;
     let incorrectWords = [];
 
@@ -318,7 +306,6 @@ async function checkAnswers() {
             return;
         }
 
-        // ✅ Remove existing correction elements
         Array.from(zone.querySelectorAll('.correction-container')).forEach(correction => correction.remove());
 
         const draggableChild = zone.querySelector('.draggable');
@@ -328,23 +315,16 @@ async function checkAnswers() {
         } else if (draggableChild) {
             incorrectWords.push(draggableChild.textContent);  
 
-            // ✅ Turn the text box/quarter grey
             zone.classList.add("incorrect-box");
 
-            // ✅ Keep incorrect draggable pink
             draggableChild.classList.add("incorrect-draggable");
 
-            // ✅ Create correction container
             const correctionContainer = document.createElement('div');
             correctionContainer.classList.add('correction-container');
 
-            // ✅ Add correction text
             const correctionText = document.createElement('div');
             correctionText.classList.add('correction-text');
             correctionText.textContent = `Correct: ${answerLabels[correctAnswers[zoneId]] || 'Unknown'}`;
-
-            // ✅ Rotate correction if in a quarter
-            applyRotation(zoneId, correctionText);
 
             correctionContainer.appendChild(correctionText);
             zone.appendChild(correctionContainer);
@@ -376,21 +356,29 @@ async function checkAnswers() {
         console.error("❌ Firestore Update Error:", error);
     }
 
+    // ✅ Hide initial instructions
     document.getElementById('initial-instructions').classList.add('hidden');
 
+    // ✅ Show next instructions (styled with your existing CSS)
     const nextInstructions = document.getElementById('next-instructions');
     nextInstructions.classList.remove('hidden');
     nextInstructions.classList.add('visible');
+    nextInstructions.style.display = 'block'; // ✅ Ensures it appears with existing styles
 
+    // ✅ Show "Next Question" button (styled with your existing CSS)
     const nextQuestionButton = document.getElementById('next-question-button');
     nextQuestionButton.classList.remove('hidden');
     nextQuestionButton.classList.add('visible');
+    nextQuestionButton.style.display = 'inline-block'; // ✅ Ensures it appears properly
 
+    // ✅ Disable & hide Submit button after clicking
     const submitButton = document.getElementById('submit-button');
-    submitButton.classList.add('hidden'); 
+    submitButton.disabled = true;
+    submitButton.classList.add('hidden'); // ✅ Ensures it is hidden after submission
 }
     
 window.checkAnswers = checkAnswers;
+
 
 
 
