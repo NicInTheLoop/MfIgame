@@ -324,6 +324,9 @@ async function checkAnswers() {
 
         if (draggableChild && draggableChild.id === correctAnswers[zoneId]) {
             correctCount++;
+            zone.classList.add("correct");
+            zone.classList.remove("incorrect-box"); // ✅ Ensure incorrect styling is removed if correct
+            
         } else if (draggableChild) {
             incorrectWords.push(draggableChild.textContent);  
 
@@ -418,6 +421,9 @@ function nextQuestion() {
     
         // ✅ Remove all correction elements
         Array.from(zone.querySelectorAll('.correction-container')).forEach(correction => correction.remove());
+
+        // ✅ Remove all previous classes related to correctness
+        zone.classList.remove("incorrect-box", "correct");
 
         // ✅ Remove all non-arrow child elements
         Array.from(zone.children).forEach(child => {

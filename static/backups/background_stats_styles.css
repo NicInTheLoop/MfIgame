@@ -1,17 +1,25 @@
-/* Styles.css content as of 19/12/24 */
+/* Main container to hold both course setup and statistics sections */
+.main-container {
+    display: flex;
+    justify-content: flex-start; /* Align items to the left */
+    align-items: flex-start; /* Align items to the top */
+    gap: 20px; /* Space between each section */
+    width: 100%; /* Full width container */
+}
 
 /* Course Setup Container */
 .course-setup-container {
     font-family: 'Lato', sans-serif; /* Match the font */
     width: 100%;
     max-width: 500px; /* Limit the width for better layout */
-    margin: 20px auto; /* Center the container */
+    margin: 20px; /* Add margin around the container */
     text-align: left; /* Align text to the left */
     padding: 20px; /* Add some padding */
     background-color: #f4f4f4; /* Light background */
     border: 1px solid #ccc; /* Add border for separation */
     border-radius: 5px; /* Rounded corners */
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    flex: 1; /* Allow the container to grow */
 }
 
 .course-setup-container h2 {
@@ -44,6 +52,7 @@
     padding: 10px 20px; /* Add padding */
     font-size: 1em; /* Adjust font size */
     cursor: pointer; /* Pointer cursor */
+    margin-top: 20px; /* Add space above the button */
 }
 
 .course-setup-container button:hover {
@@ -89,6 +98,47 @@
     background-color: #0b6b66; /* Darker teal on hover */
 }
 
+/* Statistics Container */
+.course-stats-container {
+    background-color: #f8f1f8; /* Light pink */
+    border: 2px solid #e6007e; /* Pink border */
+    border-radius: 5px;
+    padding: 20px;
+    margin: 20px; /* Add margin around the container */
+    max-width: 600px;
+    text-align: center;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    flex: 2; /* Allow the container to grow more than the course setup container */
+}
+
+/* Dropdown Styling */
+.course-stats-container select {
+    padding: 10px;
+    font-size: 1.1em;
+    border: 1px solid #e6007e;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+/* Style for the Statistics Tab */
+.stats-tab {
+    background-color: #e6007e; /* Pink */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-size: 1.2em;
+    cursor: pointer;
+    display: block;
+    margin: 20px auto;
+    text-align: center;
+    width: 200px;
+}
+
+.stats-tab:hover {
+    background-color: #b60d91; /* Darker pink */
+}
+
 /* Header Container */
 .header-container {
     display: flex; /* Arrange elements horizontally */
@@ -101,7 +151,7 @@
 
 /* Logo */
 #logo {
-    height: 30px; /* Reduce the size of the logo */
+    height: 100px;  /*size of logo */
     width: auto; /* Maintain aspect ratio */
     margin-left: auto; /* Push the logo to the far right */
 }
@@ -131,6 +181,8 @@
 .hidden {
     display: none; /* Hide elements initially */
 }
+
+
 
 /* Main Game styles start */
 body {
@@ -185,6 +237,11 @@ body {
     text-align: left; /* Align text to the left */
 }
 
+/* Ensure "Next Instructions" appear when needed */
+#next-instructions.visible {
+    display: block !important;
+}
+
 .buttons-container {
     display: flex; /* Arrange buttons horizontally */
     align-items: center; /* Vertically align buttons */
@@ -228,6 +285,11 @@ button {
     border-radius: 5px; /* Rounded corners */
     display: inline-block; /* Consistent display behavior */
     align-self: center; /* Align buttons vertically */
+}
+
+/* Ensure "Next Question" button appears when needed */
+#next-question-button.visible {
+    display: inline-block !important;
 }
 
 /* Draggable buttons */v
@@ -411,17 +473,35 @@ button {
     transform: rotate(90deg);
 }
 
-.correction {
+/* Incorrect text boxes & quarters */
+.incorrect-box {
+    background-color: grey !important;
+}
+
+/* Incorrect draggable buttons stay pink */
+.incorrect-draggable {
+    background-color: #E6007E !important;
+    color: white !important;
+    border: 2px solid #8A8B8D !important;
+}
+
+/* Correction box */
+.correction-container {
+    background-color: grey !important;
+    border: 2px solid #E6007E !important; /* Pink outline */
+    padding: 5px;
+    border-radius: 5px;
+    text-align: center;
     display: inline-block;
-    background-color: #8A8B8D; /* Grey background */
-    color: white; /* White text */
-    border-radius: 5px; /* Rounded corners */
-    padding: 8px; /* Padding to match draggable buttons */
+    margin-top: 5px;
+}
+
+/* Correction text inside the correction box */
+.correction-text {
+    color: white !important;
+    font-size: 1em;
+    padding: 5px;
     text-align: center;
-    font-size: 1em; /* Same font size as draggable buttons */
-    border: 2px solid #e6007e; /* Border colour */
-    text-align: center;
-    transform-origin: center center;
 }
 
 .final-question-container {
