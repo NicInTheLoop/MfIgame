@@ -343,7 +343,6 @@ async function checkAnswers() {
             
             correctionContainer.appendChild(correctionText);
             zone.appendChild(correctionContainer);
-            
         }
     });
 
@@ -417,7 +416,6 @@ function nextQuestion() {
     
         // ✅ Remove all correction elements
         Array.from(zone.querySelectorAll('.correction-container')).forEach(correction => correction.remove());
-    });    
 
         // ✅ Remove all non-arrow child elements
         Array.from(zone.children).forEach(child => {
@@ -463,6 +461,8 @@ function nextQuestion() {
     const finalSubmitButton = document.getElementById('final-submit-button');
     finalSubmitButton.disabled = true;
 }
+
+window.nextQuestion = nextQuestion;
 
 
 let selectedFinalOption = null; // Track the selected answer
