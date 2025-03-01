@@ -403,8 +403,8 @@ draggables.forEach(draggable => {
             const statsRef = doc(db, "MFIgameStats", `${courseCode}-Session${sessionNumber}-${today}`);
     
             await updateDoc(statsRef, {
-                firstQuestionResponses: increment(1),  // ✅ Tracks first question responses
-            });
+                firstQuestionResponses: increment(1),  // ✅ Always count response, even if wrong
+            });            
     
             console.log(`✅ Updated Firestore: +1 first question response.`);
     
@@ -577,28 +577,25 @@ async function storeRawScore(finalScore) {
 
     try {
         const docSnap = await getDoc(statsRef);
-        let data = docSnap.exists() ? docSnap.data() : {};
 
-        // ✅ Check BEFORE updating to prevent multiple executions
-        if (data.trackedThisAttempt === true) {
-            console.log(`⚠️ Already tracked this attempt. Skipping duplicate count.`);
-            return;
-        }
-
-        // ✅ Mark the attempt as tracked BEFORE updating Firestore
-        await updateDoc(statsRef, {
-            trackedThisAttempt: true
-        });
-
+        // ✅ No more checking `trackedThisAttempt`
         await updateDoc(statsRef, { 
             rawScores: arrayUnion(finalScore)
         });
 
+        // ✅ Always mark submission/session tracking
+        await updateDoc(statsRef, {
+            trackedSubmission: true,  
+            trackedThisSession: true 
+        });
+
         console.log(`✅ Stored raw score: ${finalScore}`);
+        console.log("✅ Marked submission and session tracking as complete.");
     } catch (error) {
         console.error("❌ Firestore Write Error:", error);
     }
 }
+
 
 // Function to track responses to the second question
 async function trackSecondQuestionAnswer(answerText) {
