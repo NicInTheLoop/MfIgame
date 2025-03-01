@@ -311,12 +311,23 @@ async function checkAnswers() {
         Array.from(zone.querySelectorAll('.correction')).forEach(correction => correction.remove());
 
         const draggableChild = zone.querySelector('.draggable');
-        console.log(`Zone: ${zoneId}, Found: ${draggableChild ? draggableChild.id : 'None'}, Expected: ${correctAnswers[zoneId]}`);
 
         if (draggableChild && draggableChild.id === correctAnswers[zoneId]) {
             correctCount++;
         } else if (draggableChild) {
             incorrectWords.push(draggableChild.textContent);  // ✅ Collect all incorrect words
+
+            // ✅ Change colors: text-box turns grey, draggable turns grey + pink outline
+            zone.classList.add("incorrect-box");
+            draggableChild.classList.add("incorrect-draggable");
+
+            // ✅ Add a correction element below incorrect answers
+            const correction = document.createElement('div');
+            correction.classList.add('correction');
+            const correctText = answerLabels[correctAnswers[zoneId]] || 'Unknown';
+            correction.textContent = `Correct: ${correctText}`;
+
+            zone.appendChild(correction);
         }
     });
 
@@ -350,19 +361,14 @@ async function checkAnswers() {
 
     // ✅ Restore Next Question Transition
     document.getElementById('initial-instructions').classList.add('hidden');
-    console.log('Initial instructions hidden:', document.getElementById('initial-instructions').classList.contains('hidden'));
 
     const nextInstructions = document.getElementById('next-instructions');
     nextInstructions.classList.remove('hidden');
     nextInstructions.classList.add('visible');
-    nextInstructions.style.display = ''; // Resets to CSS default
-    console.log('Next instructions visible:', nextInstructions.classList.contains('visible'));
 
     const nextQuestionButton = document.getElementById('next-question-button');
     nextQuestionButton.classList.remove('hidden');
     nextQuestionButton.classList.add('visible');
-    nextQuestionButton.style.display = ''; // Resets to CSS default
-    console.log('Next question button visible:', nextQuestionButton.classList.contains('visible'));
 
     const submitButton = document.getElementById('submit-button');
     submitButton.disabled = true;
