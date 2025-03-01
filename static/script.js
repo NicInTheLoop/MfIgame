@@ -389,10 +389,20 @@ draggables.forEach(draggable => {
 
     // ✅ Save correct answers and raw score once after checking all zones
     if (correctCount > 0) {
-        trackCorrectAnswer(correctCount); // ✅ Only update if at least one correct answer
+        try {
+            const today = new Date().toISOString().split('T')[0];
+            const statsRef = doc(db, "MFIgameStats", `${courseCode}-Session${sessionNumber}-${today}`);
+    
+            await updateDoc(statsRef, {
+                firstQuestionResponses: increment(1),  // ✅ Increment number of first question responses
+            });
+    
+            console.log(`✅ Updated Firestore: +1 first question response.`);
+        } catch (error) {
+            console.error("❌ Firestore Update Error:", error);
+        }
     }
-    await storeRawScore(correctCount);       // ✅ Always store raw score
-}
+    
 window.checkAnswers = checkAnswers;
 
 function nextQuestion() {
