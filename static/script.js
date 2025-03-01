@@ -445,7 +445,7 @@ function nextQuestion() {
             if (zone.id === 'quarter4') arrow.id = 'arrow4';
             zone.appendChild(arrow);
         }
-   
+    });
 
     // ✅ Hide previous game elements
     document.getElementById('instructions-container').classList.add('hidden');
