@@ -297,18 +297,6 @@ async function checkAnswers() {
         word20: 'Act'
     };
 
-    function applyRotation(quarterId, element) {
-        if (quarterId === "quarter2") {
-            element.classList.add('rotate-90');
-        } else if (quarterId === "quarter3") {
-            element.classList.add('rotate-180');
-        } else if (quarterId === "quarter4") {
-            element.classList.add('rotate-90-reverse');
-        } else {
-            element.classList.remove('rotate-90', 'rotate-180', 'rotate-90-reverse');
-        }
-    }
-
     let correctCount = 0;
     let incorrectWords = []; // Track incorrect guesses
 
@@ -326,13 +314,9 @@ async function checkAnswers() {
         console.log(`Zone: ${zoneId}, Found: ${draggableChild ? draggableChild.id : 'None'}, Expected: ${correctAnswers[zoneId]}`);
 
         if (draggableChild && draggableChild.id === correctAnswers[zoneId]) {
-            zone.classList.add('correct');
-            zone.classList.remove('incorrect');
             correctCount++;
         } else if (draggableChild) {
             incorrectWords.push(draggableChild.textContent);  // ✅ Collect all incorrect words
-            zone.classList.add('incorrect'); // ✅ Restore incorrect answer highlighting
-            zone.classList.remove('correct');
         }
     });
 
@@ -385,6 +369,7 @@ async function checkAnswers() {
 }
     
 window.checkAnswers = checkAnswers;
+
 
 
 function nextQuestion() {
