@@ -10,6 +10,7 @@ async function ensureStatsDocumentExists() {
     if (!courseCode || !sessionNumber) {
         console.warn("⚠️ No course or session found in URL, cannot create document.");
         return;
+    }
 
     const today = new Date().toISOString().split('T')[0];
     const statsRef = doc(db, "MFIgameStats", `${courseCode}-Session${sessionNumber}-${today}`);
@@ -728,14 +729,3 @@ window.testFirestore = async function () {
 
 console.log("✅ testFirestore function is now available globally.");
 console.log("✅ Reached the end of script.js execution.");
-
-
-// Attach functions to window for global access
-
-
-
-
-
-
-
-
