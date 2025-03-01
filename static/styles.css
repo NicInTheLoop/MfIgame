@@ -465,26 +465,30 @@ button {
 
 /* Incorrect text boxes & quarters */
 .incorrect-box {
-    background-color: grey 
+    background-color: grey !important;
 }
 
 /* Incorrect draggable buttons */
 .incorrect-draggable {
-    background-color: grey 
-    border: 2px solid #E6007E; /* Pink outline */
+    background-color: grey !important;
+    border: 2px solid #E6007E !important; /* Pink outline */
 }
 
-/* Correction text */
-.correction {
-    display: inline-block;
-    background-color: #8A8B8D; /* Grey background */
-    color: white; /* White text */
-    border-radius: 5px;
-    padding: 8px;
+/* Correction draggable */
+.correction-draggable {
+    background-color: grey !important;
+    color: white !important;
+    border: 2px solid #E6007E !important; /* Pink outline */
+    padding: 10px;
     font-size: 1em;
-    border: 2px solid #E6007E; /* Pink border */
+    border-radius: 5px;
     text-align: center;
-    margin-top: 5px;
+    user-select: none;
+}
+
+/* Show next question button */
+#next-question-button.visible {
+    display: block !important;
 }
 
 .final-question-container {

@@ -374,7 +374,7 @@ async function checkAnswers() {
         console.error("❌ Firestore Update Error:", error);
     }
 
-    // ✅ Restore Next Question Transition
+    // ✅ Show the next question button after submission
     document.getElementById('initial-instructions').classList.add('hidden');
 
     const nextInstructions = document.getElementById('next-instructions');
@@ -386,10 +386,11 @@ async function checkAnswers() {
     nextQuestionButton.classList.add('visible');
 
     const submitButton = document.getElementById('submit-button');
-    submitButton.disabled = true;
+    submitButton.classList.add('hidden'); // ✅ Hide submit after clicking
 }
     
 window.checkAnswers = checkAnswers;
+
 
 
 
