@@ -2,6 +2,33 @@
 import { db } from "./firebase.js";
 import { doc, setDoc, getDoc, updateDoc, increment, arrayUnion } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js";
 
+// ✅ Function to check if a course session exists in URL and update UI accordingly
+function checkForExistingSession() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const courseCode = urlParams.get("course");
+    const sessionNumber = urlParams.get("session");
+
+    if (courseCode && sessionNumber) {
+        console.log(`🔹 Course detected in URL: ${courseCode}, Session: ${sessionNumber}`);
+
+        // Hide course setup for participants, show for organisers
+        if (!sessionStorage.getItem("isOrganiser")) {
+            courseSetup.style.display = "none";
+        } else {
+            sessionLinkContainer.style.display = "block";
+        }
+
+        // Update UI with session details
+        courseTitleElement.textContent = `Course Session: ${courseCode} (Session ${sessionNumber})`;
+        courseTitleElement.classList.remove("hidden");
+
+        // Show the game area
+        gameArea.style.display = "flex";
+    } else {
+        console.log("ℹ️ No course session found in URL.");
+    }
+}
+
 async function ensureStatsDocumentExists() {
     const urlParams = new URLSearchParams(window.location.search);
     const courseCode = urlParams.get("course");
@@ -669,35 +696,8 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // ✅ Function to check if a course session exists in URL and update UI accordingly
-    function checkForExistingSession() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const courseCode = urlParams.get("course");
-        const sessionNumber = urlParams.get("session");
+    
 
-        if (courseCode && sessionNumber) {
-            console.log(`🔹 Course detected in URL: ${courseCode}, Session: ${sessionNumber}`);
-
-            // Hide course setup for participants, show for organisers
-            if (!sessionStorage.getItem("isOrganiser")) {
-                courseSetup.style.display = "none";
-            } else {
-                sessionLinkContainer.style.display = "block";
-            }
-
-            // Update UI with session details
-            courseTitleElement.textContent = `Course Session: ${courseCode} (Session ${sessionNumber})`;
-            courseTitleElement.classList.remove("hidden");
-
-            // Show the game area
-            gameArea.style.display = "flex";
-        } else {
-            console.log("ℹ️ No course session found in URL.");
-        }
-    }
-
-    // ✅ Run the session check after page load
-    setTimeout(checkForExistingSession, 500);
 
     // ✅ Setup event listener for next question button
     if (nextQuestionButton) {
