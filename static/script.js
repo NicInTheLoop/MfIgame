@@ -71,14 +71,13 @@ async function ensureStatsDocumentExists() {
         const docSnap = await getDoc(statsRef);
         if (!docSnap.exists()) {
             await setDoc(statsRef, { 
-                correctAnswers: 0, 
                 firstQuestionResponses: 0, 
                 rawScores: [], 
                 secondQuestionAnswers: {}, 
                 secondQuestionResponses: 0,
                 trackedThisSession: false,
                 trackedSubmission: false
-            });
+            });            
             console.log(`✅ Created new stats document ONCE for ${courseCode} - Session ${sessionNumber}`);
         }
     } catch (error) {
@@ -404,14 +403,18 @@ draggables.forEach(draggable => {
             const statsRef = doc(db, "MFIgameStats", `${courseCode}-Session${sessionNumber}-${today}`);
     
             await updateDoc(statsRef, {
-                firstQuestionResponses: increment(1),  // ✅ Increment number of first question responses
+                firstQuestionResponses: increment(1),  // ✅ Tracks first question responses
             });
     
             console.log(`✅ Updated Firestore: +1 first question response.`);
+    
+            // ✅ Store raw score correctly
+            await storeRawScore(correctCount);
+    
         } catch (error) {
             console.error("❌ Firestore Update Error:", error);
         }
-    }
+    }    
 }
     
 window.checkAnswers = checkAnswers;
