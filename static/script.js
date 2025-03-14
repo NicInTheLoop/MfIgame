@@ -262,7 +262,7 @@ function checkSubmitButtonState() {
         if (draggableChild) {
             hasDraggable = true;
         }
-        console.log(`✅ Checking zone: ${zone.id}, Has draggable: ${!!draggableChild}`);
+        console.log(` Checking zone: ${zone.id}, Has draggable: ${!!draggableChild}`);
     });
     
     // ✅ Ensure the submit button updates correctly
@@ -273,7 +273,7 @@ function checkSubmitButtonState() {
     }   
 
     // Enable or disable the submit button based on presence of draggables
-    const submitButton = document.getElementById('submit-button');
+    submitButton = document.getElementById('submit-button'); // No `const`, just assign it
     submitButton.disabled = !hasDraggable;
 }
 
