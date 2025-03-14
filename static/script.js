@@ -11,38 +11,39 @@ function checkForExistingSession() {
 
     if (courseCode && sessionNumber) {
         console.log(`🔹 Course detected in URL: ${courseCode}, Session: ${sessionNumber}`);
-
-        // Hide course setup form (for participants)
-        const courseSetup = document.getElementById("course-setup");
-        if (courseSetup) {
-            courseSetup.style.display = "none"; 
-            console.log("✅ Course setup hidden for participant view.");
+    
+        // Check if the user is the organiser
+        const isOrganiser = sessionStorage.getItem("isOrganiser") === "true";
+    
+        if (!isOrganiser) {
+            // Hide course setup for participants
+            const courseSetup = document.getElementById("course-setup");
+            if (courseSetup) {
+                courseSetup.style.display = "none"; 
+                console.log("✅ Course setup hidden for participant view.");
+            }
         }
-
+    
         // Show game area
         const gameArea = document.getElementById("game-area");
         if (gameArea) {
             gameArea.style.display = "flex";
             console.log("✅ Game area displayed.");
         }
-
-        // Update the title
-        const courseTitleElement = document.getElementById("course-title");
-        if (courseTitleElement) {
-            courseTitleElement.textContent = `Course Session: ${courseCode} (Session ${sessionNumber})`;
-            courseTitleElement.classList.remove("hidden");
+    
+        // ✅ Mark participant view in sessionStorage if they're not the organiser
+        if (!isOrganiser) {
+            sessionStorage.setItem("isParticipant", "true");
         }
-
-        // ✅ Mark participant view in sessionStorage (Prevents them from seeing setup on reload)
-        sessionStorage.setItem("isParticipant", "true");
-
-        // ✅ Ensure Firestore initializes properly
-        initializeSecondQuestionAnswers();  
-        ensureStatsDocumentExists();  
     } else {
-        console.log("ℹ️ No course session found in URL.");
+        // If no course is detected, ensure the course setup is always visible
+        console.log("ℹ️ No course session found in URL. Showing setup form.");
+        const courseSetup = document.getElementById("course-setup");
+        if (courseSetup) {
+            courseSetup.style.display = "block";
+        }
     }
-}
+    
 checkForExistingSession(); // ✅ Run it immediately
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -257,13 +258,19 @@ function checkSubmitButtonState() {
     let hasDraggable = false;
 
     dropZones.forEach(zone => {
-        // Check if the zone contains at least one draggable element
-        const draggableChild = Array.from(zone.children).some(child => child.classList.contains('draggable'));
+        const draggableChild = zone.querySelector('.draggable'); // Directly select inside the drop zone
         if (draggableChild) {
             hasDraggable = true;
         }
-        console.log(`Checking zone: ${zone.id}, Has draggable: ${draggableChild}`);
+        console.log(`✅ Checking zone: ${zone.id}, Has draggable: ${!!draggableChild}`);
     });
+    
+    // ✅ Ensure the submit button updates correctly
+    const submitButton = document.getElementById('submit-button');
+    if (submitButton) {
+        submitButton.disabled = !hasDraggable;
+        console.log(`🔄 Submit button ${submitButton.disabled ? 'disabled' : 'enabled'}`);
+    }   
 
     // Enable or disable the submit button based on presence of draggables
     const submitButton = document.getElementById('submit-button');
