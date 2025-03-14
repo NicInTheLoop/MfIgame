@@ -1109,8 +1109,6 @@ async function loadWordCloud(selectedSessions) {
 
 
 
-
-
 // ✅ DOMContentLoaded - Single, Cleaned-Up Listener
 document.addEventListener("DOMContentLoaded", function () {
     // Elements for course/session setup
@@ -1325,3 +1323,21 @@ function generateWordCloud(maxWords) {
 
 // ✅ Make function globally accessible
 window.populateDemoStats = populateDemoStats;
+
+// Styles for the disabled "View Statistics" button
+#toggle-stats:disabled {
+    background-color: #ccc; /* Pale grey background */
+    cursor: not-allowed; /* Disabled cursor */
+    opacity: 0.5; /* Make it look faded */
+}
+
+//  Ensure Word Cloud is contained within the statistics box
+#wordCloudCanvas {
+    width: 100% !important; /*  Prevents it from overflowing */
+    max-width: 90%; /*  Ensures it remains inside */
+    height: auto !important; /*  Allows dynamic resizing */
+    max-height: 500px !important; /*  Prevents excessive stretching */
+    display: block;
+    margin: 0 auto; /*  Centers within the container */
+    text-align: center; /*  Centers the content */
+}
