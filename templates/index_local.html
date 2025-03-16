@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/shared/common.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/game/game.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-cloud/1.2.5/d3.layout.cloud.min.js"></script>
@@ -68,26 +68,26 @@
         <!-- Game content -->
         <div class="main-container">
             <div class="game-area" id="game-area">
-                <div class="text-box" id="box1">A</div>
+                <div class="text-box sortable-container" id="box1">A</div>
                 <div class="downward-arrow"></div>
-                <div class="text-box" id="box2">B</div>
+                <div class="text-box sortable-container" id="box2">B</div>
                 <div class="downward-arrow"></div>
-                <div class="text-box" id="box3">C</div>
+                <div class="text-box sortable-container" id="box3">C</div>
                 <div class="downward-arrow"></div>
                 <div class="cycle">
-                    <div class="quarter" id="quarter1">
+                    <div class="quarter sortable-container" id="quarter1">
                         <span>1</span>
                         <div class="arrow" id="arrow1"></div>
                     </div>
-                    <div class="quarter" id="quarter2">
+                    <div class="quarter sortable-container" id="quarter2">
                         <span>2</span>
                         <div class="arrow" id="arrow2"></div>
                     </div>
-                    <div class="quarter" id="quarter3">
+                    <div class="quarter sortable-container" id="quarter3">
                         <span>3</span>
                         <div class="arrow" id="arrow3"></div>
                     </div>
-                    <div class="quarter" id="quarter4">
+                    <div class="quarter sortable-container" id="quarter4">
                         <span>4</span>
                         <div class="arrow" id="arrow4"></div>
                     </div>

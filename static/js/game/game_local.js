@@ -15,6 +15,12 @@ export class GameManager {
 
     initialize() {
         document.addEventListener('DOMContentLoaded', () => {
+            // Prevent default drag behavior globally
+            document.addEventListener('dragstart', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+            }, true);
+            
             this.setupSortable();
             this.setupEventListeners();
         });
@@ -27,7 +33,8 @@ export class GameManager {
             ghostClass: 'sortable-ghost',
             dragClass: 'sortable-drag',
             swapThreshold: 0.65,
-            handle: '.draggable'
+            fallbackOnBody: true,  // Use fallback but allow native drag
+            dragoverBubble: true   // Ensure dragover events bubble correctly
         };
 
         // Initialize word bank

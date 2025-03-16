@@ -14,6 +14,12 @@ class GameManager {
 
     initialize() {
         document.addEventListener('DOMContentLoaded', () => {
+            // Prevent default drag behavior globally
+            document.addEventListener('dragstart', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+            }, true);
+            
             this.setupSortable();
             this.setupEventListeners();
         });
@@ -21,29 +27,41 @@ class GameManager {
 
     setupSortable() {
         const sortableOptions = {
-            group: 'shared',
+            group: {
+                name: 'shared',
+                pull: 'clone',
+                put: true
+            },
             animation: 150,
             ghostClass: 'sortable-ghost',
             dragClass: 'sortable-drag',
             swapThreshold: 0.65,
-            handle: '.draggable'
+            sort: false,
+            removeCloneOnHide: true,
+            onStart: (evt) => {
+                evt.item.style.cursor = 'move';
+            },
+            onEnd: (evt) => {
+                evt.item.style.cursor = 'move';
+            }
         };
 
         // Initialize word bank
         new Sortable(document.getElementById('word-bank'), {
             ...sortableOptions,
-            sort: false,
-            group: {
-                name: 'shared',
-                pull: true,
-                put: true
-            }
+            removeOnSpill: false,
+            revertOnSpill: true
         });
 
         // Initialize drop zones
         ['box1', 'box2', 'box3'].forEach(id => {
             new Sortable(document.getElementById(id), {
                 ...sortableOptions,
+                group: {
+                    name: 'shared',
+                    pull: true,
+                    put: true
+                },
                 onAdd: () => this.checkSubmitButtonState()
             });
         });
@@ -52,6 +70,11 @@ class GameManager {
         ['quarter1', 'quarter2', 'quarter3', 'quarter4'].forEach(id => {
             new Sortable(document.getElementById(id), {
                 ...sortableOptions,
+                group: {
+                    name: 'shared',
+                    pull: true,
+                    put: true
+                },
                 onAdd: (evt) => {
                     const quarter = evt.to;
                     const items = quarter.getElementsByClassName('draggable');
