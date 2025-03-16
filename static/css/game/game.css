@@ -9,6 +9,7 @@
     align-items: center;
     text-align: center;
     transition: background-color 0.2s;
+    z-index: 1;  /* Base layer */
 }
 
 .quarter:hover {
@@ -20,14 +21,11 @@
     transform-origin: center;
 }
 
+/* Quarter positions */
 #quarter1 {
     top: 0;
     left: 72%;
     transform: translate(-50%, 0) rotate(0deg);
-}
-
-#quarter1 span {
-    transform: rotate(0deg);
 }
 
 #quarter2 {
@@ -36,24 +34,29 @@
     transform: translate(-50%, -50%) rotate(90deg);
 }
 
-#quarter2 span {
-    transform: rotate(-90deg);
-}
-
 #quarter3 {
     top: 60%;
     left: 29%;
     transform: translate(-50%, -50%) rotate(180deg);
 }
 
-#quarter3 span {
-    transform: rotate(180deg);
-}
-
 #quarter4 {
     top: 0;
     left: 29%;
     transform: translate(-50%, 0) rotate(270deg);
+}
+
+/* Quarter number rotations */
+#quarter1 span {
+    transform: rotate(0deg);
+}
+
+#quarter2 span {
+    transform: rotate(-90deg);
+}
+
+#quarter3 span {
+    transform: rotate(180deg);
 }
 
 #quarter4 span {
@@ -69,18 +72,19 @@
     border-right: 20px solid transparent;
     border-top: 20px solid #000;
     pointer-events: none;
+    z-index: 2;  /* Above quarters */
 }
 
 #arrow1 {
     position: absolute;
-    top: 140px;
+    top: 95%;
     left: 50%;
     transform: translate(-50%, 0);
 }
 
 #arrow2 {
     position: absolute;
-    right: 50px;
+    right: 40%;
     top: 100%;
     transform: translate(0, -50%) rotate(0deg);
 }
@@ -88,13 +92,13 @@
 #arrow3 {
     position: absolute;
     top: 100%;
-    left: 50px;
+    left: 40%;
     transform: translate(0, -50%) rotate(0deg);
 }
 
 #arrow4 {
     position: absolute;
-    top: 140px;
+    top: 95%;
     left: 50%;
     transform: translate(-50%, 0) rotate(0deg);
 }
@@ -102,7 +106,7 @@
 /* Game-specific styles */
 /* Game area styles */
 .game-area {
-    width: 30%;
+    width: 400px;  
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -112,14 +116,14 @@
 }
 
 .text-box {
-    width: 250px;
+    width: 250px;  
     height: 50px;
     background-color: #BCCF04;
     border: 1px solid #ccc;
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: 5px auto;
+    margin: 0;
     text-align: center;
     font-size: 1.2em;
 }
@@ -127,8 +131,8 @@
 .downward-arrow {
     width: 0;
     height: 0;
-    border-left: 15px solid transparent;
-    border-right: 15px solid transparent;
+    border-left: 20px solid transparent;
+    border-right: 20px solid transparent;
     border-top: 20px solid #000000;
     margin: 0 auto;
 }
@@ -136,12 +140,33 @@
 /* PDSA Cycle styles */
 .cycle {
     position: relative;
-    width: 400px;
-    height: 400px;
+    width: 400px;    
+    height: 400px;   
     margin: 20px auto;
     display: flex;
     justify-content: center;
     align-items: center;
+    transform-origin: center;
+}
+
+@media screen and (max-width: 768px) {
+    .game-area {
+        transform-origin: top center;
+        transform: scale(0.8);
+        margin: 0 auto;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .game-area {
+        transform: scale(0.6);
+    }
+}
+
+@media screen and (max-width: 450px) {
+    .game-area {
+        transform: scale(0.5);
+    }
 }
 
 /* Right container styles */
