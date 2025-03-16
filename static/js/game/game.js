@@ -71,6 +71,14 @@ class GameManager {
                         }
                     }
                     
+                    // Add has-draggable class when an item is added
+                    quarter.classList.add('has-draggable');
+                    this.checkSubmitButtonState();
+                },
+                onRemove: (evt) => {
+                    const quarter = evt.from;
+                    // Remove has-draggable class when item is removed
+                    quarter.classList.remove('has-draggable');
                     this.checkSubmitButtonState();
                 }
             });
@@ -129,9 +137,14 @@ class GameManager {
             if (draggable && draggable.textContent === correctAnswers[zone.id]) {
                 this.correctAnswersCount++;
                 draggable.classList.add('correct');
+                // Keep has-draggable class for correct answers
             } else if (draggable) {
                 draggable.classList.add('incorrect');
                 this.incorrectGuesses.push(draggable.textContent);
+                // Keep has-draggable class for incorrect answers
+            } else {
+                // Remove has-draggable if no draggable is present
+                zone.classList.remove('has-draggable');
             }
         });
 

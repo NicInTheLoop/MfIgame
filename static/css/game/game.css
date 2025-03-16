@@ -17,11 +17,17 @@
 }
 
 .quarter span {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    transition: all 0.3s ease;
     font-size: 1.2em;
     transform-origin: center;
+    z-index: 1;  /* Ensure text stays above background */
 }
 
-/* Quarter positions */
+/* Quarter positions with rotations */
 #quarter1 {
     top: 0;
     left: 72%;
@@ -46,21 +52,89 @@
     transform: translate(-50%, 0) rotate(270deg);
 }
 
-/* Quarter number rotations */
+/* Quarter number rotations to counter parent rotation */
 #quarter1 span {
-    transform: rotate(0deg);
+    transform: translate(-50%, -50%) rotate(0deg);
 }
 
 #quarter2 span {
-    transform: rotate(-90deg);
+    transform: translate(-50%, -50%) rotate(-90deg);
 }
 
 #quarter3 span {
-    transform: rotate(180deg);
+    transform: translate(-50%, -50%) rotate(-180deg);
 }
 
 #quarter4 span {
-    transform: rotate(90deg);
+    transform: translate(-50%, -50%) rotate(-270deg);
+}
+
+/* Move number up when draggable is present */
+.quarter.has-draggable span {
+    top: 35px;  /* ~23% of quarter height (150px) */
+}
+
+/* Keep counter-rotations when moved */
+#quarter1.has-draggable span {
+    transform: translate(-50%, -50%) rotate(0deg);
+}
+
+#quarter2.has-draggable span {
+    transform: translate(-50%, -50%) rotate(-90deg);
+}
+
+#quarter3.has-draggable span {
+    transform: translate(-50%, -50%) rotate(-180deg);
+}
+
+#quarter4.has-draggable span {
+    transform: translate(-50%, -50%) rotate(-270deg);
+}
+
+/* Position draggables in quarters */
+.quarter .draggable {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: 0;  /* Remove margin in quarters */
+    z-index: 2;  /* Ensure draggables stay above text */
+}
+
+/* Counter-rotations for draggables */
+#quarter1 .draggable {
+    transform: translate(-50%, -50%) rotate(0deg);
+}
+
+#quarter2 .draggable {
+    transform: translate(-50%, -50%) rotate(-90deg);  /* Counter 90deg rotation */
+}
+
+#quarter3 .draggable {
+    transform: translate(-50%, -50%) rotate(-180deg);
+}
+
+#quarter4 .draggable {
+    transform: translate(-50%, -50%) rotate(-270deg);  /* Counter 270deg rotation */
+}
+
+#quarter1 .draggable.correct,
+#quarter1 .draggable.incorrect {
+    transform: translate(-50%, -50%) rotate(0deg);
+}
+
+#quarter2 .draggable.correct,
+#quarter2 .draggable.incorrect {
+    transform: translate(-50%, -50%) rotate(-90deg);  /* Counter 90deg rotation */
+}
+
+#quarter3 .draggable.correct,
+#quarter3 .draggable.incorrect {
+    transform: translate(-50%, -50%) rotate(-180deg);
+}
+
+#quarter4 .draggable.correct,
+#quarter4 .draggable.incorrect {
+    transform: translate(-50%, -50%) rotate(-270deg);  /* Counter 270deg rotation */
 }
 
 /* Arrow styles */
@@ -115,8 +189,9 @@
     margin-left: 0;
 }
 
+/* Text boxes */
 .text-box {
-    width: 250px;  
+    width: 250px;
     height: 50px;
     background-color: #BCCF04;
     border: 1px solid #ccc;
@@ -128,6 +203,49 @@
     font-size: 1.2em;
 }
 
+/* Draggable items */
+.draggable {
+    background-color: #e6007e;  /* Brand pink */
+    border: 2px solid #87898A;  /* Brand grey */
+    border-radius: 5px;
+    padding: 12px 16px;
+    margin: 0;  
+    display: inline-block;
+    color: white;
+    text-align: center;
+    cursor: default;
+    user-select: none;
+    transition: background-color 0.2s;
+    font-size: 1.1em;
+    touch-action: none;
+}
+
+.draggable:hover {
+    background-color: #b60d91;  /* Brand pink hover */
+}
+
+.draggable.correct {
+    background-color: #cddc39;  /* Lime */
+    border-color: #cddc39;
+    color: black;
+}
+
+.draggable.incorrect {
+    background-color: #87898A;  /* Brand grey */
+    border-color: #87898A;
+    color: white;
+}
+
+/* Override Sortable.js default cursors */
+.sortable-ghost,
+.sortable-drag,
+.sortable-chosen,
+.draggable:active,
+.draggable.dragging {
+    cursor: default !important;
+}
+
+/* Downward arrow styles */
 .downward-arrow {
     width: 0;
     height: 0;
@@ -690,6 +808,7 @@ button {
     margin: 0;
 }
 
+/* Word bank container */
 #word-bank {
     display: flex;
     flex-wrap: wrap;
@@ -697,37 +816,6 @@ button {
     gap: 10px;
     margin: 10px 0;
     width: 100%;
-}
-
-/* Draggable items */
-.draggable {
-    background-color: #e6007e;
-    border: 2px solid #87898A;
-    border-radius: 5px;
-    padding: 12px 16px;
-    color: white;
-    text-align: center;
-    cursor: move;
-    user-select: none;
-    transition: background-color 0.2s;
-    font-size: 1.1em;
-    touch-action: none;
-}
-
-.draggable:hover {
-    background-color: #b60d91;
-}
-
-.draggable.correct {
-    background-color: #cddc39;
-    border-color: #cddc39;
-    color: black;
-}
-
-.draggable.incorrect {
-    background-color: #87898A;
-    border-color: #87898A;
-    color: white;
 }
 
 /* Stats button styles */
