@@ -7,18 +7,13 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/shared/common.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/game/game.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-cloud/1.2.5/d3.layout.cloud.min.js"></script>
 </head>
 
 <body>
-    <!-- Logo (always at top right) -->
-    <div class="logo-container">
-        <img id="logo" src="{{ url_for('static', filename='images/QICLearn_logo.jpg') }}" alt="QIC Learn Logo" class="logo">
-        <p id="course-info" class="course-info hidden">Course: - Session </p>
-    </div>
-
     <!-- Course Organiser View -->
     <div id="organiser-view">
         <div id="stats-container">
@@ -44,9 +39,6 @@
                             <button id="copy-link" title="Copy Link">Copy Link</button>
                         </div>
                     </div>
-                    <div class="stats-button-container">
-                        <a href="{{ url_for('statistics') }}" id="toggle-stats" class="stats-tab">View Statistics</a>
-                    </div>
                 </div>
 
                 <div class="live-tally">
@@ -57,12 +49,19 @@
                     <p>Submitted Second Question</p>
                 </div>
             </div>
+            <div class="stats-button-container">
+                <a href="{{ url_for('statistics') }}" id="toggle-stats" class="stats-tab">View Statistics</a>
+            </div>
         </div>
     </div>
 
     <!-- Main Game Area (visible to both organiser and participant) -->
     <div class="game-container">
         <header class="header-container">
+            <div class="logo-container">
+                <img src="{{ url_for('static', filename='images/QICLearn_logo.jpg') }}" alt="QIC Learn Logo" class="logo">
+                <p id="course-info" class="course-info hidden">Course: - Session </p>
+            </div>
             <h1 id="main-title">Test Your Knowledge of the Model for Improvement!</h1>
         </header>
 
@@ -149,32 +148,19 @@
                     </div>
                     <button id="final-submit-button" disabled>Submit</button>
                 </div>
-
-                <!-- Thank you message -->
-                <div id="thank-you" style="display: none;">
-                    <h2>Thank you for participating!</h2>
-                </div>
             </div>
         </div>
-
-        <!-- Load Sortable.js -->
-        <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
-
-        <!-- Load Firebase SDK -->
-        <script type="module" src="https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js"></script>
-        <script type="module" src="https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js"></script>
-        
-        <!-- Load Firebase and game scripts -->
-        <script type="module" src="{{ url_for('static', filename='firebase_local.js') }}"></script>
-        <script type="module" src="{{ url_for('static', filename='js/shared/session_local.js') }}"></script>
-        <script type="module" src="{{ url_for('static', filename='js/game/game_local.js') }}"></script>
-
-        <!-- Pass course and session parameters to JavaScript -->
-        <script>
-            window.courseCode = "{{ course if course else '' }}";
-            window.sessionNumber = "{{ session if session else '' }}";
-        </script>
     </div>
 
+    <!-- Firebase Scripts -->
+    <script type="module" src="{{ url_for('static', filename='firebase_local.js') }}"></script>
+    <script type="module" src="{{ url_for('static', filename='js/shared/session_local.js') }}"></script>
+    <script type="module" src="{{ url_for('static', filename='js/game/game_local.js') }}"></script>
+
+    <!-- Pass course and session parameters to JavaScript -->
+    <script>
+        window.courseCode = "{{ course if course else '' }}";
+        window.sessionNumber = "{{ session if session else '' }}";
+    </script>
 </body>
 </html>

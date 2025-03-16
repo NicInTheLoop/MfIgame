@@ -4,26 +4,22 @@ import { doc, updateDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/1
 
 class GameManager {
     constructor() {
+        this.db = db;
         this.session = new SessionManager();
         this.correctAnswersCount = 0;
         this.incorrectGuesses = [];
         this.finalQuestionResponse = '';
+        this.initialize();
     }
 
     initialize() {
-        // Create an invisible drag image element
-        const dragImage = document.createElement('div');
-        dragImage.style.position = 'absolute';
-        dragImage.style.top = '-1000px';
-        dragImage.style.opacity = '0';
-        document.body.appendChild(dragImage);
+        document.addEventListener('DOMContentLoaded', () => {
+            this.setupSortable();
+            this.setupEventListeners();
+        });
+    }
 
-        // Prevent default drag behavior globally
-        document.addEventListener('dragstart', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-        }, true);
-
+    setupSortable() {
         const sortableOptions = {
             group: 'shared',
             animation: 150,
@@ -33,14 +29,14 @@ class GameManager {
             handle: '.draggable'
         };
 
-        // Initialize word bank as the main container
+        // Initialize word bank
         new Sortable(document.getElementById('word-bank'), {
             ...sortableOptions,
             sort: false,
             group: {
                 name: 'shared',
                 pull: true,
-                put: true // Allow items to be put back
+                put: true
             }
         });
 
@@ -71,12 +67,17 @@ class GameManager {
                         }
                     }
                     
+                    // Add has-draggable class to quarter
+                    quarter.classList.add('has-draggable');
                     this.checkSubmitButtonState();
+                },
+                onRemove: (evt) => {
+                    // Remove has-draggable class when item is removed
+                    const quarter = evt.from;
+                    quarter.classList.remove('has-draggable');
                 }
             });
         });
-
-        this.setupEventListeners();
     }
 
     setupEventListeners() {
@@ -89,22 +90,33 @@ class GameManager {
         if (nextQuestionButton) {
             nextQuestionButton.addEventListener('click', () => this.nextQuestion());
         }
+
+        // Setup final options
+        const finalOptions = document.querySelectorAll('.final-option');
+        finalOptions.forEach(option => {
+            option.addEventListener('click', () => this.selectFinalOption(option));
+        });
+
+        const finalSubmitButton = document.getElementById('final-submit-button');
+        if (finalSubmitButton) {
+            finalSubmitButton.addEventListener('click', () => this.submitFinalAnswer());
+        }
     }
 
     checkSubmitButtonState() {
         const dropZones = document.querySelectorAll('.text-box, .quarter');
-        let hasDraggable = false;
+        let allZonesHaveDraggable = true;
 
         dropZones.forEach(zone => {
             const draggableChild = zone.querySelector('.draggable');
-            if (draggableChild) {
-                hasDraggable = true;
+            if (!draggableChild) {
+                allZonesHaveDraggable = false;
             }
         });
 
         const submitButton = document.getElementById('submit-button');
         if (submitButton) {
-            submitButton.disabled = !hasDraggable;
+            submitButton.disabled = !allZonesHaveDraggable;
         }
     }
 
@@ -136,11 +148,16 @@ class GameManager {
         });
 
         // Update Firebase
-        const statsRef = doc(db, "MFIgameStats", 
-            `${this.session.getCourseCode()}-Session${this.session.getSessionNumber()}-${this.session.getToday()}`);
+        const statsRef = doc(this.db, "MFIgameStats",
+            `${this.session.getCourseCode()}-Session${this.session.getSessionNumber()}-${this.session.getToday()}`
+        );
         
         await updateDoc(statsRef, {
-            firstQuestionResponses: arrayUnion(1)
+            firstQuestionResponses: arrayUnion({
+                score: this.correctAnswersCount,
+                incorrectGuesses: this.incorrectGuesses,
+                timestamp: new Date().toISOString()
+            })
         });
 
         // Update UI
@@ -168,27 +185,42 @@ class GameManager {
         }
         option.classList.add('selected');
         this.selectedFinalOption = option;
+        this.finalQuestionResponse = option.textContent;
 
         const submitButton = document.getElementById('final-submit-button');
         if (submitButton) {
             submitButton.disabled = false;
         }
+    }
+
+    async submitFinalAnswer() {
+        if (!this.finalQuestionResponse) return;
 
         // Update Firebase
-        const statsRef = doc(db, "MFIgameStats", 
-            `${this.session.getCourseCode()}-Session${this.session.getSessionNumber()}-${this.session.getToday()}`);
+        const statsRef = doc(this.db, "MFIgameStats",
+            `${this.session.getCourseCode()}-Session${this.session.getSessionNumber()}-${this.session.getToday()}`
+        );
         
         await updateDoc(statsRef, {
-            secondQuestionResponses: arrayUnion(1),
-            secondQuestionAnswers: arrayUnion(option.textContent)
+            secondQuestionResponses: arrayUnion({
+                response: this.finalQuestionResponse,
+                timestamp: new Date().toISOString()
+            })
         });
+
+        // Show thank you message
+        document.getElementById('final-question-container').style.display = 'none';
+        const thankYouDiv = document.createElement('div');
+        thankYouDiv.id = 'thank-you';
+        thankYouDiv.innerHTML = '<h2>Thank you for participating!</h2>';
+        document.querySelector('.right-container').appendChild(thankYouDiv);
     }
 }
 
 // Initialize game when DOM is loaded
+let game;
 document.addEventListener('DOMContentLoaded', () => {
-    const game = new GameManager();
-    game.initialize();
+    game = new GameManager();
 });
 
 // Export functions for global access
