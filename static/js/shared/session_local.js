@@ -1,8 +1,5 @@
-// Import Firebase
-import { db } from "../../firebase.js";
-import { doc, setDoc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js";
-
-export class SessionManager {
+// Non-module version for Flask
+class SessionManager {
     constructor() {
         this.urlParams = new URLSearchParams(window.location.search);
         this.courseCode = this.urlParams.get("course");
@@ -70,21 +67,25 @@ export class SessionManager {
     }
 
     generateSessionLink(courseCode, sessionNumber) {
-        // For GitHub Pages, we need to include the repository name
-        const baseUrl = window.location.origin + '/MfIgame/index.html';
+        // For Flask, we want to keep the user on the root path
+        const baseUrl = window.location.origin;
+        const rootPath = window.location.pathname;
         const queryParams = new URLSearchParams({
             course: courseCode,
             session: sessionNumber
         });
-        return `${baseUrl}?${queryParams.toString()}`;
+        return `${baseUrl}${rootPath}?${queryParams.toString()}`;
     }
 
     async createStatsDocument(courseCode, sessionNumber) {
-        const statsRef = doc(db, "MFIgameStats", `${courseCode}-Session${sessionNumber}-${this.today}`);
+        const docRef = firebase.firestore().collection("MFIgameStats").doc(
+            `${courseCode}-Session${sessionNumber}-${this.today}`
+        );
+        
         try {
-            const docSnap = await getDoc(statsRef);
-            if (!docSnap.exists()) {
-                await setDoc(statsRef, {
+            const docSnap = await docRef.get();
+            if (!docSnap.exists) {
+                await docRef.set({
                     firstQuestionResponses: 0,
                     rawScores: [],
                     secondQuestionAnswers: {},
@@ -96,6 +97,18 @@ export class SessionManager {
         } catch (error) {
             console.error("Error creating stats document:", error);
         }
+    }
+
+    getCourseCode() {
+        return this.courseCode;
+    }
+
+    getSessionNumber() {
+        return this.sessionNumber;
+    }
+
+    getToday() {
+        return this.today;
     }
 
     async initializeSession() {
@@ -140,11 +153,14 @@ export class SessionManager {
     async ensureStatsDocumentExists() {
         if (!this.courseCode || !this.sessionNumber) return;
 
-        const statsRef = doc(db, "MFIgameStats", `${this.courseCode}-Session${this.sessionNumber}-${this.today}`);
+        const docRef = firebase.firestore().collection("MFIgameStats").doc(
+            `${this.courseCode}-Session${this.sessionNumber}-${this.today}`
+        );
+        
         try {
-            const docSnap = await getDoc(statsRef);
-            if (!docSnap.exists()) {
-                await setDoc(statsRef, {
+            const docSnap = await docRef.get();
+            if (!docSnap.exists) {
+                await docRef.set({
                     firstQuestionResponses: 0,
                     rawScores: [],
                     secondQuestionAnswers: {},
@@ -157,8 +173,4 @@ export class SessionManager {
             console.error("Error creating stats document:", error);
         }
     }
-
-    getCourseCode() { return this.courseCode; }
-    getSessionNumber() { return this.sessionNumber; }
-    getToday() { return this.today; }
 }

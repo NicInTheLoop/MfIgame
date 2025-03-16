@@ -14,135 +14,145 @@
 </head>
 
 <body>
-    <!-- Statistics Button (Only for organisers) --> 
-    <div id="stats-container">
-        <div class="stats-header">
-            <div id="course-setup" class="course-setup-container">
-                <h2>Setup Course Session</h2>
-                <form id="course-form">
-                    <label for="course-code">Course Code:</label>
-                    <input type="text" id="course-code" name="course-code" required>
-                    <label for="session-number">Session Number:</label>
-                    <input type="number" id="session-number" name="session-number" min="1" max="4" required>
-                    <button type="submit">Generate Session Link</button>
-                </form>
+    <!-- Course Organiser View -->
+    <div id="organiser-view">
+        <div id="stats-container">
+            <div class="stats-header">
+                <div id="course-setup" class="course-setup-container">
+                    <h2>Setup Course Session</h2>
+                    <form id="course-form">
+                        <div class="form-group">
+                            <label for="course-code">Course Code:</label>
+                            <input type="text" id="course-code" name="course-code" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="session-number">Session Number:</label>
+                            <input type="number" id="session-number" name="session-number" min="1" max="4" required>
+                        </div>
+                        <button type="submit" id="generate-link">Generate Session Link</button>
+                    </form>
 
-                <div id="session-link" class="link-container" style="display: none;">
-                    <p>Share this link with learners:</p>
-                    <div class="link-box">
-                        <span id="link-output"></span>
-                        <button id="copy-link" title="Copy Link">Copy Link</button>
+                    <div id="session-link" class="link-container" style="display: none;">
+                        <p>Share this link with learners:</p>
+                        <div class="link-box">
+                            <span id="link-output"></span>
+                            <button id="copy-link" title="Copy Link">Copy Link</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="live-tally">
+                    <h2>Live Participation</h2>
+                    <p class="large-number" id="stats-first-question">0</p>
+                    <p>Submitted First Question</p>
+                    <p class="large-number" id="stats-second-question">0</p>
+                    <p>Submitted Second Question</p>
+                </div>
+            </div>
+            <div class="stats-button-container">
+                <a href="/MfIgame/statistics.html" id="toggle-stats" class="stats-tab">View Statistics</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Game Area (visible to both organiser and participant) -->
+    <div class="game-container">
+        <header class="header-container">
+            <div class="logo-container">
+                <img src="/MfIgame/static/images/QICLearn_logo.jpg" alt="QIC Learn Logo" class="logo">
+                <p id="course-info" class="course-info hidden">Course: - Session </p>
+            </div>
+            <h1 id="main-title">Test Your Knowledge of the Model for Improvement!</h1>
+        </header>
+
+        <!-- Game content -->
+        <div class="main-container">
+            <div class="game-area" id="game-area">
+                <div class="text-box" id="box1">A</div>
+                <div class="downward-arrow"></div>
+                <div class="text-box" id="box2">B</div>
+                <div class="downward-arrow"></div>
+                <div class="text-box" id="box3">C</div>
+                <div class="downward-arrow"></div>
+                <div class="cycle">
+                    <div class="quarter" id="quarter1">
+                        <span>1</span>
+                        <div class="arrow" id="arrow1"></div>
+                    </div>
+                    <div class="quarter" id="quarter2">
+                        <span>2</span>
+                        <div class="arrow" id="arrow2"></div>
+                    </div>
+                    <div class="quarter" id="quarter3">
+                        <span>3</span>
+                        <div class="arrow" id="arrow3"></div>
+                    </div>
+                    <div class="quarter" id="quarter4">
+                        <span>4</span>
+                        <div class="arrow" id="arrow4"></div>
                     </div>
                 </div>
             </div>
+        
+            <div class="right-container">
+                <div class="instructions-container" id="instructions-container">
+                    <div class="instructions" id="initial-instructions">
+                        <h2>Get your MfI Score: Drag and drop</h2>
+                        <p>When you've dropped an item into each of the sections click on this button:</p>
+                        <p>Good luck!</p>
+                    </div>
+                    <div class="instructions" id="next-instructions" style="display: none;">
+                        <h2>Next Steps</h2>
+                        <p>Click to go to the final question</p>
+                    </div>
+                    <div class="buttons-container">
+                        <button id="submit-button" disabled>Submit</button>
+                        <button id="next-question-button" style="display: none;">Next Question</button>
+                    </div>
+                </div>
 
-            <div class="live-tally">
-                <h2>Live Participation</h2>
-                <p class="large-number" id="stats-first-question">0</p>
-                <p>Submitted First Question</p>
-                <p class="large-number" id="stats-second-question">0</p>
-                <p>Submitted Second Question</p>
-            </div>
-        </div>
-        <div class="stats-button-container">
-            <a href="/MfIgame/statistics.html" id="toggle-stats" class="stats-tab" disabled>View Statistics</a>
-        </div>
-    </div>
-
-    <header class="header-container">
-        <h1 id="main-title">Test Your Knowledge of the Model for Improvement!</h1>
-        <p id="course-title" class="hidden"></p>
-        <img id="logo" src="/MfIgame/static/images/QICLearn_logo.jpg" alt="QIC Learn Logo" class="logo" />
-    </header>
-    
-    <div class="main-container">
-        <!-- Game Area -->
-        <div class="game-area" id="game-area">
-            <div class="text-box" id="box1">A</div>
-            <div class="downward-arrow"></div>
-            <div class="text-box" id="box2">B</div>
-            <div class="downward-arrow"></div>
-            <div class="text-box" id="box3">C</div>
-            <div class="downward-arrow"></div>
-            <div class="cycle">
-                <div class="quarter" id="quarter1">
-                    <span>1</span>
-                    <div class="arrow" id="arrow1"></div>
+                <!-- Draggable Buttons -->
+                <div class="draggable-container" id="draggable-container">
+                    <div id="word-bank">
+                        <div class="draggable" id="word1">Learn</div>
+                        <div class="draggable" id="word2">Assess</div>
+                        <div class="draggable" id="word3">Measure</div>
+                        <div class="draggable" id="word4">Goal</div>
+                        <div class="draggable" id="word5">Think</div>
+                        <div class="draggable" id="word6">Do</div>
+                        <div class="draggable" id="word7">Purpose</div>
+                        <div class="draggable" id="word8">Objective</div>
+                        <div class="draggable" id="word9">Change Ideas</div>
+                        <div class="draggable" id="word10">Study</div>
+                        <div class="draggable" id="word11">Plan</div>
+                        <div class="draggable" id="word12">Perform</div>
+                        <div class="draggable" id="word13">Check</div>
+                        <div class="draggable" id="word14">Define</div>
+                        <div class="draggable" id="word15">Test</div>
+                        <div class="draggable" id="word16">Audit</div>
+                        <div class="draggable" id="word17">Aim</div>
+                        <div class="draggable" id="word18">Result</div>
+                        <div class="draggable" id="word19">Research</div>
+                        <div class="draggable" id="word20">Act</div>
+                    </div>
                 </div>
-                <div class="quarter" id="quarter2">
-                    <span>2</span>
-                    <div class="arrow" id="arrow2"></div>
+              
+                <!-- Final Question -->
+                <div class="final-question-container" id="final-question-container" style="display: none;">
+                    <h2>How familiar are you with this change method (from start to finish)?</h2>
+                    <div class="final-options">
+                        <button class="final-option">Not at all familiar</button>
+                        <button class="final-option">Slightly familiar</button>
+                        <button class="final-option">Moderately familiar</button>
+                        <button class="final-option">Very familiar</button>
+                    </div>
+                    <button id="final-submit-button" disabled>Submit</button>
                 </div>
-                <div class="quarter" id="quarter3">
-                    <span>3</span>
-                    <div class="arrow" id="arrow3"></div>
-                </div>
-                <div class="quarter" id="quarter4">
-                    <span>4</span>
-                    <div class="arrow" id="arrow4"></div>
-                </div>
-            </div>
-        </div>
-    
-        <!-- Right Container for Instructions and Draggables -->
-        <div class="right-container">
-            <div class="instructions-container" id="instructions-container">
-                <div class="instructions" id="initial-instructions">
-                    <h2>Get your MfI Score: Drag and drop</h2>
-                    <p>When you've dropped an item into each of the sections click on this button:</p>
-                    <p>Good luck!</p>
-                </div>
-                <div class="instructions" id="next-instructions" style="display: none;">
-                    <h2>Next Steps</h2>
-                    <p>Click to go to the final question</p>
-                </div>
-                <div class="buttons-container">
-                    <button id="submit-button" disabled>Submit</button>
-                    <button id="next-question-button" style="display: none;">Next Question</button>
-                </div>
-            </div>
-
-            <!-- Draggable Buttons -->
-            <div class="draggable-container" id="draggable-container">
-                <div id="word-bank">
-                    <div class="draggable" id="word1" draggable="true">Learn</div>
-                    <div class="draggable" id="word2" draggable="true">Assess</div>
-                    <div class="draggable" id="word3" draggable="true">Measure</div>
-                    <div class="draggable" id="word4" draggable="true">Goal</div>
-                    <div class="draggable" id="word5" draggable="true">Think</div>
-                    <div class="draggable" id="word6" draggable="true">Do</div>
-                    <div class="draggable" id="word7" draggable="true">Purpose</div>
-                    <div class="draggable" id="word8" draggable="true">Objective</div>
-                    <div class="draggable" id="word9" draggable="true">Change Ideas</div>
-                    <div class="draggable" id="word10" draggable="true">Study</div>
-                    <div class="draggable" id="word11" draggable="true">Plan</div>
-                    <div class="draggable" id="word12" draggable="true">Perform</div>
-                    <div class="draggable" id="word13" draggable="true">Check</div>
-                    <div class="draggable" id="word14" draggable="true">Define</div>
-                    <div class="draggable" id="word15" draggable="true">Test</div>
-                    <div class="draggable" id="word16" draggable="true">Audit</div>
-                    <div class="draggable" id="word17" draggable="true">Aim</div>
-                    <div class="draggable" id="word18" draggable="true">Result</div>
-                    <div class="draggable" id="word19" draggable="true">Research</div>
-                    <div class="draggable" id="word20" draggable="true">Act</div>
-                </div>
-            </div>
-          
-            <!-- Final Question -->
-            <div class="final-question-container" id="final-question-container" style="display: none;">
-                <h2>How familiar are you with this change method (from start to finish)?</h2>
-                <div class="final-options">
-                    <button class="final-option">Not at all familiar</button>
-                    <button class="final-option">Slightly familiar</button>
-                    <button class="final-option">Moderately familiar</button>
-                    <button class="final-option">Very familiar</button>
-                </div>
-                <button id="final-submit-button" disabled>Submit</button>
             </div>
         </div>
     </div>
 
-    <!-- Load Firebase and game scripts -->
+    <!-- Firebase Scripts -->
     <script type="module" src="/MfIgame/static/firebase.js"></script>
     <script type="module" src="/MfIgame/static/js/shared/session.js"></script>
     <script type="module" src="/MfIgame/static/js/game/game.js"></script>

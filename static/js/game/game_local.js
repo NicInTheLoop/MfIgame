@@ -1,8 +1,5 @@
-import { SessionManager } from '../shared/session.js';
-import { db } from "../../firebase.js";
-import { doc, updateDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js";
-
-class GameManager {
+// Non-module version for Flask
+const GameManager = class {
     constructor() {
         this.session = new SessionManager();
         this.correctAnswersCount = 0;
@@ -11,19 +8,6 @@ class GameManager {
     }
 
     initialize() {
-        // Create an invisible drag image element
-        const dragImage = document.createElement('div');
-        dragImage.style.position = 'absolute';
-        dragImage.style.top = '-1000px';
-        dragImage.style.opacity = '0';
-        document.body.appendChild(dragImage);
-
-        // Prevent default drag behavior globally
-        document.addEventListener('dragstart', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-        }, true);
-
         const sortableOptions = {
             group: 'shared',
             animation: 150,
@@ -33,14 +17,14 @@ class GameManager {
             handle: '.draggable'
         };
 
-        // Initialize word bank as the main container
+        // Initialize word bank
         new Sortable(document.getElementById('word-bank'), {
             ...sortableOptions,
             sort: false,
             group: {
                 name: 'shared',
                 pull: true,
-                put: true // Allow items to be put back
+                put: true
             }
         });
 
@@ -135,12 +119,12 @@ class GameManager {
             }
         });
 
-        // Update Firebase
-        const statsRef = doc(db, "MFIgameStats", 
+        // Update Firebase using global Firebase SDK
+        const statsRef = firebase.firestore().doc("MFIgameStats", 
             `${this.session.getCourseCode()}-Session${this.session.getSessionNumber()}-${this.session.getToday()}`);
         
-        await updateDoc(statsRef, {
-            firstQuestionResponses: arrayUnion(1)
+        await statsRef.update({
+            firstQuestionResponses: firebase.firestore.FieldValue.arrayUnion(1)
         });
 
         // Update UI
@@ -174,20 +158,21 @@ class GameManager {
             submitButton.disabled = false;
         }
 
-        // Update Firebase
-        const statsRef = doc(db, "MFIgameStats", 
+        // Update Firebase using global Firebase SDK
+        const statsRef = firebase.firestore().doc("MFIgameStats", 
             `${this.session.getCourseCode()}-Session${this.session.getSessionNumber()}-${this.session.getToday()}`);
         
-        await updateDoc(statsRef, {
-            secondQuestionResponses: arrayUnion(1),
-            secondQuestionAnswers: arrayUnion(option.textContent)
+        await statsRef.update({
+            secondQuestionResponses: firebase.firestore.FieldValue.arrayUnion(1),
+            secondQuestionAnswers: firebase.firestore.FieldValue.arrayUnion(option.textContent)
         });
     }
-}
+};
 
 // Initialize game when DOM is loaded
+let game;
 document.addEventListener('DOMContentLoaded', () => {
-    const game = new GameManager();
+    game = new GameManager();
     game.initialize();
 });
 
