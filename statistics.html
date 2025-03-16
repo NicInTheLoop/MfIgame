@@ -1,40 +1,79 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Game Statistics</title>
-    <!-- Use a static relative URL for the stylesheet -->
-    <link rel="stylesheet" href="/MfIgame/static/styles.css">
+    <title>Course Statistics</title>
+    <link rel="stylesheet" href="/MfIgame/static/css/shared/common.css">
+    <link rel="stylesheet" href="/MfIgame/static/css/statistics/statistics.css">
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-cloud/1.2.5/d3.layout.cloud.min.js"></script>
 </head>
-
 <body>
-    <header class="header-container">
-        <h1 id="main-title">Game Statistics</h1>
-    </header>
+    <div id="stats-container">
+        <div class="stats-header">
+            <div id="course-setup" class="course-setup-container">
+                <h2>Setup Course Session</h2>
+                <form id="course-form">
+                    <label for="course-code">Course Code:</label>
+                    <input type="text" id="course-code" name="course-code" required>
+                    <label for="session-number">Session Number:</label>
+                    <input type="number" id="session-number" name="session-number" min="1" max="4" required>
+                    <button type="submit">Generate Session Link</button>
+                </form>
 
-    <div class="main-container">
-        <div id="statistics-container">
-            <!-- Statistics content will be dynamically inserted here -->
+                <div id="session-link" class="link-container" style="display: none;">
+                    <p>Share this link with learners:</p>
+                    <div class="link-box">
+                        <span id="link-output"></span>
+                        <button id="copy-link" title="Copy Link">Copy Link</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="live-tally">
+                <h2>Live Participation</h2>
+                <p class="large-number" id="stats-first-question">0</p>
+                <p>Submitted First Question</p>
+                <p class="large-number" id="stats-second-question">0</p>
+                <p>Submitted Second Question</p>
+            </div>
         </div>
     </div>
-    <script>
-        try {
-            const stats = JSON.parse(localStorage.getItem('gameStatistics')) || {};
-            document.getElementById('statistics-container').innerHTML = `
-                <p>Correct Answers: ${stats.correctCount || 0}</p>
-                <p>Incorrect Guesses: ${stats.incorrect?.join(', ') || 'None'}</p>
-                <p>Final Question Response: ${stats.finalResponse || 'None'}</p>
-            `;
-        } catch (error) {
-            console.error('Error accessing localStorage:', error);
-            document.getElementById('statistics-container').innerHTML = `
-                <p>Error accessing statistics. Please ensure you are not in incognito mode or an iframe.</p>
-            `;
-        }
-    </script>
-</body>
 
+    <a href="/MfIgame/index.html" class="stats-tab">Back to Game</a>
+
+    <div class="stats-container">
+        <h2 class="live-stats-header">Course Statistics</h2>
+
+        <div class="session-checkboxes">
+            <label><input type="checkbox" value="1" checked> Session 1</label>
+            <label><input type="checkbox" value="2"> Session 2</label>
+            <label><input type="checkbox" value="3"> Session 3</label>
+            <label><input type="checkbox" value="4"> Session 4</label>
+        </div>
+
+        <div class="stats-tabs">
+            <button class="tab-button active" data-tab="raw-scores">Raw Scores</button>
+            <button class="tab-button" data-tab="question2">2nd Question Answers</button>
+            <button class="tab-button" data-tab="word-cloud">Incorrect Answers</button>
+        </div>
+
+        <div class="stats-content">
+            <div id="raw-scores" class="stats-panel active">
+                <canvas id="rawScoresChart"></canvas>
+            </div>
+            <div id="question2" class="stats-panel">
+                <canvas id="question2Chart"></canvas>
+            </div>
+            <div id="word-cloud" class="stats-panel">
+                <div id="wordCloudCanvas"></div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="/MfIgame/static/js/statistics/statistics.js"></script>
+</body>
 </html>

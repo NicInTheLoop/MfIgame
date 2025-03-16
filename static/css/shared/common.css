@@ -1,0 +1,112 @@
+/* Common styles for both game and statistics pages */
+.header-container {
+    text-align: center;
+    padding: 20px;
+    margin-bottom: 30px;
+}
+
+.logo {
+    max-width: 200px;
+    height: auto;
+}
+
+/* Course setup styles */
+.course-setup-container {
+    background-color: #f5f5f5;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.course-setup-container h2 {
+    color: #14a19a;
+    margin-bottom: 15px;
+}
+
+.course-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.course-form label {
+    font-weight: bold;
+    color: #045275;
+}
+
+.course-form input {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.course-form button {
+    background-color: #14a19a;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.course-form button:hover {
+    background-color: #0e7c77;
+}
+
+/* Live tally styles */
+.live-tally {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.live-tally h2 {
+    color: #E6007E;
+    margin-bottom: 15px;
+}
+
+.large-number {
+    font-size: 2.5em;
+    color: #14a19a;
+    margin: 10px 0;
+}
+
+/* Session link styles */
+.link-container {
+    margin-top: 15px;
+    padding: 15px;
+    background-color: #f8f8f8;
+    border-radius: 4px;
+}
+
+.link-box {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+#copy-link {
+    background-color: #045275;
+    color: white;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#copy-link:hover {
+    background-color: #033857;
+}
+
+/* Utility classes */
+.hidden {
+    display: none !important;
+}
+
+.visible {
+    display: block !important;
+}

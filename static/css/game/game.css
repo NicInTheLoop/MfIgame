@@ -1,0 +1,127 @@
+/* Game-specific styles */
+.game-area {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+    margin: 0 auto;
+    max-width: 800px;
+}
+
+.text-box {
+    width: 150px;
+    height: 60px;
+    background-color: #BCCF04;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 10px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.downward-arrow {
+    width: 0;
+    height: 0;
+    border-left: 20px solid transparent;
+    border-right: 20px solid transparent;
+    border-top: 20px solid #045275;
+    margin: 10px auto;
+}
+
+.cycle {
+    width: 400px;
+    height: 400px;
+    position: relative;
+    margin: 20px auto;
+}
+
+.quarter {
+    width: 180px;
+    height: 180px;
+    position: absolute;
+    background-color: #BCCF04;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+#quarter1 { top: 0; left: 110px; border-radius: 8px; }
+#quarter2 { right: 0; top: 110px; border-radius: 8px; }
+#quarter3 { bottom: 0; left: 110px; border-radius: 8px; }
+#quarter4 { left: 0; top: 110px; border-radius: 8px; }
+
+.arrow {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    border-right: 4px solid #045275;
+    border-bottom: 4px solid #045275;
+}
+
+#arrow1 { transform: rotate(45deg); bottom: -15px; }
+#arrow2 { transform: rotate(-45deg); left: -15px; }
+#arrow3 { transform: rotate(-135deg); top: -15px; }
+#arrow4 { transform: rotate(135deg); right: -15px; }
+
+.draggable-container {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+}
+
+.draggable {
+    display: inline-block;
+    padding: 10px 15px;
+    margin: 5px;
+    background-color: #14a19a;
+    color: white;
+    border-radius: 4px;
+    cursor: move;
+    user-select: none;
+}
+
+.draggable.correct {
+    background-color: #4CAF50;
+}
+
+.draggable.incorrect {
+    background-color: #f44336;
+}
+
+.final-question-container {
+    display: none;
+    text-align: center;
+    padding: 20px;
+    margin-top: 20px;
+}
+
+.final-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.final-option {
+    padding: 15px;
+    background-color: #14a19a;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.final-option:hover {
+    background-color: #0e7c77;
+}
+
+.final-option.selected {
+    background-color: #E6007E;
+}
