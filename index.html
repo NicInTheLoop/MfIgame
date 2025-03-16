@@ -8,6 +8,9 @@
     <link rel="stylesheet" href="/MfIgame/static/styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-cloud/1.2.5/d3.layout.cloud.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/wordcloud@1.2.2"></script>
 </head>
 
@@ -25,12 +28,12 @@
                     <button type="submit">Generate Session Link</button>
                 </form>
 
-                <!-- ✅ New Section for Session Link and Copy Button -->
+                <!-- New Section for Session Link and Copy Button -->
                 <div id="session-link" class="link-container" style="display: none;">
                     <p>Share this link with learners:</p>
                     <div class="link-box">
                         <span id="link-output"></span>
-                        <button id="copy-link" title="Copy Link">📋 Copy Link</button>
+                        <button id="copy-link" title="Copy Link"> Copy Link</button>
                     </div>
                 </div>
             </div>
@@ -47,9 +50,9 @@
     
     <button id="toggle-stats" class="stats-tab" onclick="toggleStatistics()" disabled>View Statistics</button>
     <div id="statsContainer" class="course-stats-container" style="display: block;">
-        <h3 class="live-stats-header">Live Course Statistics</h3> <!-- ✅ Now using .live-stats-header -->
+        <h3 class="live-stats-header">Live Course Statistics</h3> 
 
-        <!-- ✅ Add Session Selection Checkboxes -->
+        <!-- Add Session Selection Checkboxes -->
         <div id="session-selection" class="session-checkboxes">
             <label><input type="checkbox" value="1" checked onchange="updateSessionSelection()"> Session 1</label>
             <label><input type="checkbox" value="2" onchange="updateSessionSelection()"> Session 2</label>
@@ -65,7 +68,7 @@
 
         <div class="stats-content">
             <div id="raw-scores" class="stats-panel active">
-                <div id="rawScoresContainer"></div> <!-- ✅ Added this div -->
+                <div id="rawScoresContainer"></div> 
                 <canvas id="rawScoresChart"></canvas>
             </div>
             <div id="question2" class="stats-panel">
