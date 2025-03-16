@@ -1,4 +1,8 @@
-// Non-module version for Flask
+// Import Firebase modules
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js';
+import { getFirestore } from 'https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js';
+
+// Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyA821UkL_YsC8jAWeeBlC-TsOE4m7mC6TI",
   authDomain: "mfigame-48c52.firebaseapp.com",
@@ -10,4 +14,7 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-firebase.initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
+
+// Initialize Firestore
+export const db = getFirestore(app);

@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/shared/common.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/game/game.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-cloud/1.2.5/d3.layout.cloud.min.js"></script>
@@ -143,24 +142,38 @@
                 <div class="final-question-container" id="final-question-container" style="display: none;">
                     <h2>How familiar are you with this change method (from start to finish)?</h2>
                     <div class="final-options">
-                        <button class="final-option">Not at all familiar</button>
-                        <button class="final-option">Slightly familiar</button>
-                        <button class="final-option">Moderately familiar</button>
-                        <button class="final-option">Very familiar</button>
+                        <button class="final-option">1st time I've seen it</button>
+                        <button class="final-option">Seen it, tried it or trying it</button>
+                        <button class="final-option">Know it - used it</button>
+                        <button class="final-option">Use it well - want to learn more</button>
                     </div>
                     <button id="final-submit-button" disabled>Submit</button>
+                </div>
+
+                <!-- Thank you message -->
+                <div id="thank-you" style="display: none;">
+                    <h2>Thank you for participating!</h2>
                 </div>
             </div>
         </div>
 
+        <!-- Load Sortable.js -->
+        <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+
         <!-- Load Firebase SDK -->
-        <script src="https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js"></script>
-        <script src="https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js"></script>
+        <script type="module" src="https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js"></script>
+        <script type="module" src="https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js"></script>
         
         <!-- Load Firebase and game scripts -->
-        <script src="{{ url_for('static', filename='firebase_local.js') }}"></script>
-        <script src="{{ url_for('static', filename='js/shared/session_local.js') }}"></script>
-        <script src="{{ url_for('static', filename='js/game/game_local.js') }}"></script>
+        <script type="module" src="{{ url_for('static', filename='firebase_local.js') }}"></script>
+        <script type="module" src="{{ url_for('static', filename='js/shared/session_local.js') }}"></script>
+        <script type="module" src="{{ url_for('static', filename='js/game/game_local.js') }}"></script>
+
+        <!-- Pass course and session parameters to JavaScript -->
+        <script>
+            window.courseCode = "{{ course if course else '' }}";
+            window.sessionNumber = "{{ session if session else '' }}";
+        </script>
     </div>
 
 </body>

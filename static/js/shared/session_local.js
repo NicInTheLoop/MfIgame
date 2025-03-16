@@ -1,9 +1,12 @@
-// Non-module version for Flask
+import { db } from '/static/firebase_local.js';
+import { collection, doc, getDoc, setDoc } from 'https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js';
+
 class SessionManager {
     constructor() {
         this.urlParams = new URLSearchParams(window.location.search);
-        this.courseCode = this.urlParams.get("course");
-        this.sessionNumber = this.urlParams.get("session");
+        // First try URL parameters, then fall back to window variables
+        this.courseCode = this.urlParams.get("course") || window.courseCode;
+        this.sessionNumber = this.urlParams.get("session") || window.sessionNumber;
         this.today = new Date().toISOString().split('T')[0];
         this.setupCourseForm();
         this.initializeSession();
@@ -78,14 +81,12 @@ class SessionManager {
     }
 
     async createStatsDocument(courseCode, sessionNumber) {
-        const docRef = firebase.firestore().collection("MFIgameStats").doc(
-            `${courseCode}-Session${sessionNumber}-${this.today}`
-        );
+        const docRef = doc(db, "MFIgameStats", `${courseCode}-Session${sessionNumber}-${this.today}`);
         
         try {
-            const docSnap = await docRef.get();
-            if (!docSnap.exists) {
-                await docRef.set({
+            const docSnap = await getDoc(docRef);
+            if (!docSnap.exists()) {
+                await setDoc(docRef, {
                     firstQuestionResponses: 0,
                     rawScores: [],
                     secondQuestionAnswers: {},
@@ -153,14 +154,12 @@ class SessionManager {
     async ensureStatsDocumentExists() {
         if (!this.courseCode || !this.sessionNumber) return;
 
-        const docRef = firebase.firestore().collection("MFIgameStats").doc(
-            `${this.courseCode}-Session${this.sessionNumber}-${this.today}`
-        );
+        const docRef = doc(db, "MFIgameStats", `${this.courseCode}-Session${this.sessionNumber}-${this.today}`);
         
         try {
-            const docSnap = await docRef.get();
-            if (!docSnap.exists) {
-                await docRef.set({
+            const docSnap = await getDoc(docRef);
+            if (!docSnap.exists()) {
+                await setDoc(docRef, {
                     firstQuestionResponses: 0,
                     rawScores: [],
                     secondQuestionAnswers: {},
@@ -174,3 +173,5 @@ class SessionManager {
         }
     }
 }
+
+export default SessionManager;

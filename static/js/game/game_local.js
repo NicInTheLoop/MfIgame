@@ -1,13 +1,26 @@
-// Non-module version for Flask
-const GameManager = class {
+// Import Firebase modules
+import { doc, updateDoc, arrayUnion } from 'https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js';
+import { db } from '/static/firebase_local.js';
+import SessionManager from '/static/js/shared/session_local.js';
+
+export class GameManager {
     constructor() {
+        this.db = db;
         this.session = new SessionManager();
         this.correctAnswersCount = 0;
         this.incorrectGuesses = [];
         this.finalQuestionResponse = '';
+        this.initialize();
     }
 
     initialize() {
+        document.addEventListener('DOMContentLoaded', () => {
+            this.setupSortable();
+            this.setupEventListeners();
+        });
+    }
+
+    setupSortable() {
         const sortableOptions = {
             group: 'shared',
             animation: 150,
@@ -55,12 +68,17 @@ const GameManager = class {
                         }
                     }
                     
+                    // Add has-draggable class to quarter
+                    quarter.classList.add('has-draggable');
                     this.checkSubmitButtonState();
+                },
+                onRemove: (evt) => {
+                    // Remove has-draggable class when item is removed
+                    const quarter = evt.from;
+                    quarter.classList.remove('has-draggable');
                 }
             });
         });
-
-        this.setupEventListeners();
     }
 
     setupEventListeners() {
@@ -73,22 +91,33 @@ const GameManager = class {
         if (nextQuestionButton) {
             nextQuestionButton.addEventListener('click', () => this.nextQuestion());
         }
+
+        // Setup final options
+        const finalOptions = document.querySelectorAll('.final-option');
+        finalOptions.forEach(option => {
+            option.addEventListener('click', () => this.selectFinalOption(option));
+        });
+
+        const finalSubmitButton = document.getElementById('final-submit-button');
+        if (finalSubmitButton) {
+            finalSubmitButton.addEventListener('click', () => this.submitFinalAnswer());
+        }
     }
 
     checkSubmitButtonState() {
         const dropZones = document.querySelectorAll('.text-box, .quarter');
-        let hasDraggable = false;
+        let allZonesHaveDraggable = true;
 
         dropZones.forEach(zone => {
             const draggableChild = zone.querySelector('.draggable');
-            if (draggableChild) {
-                hasDraggable = true;
+            if (!draggableChild) {
+                allZonesHaveDraggable = false;
             }
         });
 
         const submitButton = document.getElementById('submit-button');
         if (submitButton) {
-            submitButton.disabled = !hasDraggable;
+            submitButton.disabled = !allZonesHaveDraggable;
         }
     }
 
@@ -119,12 +148,17 @@ const GameManager = class {
             }
         });
 
-        // Update Firebase using global Firebase SDK
-        const statsRef = firebase.firestore().doc("MFIgameStats", 
-            `${this.session.getCourseCode()}-Session${this.session.getSessionNumber()}-${this.session.getToday()}`);
+        // Update Firebase
+        const statsRef = doc(this.db, "MFIgameStats",
+            `${this.session.getCourseCode()}-Session${this.session.getSessionNumber()}-${this.session.getToday()}`
+        );
         
-        await statsRef.update({
-            firstQuestionResponses: firebase.firestore.FieldValue.arrayUnion(1)
+        await updateDoc(statsRef, {
+            firstQuestionResponses: arrayUnion({
+                score: this.correctAnswersCount,
+                incorrectGuesses: this.incorrectGuesses,
+                timestamp: new Date().toISOString()
+            })
         });
 
         // Update UI
@@ -152,22 +186,41 @@ const GameManager = class {
         }
         option.classList.add('selected');
         this.selectedFinalOption = option;
+        this.finalQuestionResponse = option.textContent;
 
         const submitButton = document.getElementById('final-submit-button');
         if (submitButton) {
             submitButton.disabled = false;
         }
-
-        // Update Firebase using global Firebase SDK
-        const statsRef = firebase.firestore().doc("MFIgameStats", 
-            `${this.session.getCourseCode()}-Session${this.session.getSessionNumber()}-${this.session.getToday()}`);
-        
-        await statsRef.update({
-            secondQuestionResponses: firebase.firestore.FieldValue.arrayUnion(1),
-            secondQuestionAnswers: firebase.firestore.FieldValue.arrayUnion(option.textContent)
-        });
     }
-};
+
+    async submitFinalAnswer() {
+        if (!this.finalQuestionResponse) return;
+
+        // Update Firebase
+        const statsRef = doc(this.db, "MFIgameStats",
+            `${this.session.getCourseCode()}-Session${this.session.getSessionNumber()}-${this.session.getToday()}`
+        );
+
+        try {
+            await updateDoc(statsRef, {
+                secondQuestionAnswers: {
+                    [this.finalQuestionResponse]: arrayUnion(new Date().toISOString())
+                },
+                secondQuestionResponses: arrayUnion({
+                    response: this.finalQuestionResponse,
+                    timestamp: new Date().toISOString()
+                })
+            });
+
+            // Show thank you message
+            document.getElementById('final-question-container').style.display = 'none';
+            document.getElementById('thank-you').style.display = 'block';
+        } catch (error) {
+            console.error("Error submitting final answer:", error);
+        }
+    }
+}
 
 // Initialize game when DOM is loaded
 let game;
