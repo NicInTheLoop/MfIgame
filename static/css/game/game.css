@@ -73,34 +73,30 @@
 
 #arrow1 {
     position: absolute;
-    top: -25px;
-    left: 72%;
+    top: 140px;
+    left: 50%;
     transform: translate(-50%, 0);
-    border-top-color: red;
 }
 
 #arrow2 {
     position: absolute;
-    right: -25px;
-    top: 50%;
-    transform: translate(0, -50%) rotate(180deg);
-    border-top-color: blue;
+    right: 50px;
+    top: 100%;
+    transform: translate(0, -50%) rotate(0deg);
 }
 
 #arrow3 {
     position: absolute;
-    top: 50%;
-    left: -25px;
-    transform: translate(0, -50%) rotate(-90deg);
-    border-top-color: green;
+    top: 100%;
+    left: 50px;
+    transform: translate(0, -50%) rotate(0deg);
 }
 
 #arrow4 {
     position: absolute;
-    top: -25px;
-    left: 29%;
-    transform: translate(-50%, 0) rotate(180deg);
-    border-top-color: purple;
+    top: 140px;
+    left: 50%;
+    transform: translate(-50%, 0) rotate(0deg);
 }
 
 /* Game-specific styles */
