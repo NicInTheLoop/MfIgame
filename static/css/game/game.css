@@ -1,25 +1,25 @@
-/* Game-specific styles */
+/* Game area styles */
 .game-area {
-    display: none;
+    width: 30%;
+    display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 20px;
-    padding: 20px;
-    margin: 0 auto;
-    max-width: 800px;
+    gap: 10px;
+    padding: 20px 0;
+    margin-left: 0;
 }
 
 .text-box {
-    width: 150px;
-    height: 60px;
+    width: 250px;
+    height: 50px;
     background-color: #BCCF04;
+    border: 1px solid #ccc;
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: 10px;
-    border-radius: 8px;
-    font-weight: bold;
-    cursor: pointer;
+    margin: 5px auto;
+    text-align: center;
+    font-size: 1.2em;
 }
 
 .downward-arrow {
@@ -27,101 +27,314 @@
     height: 0;
     border-left: 20px solid transparent;
     border-right: 20px solid transparent;
-    border-top: 20px solid #045275;
-    margin: 10px auto;
+    border-top: 20px solid #000;
+    margin: 0 auto;
 }
 
+/* PDSA Cycle styles */
 .cycle {
+    position: relative;
     width: 400px;
     height: 400px;
-    position: relative;
-    margin: 20px auto;
-}
-
-.quarter {
-    width: 180px;
-    height: 180px;
-    position: absolute;
-    background-color: #BCCF04;
     display: flex;
     justify-content: center;
     align-items: center;
-    cursor: pointer;
-    font-weight: bold;
+    margin: 10px auto;
 }
 
-#quarter1 { top: 0; left: 110px; border-radius: 8px; }
-#quarter2 { right: 0; top: 110px; border-radius: 8px; }
-#quarter3 { bottom: 0; left: 110px; border-radius: 8px; }
-#quarter4 { left: 0; top: 110px; border-radius: 8px; }
+.quarter {
+    width: 150px;
+    height: 150px;
+    background-color: #BCCF04;
+    position: absolute;
+    border-radius: 0 100% 0 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
 
+.quarter span {
+    font-size: 1.2em;
+    display: block;
+    transform-origin: center center;
+}
+
+#quarter1 span { transform: rotate(0deg); }
+#quarter2 span { transform: rotate(-90deg); }
+#quarter3 span { transform: rotate(-180deg); }
+#quarter4 span { transform: rotate(-270deg); }
+
+#quarter1 {
+    top: 0;
+    left: 72%;
+    transform: translate(-50%, 0) rotate(0deg);
+}
+
+#quarter2 {
+    top: 60%;
+    left: 72%;
+    transform: translate(-50%, -50%) rotate(90deg);
+}
+
+#arrow1 {
+    top: 145px;
+    right: 60px;
+    transform: rotate(0deg);
+    border-top: 20px solid black;
+}
+
+#quarter3 {
+    top: 60%;
+    left: 29%;
+    transform: translate(-50%, -50%) rotate(180deg);
+}
+
+#quarter4 {
+    top: 0;
+    left: 29%;
+    transform: translate(-50%, 0) rotate(270deg);
+}
+
+/* Arrow styles */
 .arrow {
     position: absolute;
-    width: 30px;
-    height: 30px;
-    border-right: 4px solid #045275;
-    border-bottom: 4px solid #045275;
+    width: 0;
+    height: 0;
+    border-left: 20px solid transparent;
+    border-right: 20px solid transparent;
+    pointer-events: none;
 }
 
-#arrow1 { transform: rotate(45deg); bottom: -15px; }
-#arrow2 { transform: rotate(-45deg); left: -15px; }
-#arrow3 { transform: rotate(-135deg); top: -15px; }
-#arrow4 { transform: rotate(135deg); right: -15px; }
+#arrow2 {
+    top: 140px;
+    right: 60px;
+    transform: rotate(0deg);
+    border-top: 20px solid black;
+}
 
-.draggable-container {
-    margin-top: 20px;
+#arrow3 {
+    top: 145px;
+    left: 60px;
+    transform: rotate(0deg);
+    border-top: 20px solid black;
+}
+
+#arrow4 {
+    bottom: -10px;
+    left: 45px;
+    transform: rotate(0deg);
+    border-top: 20px solid black;
+}
+
+/* Right container styles */
+.right-container {
+    width: 70%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
     padding: 20px;
-    background-color: #f5f5f5;
-    border-radius: 8px;
+}
+
+/* Instructions styles */
+.instructions-container {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.instructions {
+    padding: 20px;
+    display: block;
+    background-color: #14a19a;
+    color: white;
+    position: relative;
+    border-radius: 5px;
+    clip-path: polygon(0 0, 90% 0, 100% 50%, 90% 100%, 0 100%);
+    flex: 0 0 auto;
+    max-width: 60%;
+    text-align: left;
+}
+
+#next-instructions.visible {
+    display: block !important;
+}
+
+.buttons-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+}
+
+button {
+    margin: 0;
+    padding: 0;
+    border: none;
+    outline: none;
+    box-sizing: border-box;
+}
+
+#submit-button, #next-question-button {
+    background-color: #87898A;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-size: 1.5em;
+    cursor: pointer;
+    margin: 0;
+    display: inline-block;
+    align-self: center;
+}
+
+#submit-button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+#next-question-button.visible {
+    display: inline-block !important;
+}
+
+/* Draggable container styles */
+.draggable-container {
+    width: 50%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 10px;
+    margin-top: 20px;
+    flex: 1;
 }
 
 .draggable {
+    padding: 12px 16px;
+    margin: 6px;
     display: inline-block;
-    padding: 10px 15px;
-    margin: 5px;
-    background-color: #14a19a;
     color: white;
-    border-radius: 4px;
-    cursor: move;
-    user-select: none;
-}
-
-.draggable.correct {
-    background-color: #4CAF50;
-}
-
-.draggable.incorrect {
-    background-color: #f44336;
-}
-
-.final-question-container {
-    display: none;
     text-align: center;
+    cursor: pointer;
+    user-select: none;
+    background-color: #E6007E;
+    border: 2px solid #8A8B8D;
+    border-radius: 5px;
+    font-size: 1.1em;
+}
+
+.draggable:active {
+    cursor: grabbing;
+}
+
+.draggable:hover {
+    background-color: #b60d91;
+}
+
+/* Final question styles */
+.final-question-container {
+    background-color: #f4f4f4;
     padding: 20px;
-    margin-top: 20px;
+    border-radius: 10px;
+    text-align: center;
 }
 
 .final-options {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    margin-top: 20px;
+    margin: 20px 0;
 }
 
 .final-option {
-    padding: 15px;
-    background-color: #14a19a;
-    color: white;
-    border: none;
-    border-radius: 4px;
+    background-color: white;
+    border: 2px solid #14a19a;
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-size: 1em;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: all 0.3s ease;
 }
 
 .final-option:hover {
-    background-color: #0e7c77;
+    background-color: #e8f4f4;
 }
 
 .final-option.selected {
-    background-color: #E6007E;
+    background-color: #e6007e;
+    color: white;
+}
+
+#final-submit-button {
+    background-color: #14a19a;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-size: 1em;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+#final-submit-button:hover {
+    background-color: #0b6b66;
+}
+
+#final-submit-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+/* Stats button styles */
+#stats-container {
+    margin-bottom: 5px;
+}
+
+.stats-header {
+    display: flex;
+    justify-content: flex-start;
+    gap: 40px;
+    margin-bottom: 5px;
+    margin-left: 20px;
+}
+
+.stats-button-container {
+    display: flex;
+    justify-content: flex-start;
+    padding: 0;
+    margin-left: 20px;
+}
+
+.stats-tab {
+    background-color: #e6007e;
+    color: white;
+    padding: 15px 30px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    width: 200px;
+    text-align: center;
+    font-size: 1.2em;
+    margin: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+.stats-tab:hover {
+    background-color: #b60d91;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.stats-tab:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.header-container {
+    text-align: center;
+    padding: 5px 0;
+    margin: 15px 20px;
 }
