@@ -68,32 +68,38 @@
         <!-- Game content -->
         <div class="main-container">
             <div class="game-area" id="game-area">
-                <div class="text-box sortable-container" id="box1">A</div>
+                <div class="text-box" id="box1">
+                    <span class="box-label">A</span>
+                </div>
                 <div class="downward-arrow"></div>
-                <div class="text-box sortable-container" id="box2">B</div>
+                <div class="text-box" id="box2">
+                    <span class="box-label">B</span>
+                </div>
                 <div class="downward-arrow"></div>
-                <div class="text-box sortable-container" id="box3">C</div>
+                <div class="text-box" id="box3">
+                    <span class="box-label">C</span>
+                </div>
                 <div class="downward-arrow"></div>
                 <div class="cycle">
-                    <div class="quarter sortable-container" id="quarter1">
+                    <div class="quarter" id="quarter1">
                         <span>1</span>
                         <div class="arrow" id="arrow1"></div>
                     </div>
-                    <div class="quarter sortable-container" id="quarter2">
+                    <div class="quarter" id="quarter2">
                         <span>2</span>
                         <div class="arrow" id="arrow2"></div>
                     </div>
-                    <div class="quarter sortable-container" id="quarter3">
+                    <div class="quarter" id="quarter3">
                         <span>3</span>
                         <div class="arrow" id="arrow3"></div>
                     </div>
-                    <div class="quarter sortable-container" id="quarter4">
+                    <div class="quarter" id="quarter4">
                         <span>4</span>
                         <div class="arrow" id="arrow4"></div>
                     </div>
                 </div>
             </div>
-        
+
             <div class="right-container">
                 <div class="instructions-container" id="instructions-container">
                     <div class="instructions" id="initial-instructions">
@@ -112,50 +118,52 @@
                 </div>
 
                 <!-- Draggable Buttons -->
-                <div class="draggable-container" id="draggable-container">
+                <div class="draggable-container">
                     <div id="word-bank">
-                        <div class="draggable" id="word1">Learn</div>
-                        <div class="draggable" id="word2">Assess</div>
-                        <div class="draggable" id="word3">Measure</div>
-                        <div class="draggable" id="word4">Goal</div>
-                        <div class="draggable" id="word5">Think</div>
-                        <div class="draggable" id="word6">Do</div>
-                        <div class="draggable" id="word7">Purpose</div>
-                        <div class="draggable" id="word8">Objective</div>
-                        <div class="draggable" id="word9">Change Ideas</div>
-                        <div class="draggable" id="word10">Study</div>
-                        <div class="draggable" id="word11">Plan</div>
-                        <div class="draggable" id="word12">Perform</div>
-                        <div class="draggable" id="word13">Check</div>
-                        <div class="draggable" id="word14">Define</div>
-                        <div class="draggable" id="word15">Test</div>
-                        <div class="draggable" id="word16">Audit</div>
-                        <div class="draggable" id="word17">Aim</div>
-                        <div class="draggable" id="word18">Result</div>
-                        <div class="draggable" id="word19">Research</div>
-                        <div class="draggable" id="word20">Act</div>
+                        <div class="draggable" draggable="true">Learn</div>
+                        <div class="draggable" draggable="true">Assess</div>
+                        <div class="draggable" draggable="true">Measure</div>
+                        <div class="draggable" draggable="true">Goal</div>
+                        <div class="draggable" draggable="true">Think</div>
+                        <div class="draggable" draggable="true">Do</div>
+                        <div class="draggable" draggable="true">Purpose</div>
+                        <div class="draggable" draggable="true">Objective</div>
+                        <div class="draggable" draggable="true">Change Ideas</div>
+                        <div class="draggable" draggable="true">Study</div>
+                        <div class="draggable" draggable="true">Plan</div>
+                        <div class="draggable" draggable="true">Perform</div>
+                        <div class="draggable" draggable="true">Check</div>
+                        <div class="draggable" draggable="true">Define</div>
+                        <div class="draggable" draggable="true">Test</div>
+                        <div class="draggable" draggable="true">Audit</div>
+                        <div class="draggable" draggable="true">Aim</div>
+                        <div class="draggable" draggable="true">Result</div>
+                        <div class="draggable" draggable="true">Research</div>
+                        <div class="draggable" draggable="true">Act</div>
+                        <div class="draggable" draggable="true">Intervention</div>
+                        <div class="draggable" draggable="true">Set</div>
                     </div>
-                </div>
-              
-                <!-- Final Question -->
-                <div class="final-question-container" id="final-question-container" style="display: none;">
-                    <h2>How familiar are you with this change method (from start to finish)?</h2>
-                    <div class="final-options">
-                        <button class="final-option">1st time I've seen it</button>
-                        <button class="final-option">Seen it, tried it or trying it</button>
-                        <button class="final-option">Know it - used it</button>
-                        <button class="final-option">Use it well - want to learn more</button>
-                    </div>
-                    <button id="final-submit-button" disabled>Submit</button>
                 </div>
             </div>
+        </div>
+
+        <!-- Final Question -->
+        <div class="final-question-container" id="final-question-container" style="display: none;">
+            <h2>How familiar are you with this change method (from start to finish)?</h2>
+            <div class="final-options">
+                <button class="final-option">1st time I've seen it</button>
+                <button class="final-option">Seen it, tried it or trying it</button>
+                <button class="final-option">Know it - used it</button>
+                <button class="final-option">Use it well - want to learn more</button>
+            </div>
+            <button id="final-submit-button" disabled>Submit</button>
         </div>
     </div>
 
     <!-- Firebase Scripts -->
-    <script type="module" src="{{ url_for('static', filename='firebase_local.js') }}"></script>
-    <script type="module" src="{{ url_for('static', filename='js/shared/session_local.js') }}"></script>
-    <script type="module" src="{{ url_for('static', filename='js/game/game_local.js') }}"></script>
+    <script src="{{ url_for('static', filename='firebase_local.js') }}" type="module"></script>
+    <script src="{{ url_for('static', filename='js/shared/session_local.js') }}" type="module"></script>
+    <script src="{{ url_for('static', filename='js/game/game_local.js') }}" type="module"></script>
 
     <!-- Pass course and session parameters to JavaScript -->
     <script>

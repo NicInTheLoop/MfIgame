@@ -1,104 +1,295 @@
-/* Final question container */
-.final-question-container {
-    background-color: #f5f5f5;
-    padding: 20px;
+/* Quarter numbers */
+.quarter span {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.2em;
+    z-index: 1;
+}
+
+/* Keep numbers upright - exact rotations from memory */
+#quarter1 span {
+    transform: rotate(0deg);
+}
+
+#quarter2 span {
+    transform: rotate(-90deg);
+}
+
+#quarter3 span {
+    transform: rotate(180deg);
+}
+
+#quarter4 span {
+    transform: rotate(90deg);
+}
+
+/* Move number up when draggable is present */
+.quarter.has-draggable span {
+    top: 35px;
+}
+
+/* Keep numbers upright when moved - from memory */
+#quarter1.has-draggable span {
+    transform: rotate(0deg);
+}
+
+#quarter2.has-draggable span {
+    transform: rotate(-90deg);
+}
+
+#quarter3.has-draggable span {
+    transform: rotate(180deg);
+}
+
+#quarter4.has-draggable span {
+    transform: rotate(90deg);
+}
+
+/* Correct answer display */
+.quarter .correct-answer {
+    position: absolute;
+    font-size: 0.9em;
+    padding: 6px 10px;
+    max-width: 120px;
+    z-index: 2;  /* Above quarter but below draggable */
+    background-color: #cddc39;  /* Lime */
+    border: 2px solid #cddc39;
     border-radius: 5px;
-    margin-top: 20px;
+    color: black;
     text-align: center;
+    opacity: 0;
+    transition: opacity 0.3s;
+    white-space: nowrap;
 }
 
-/* Final options */
-.final-options {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin: 20px 0;
+/* Position correct answers in quarters - match quarter rotations */
+#quarter1 .correct-answer {
+    top: 35px;
+    left: 50%;
+    transform: translate(-50%, 0) rotate(0deg);
 }
 
-.final-option {
-    background-color: #e6007e;  /* Brand pink */
-    border: 2px solid #87898A;  /* Brand grey */
-    border-radius: 5px;
-    padding: 10px 20px;
-    margin: 5px;
-    color: white;
-    text-align: center;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    font-size: 1em;
+#quarter2 .correct-answer {
+    top: 50%;
+    right: 35px;
+    transform: translate(0, -50%) rotate(-90deg);
 }
 
-.final-option:hover {
-    background-color: #b60d91;  /* Brand pink hover */
+#quarter3 .correct-answer {
+    bottom: 35px;
+    left: 50%;
+    transform: translate(-50%, 0) rotate(180deg);
 }
 
-.final-option.selected {
-    background-color: #87898A;  /* Brand grey */
-    border-color: #87898A;
-    color: white;
+#quarter4 .correct-answer {
+    top: 50%;
+    left: 35px;
+    transform: translate(0, -50%) rotate(90deg);
 }
 
-/* Final submit button */
-#final-submit-button {
-    background-color: #e6007e;  /* Brand pink */
-    border: 2px solid #87898A;  /* Brand grey */
-    border-radius: 5px;
-    padding: 10px 20px;
-    margin: 20px 5px;
-    color: white;
-    text-align: center;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    font-size: 1em;
+/* Quarter positions */
+#quarter1 {
+    top: 0;
+    left: 72%;
+    transform: translate(-50%, 0) rotate(0deg);
 }
 
-#final-submit-button:hover:not(:disabled) {
-    background-color: #b60d91;  /* Brand pink hover */
+#quarter2 {
+    top: 60%;
+    left: 72%;
+    transform: translate(-50%, -50%) rotate(90deg);
 }
 
-#final-submit-button:disabled {
-    background-color: #87898A;  /* Brand grey */
-    border-color: #87898A;
-    cursor: not-allowed;
-    opacity: 0.7;
+#quarter3 {
+    top: 60%;
+    left: 29%;
+    transform: translate(-50%, -50%) rotate(180deg);
 }
 
-/* Game container */
-.game-container {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    width: 100%;
-    max-width: 1200px;
+#quarter4 {
+    top: 0;
+    left: 29%;
+    transform: translate(-50%, 0) rotate(270deg);
+}
+
+/* Position draggables in quarters */
+.quarter .draggable {
+    position: absolute;
+    top: 50%;
+    left: 50%;
     margin: 0;
-    padding: 20px;
+    z-index: 2;
 }
 
-/* Main container */
-.main-container {
-    display: flex;
-    justify-content: flex-start;
-    width: 100%;
-    gap: 20px;
+#quarter1 .draggable {
+    transform: translate(-50%, -50%) rotate(0deg);
+}
+
+#quarter2 .draggable {
+    transform: translate(-50%, -50%) rotate(-90deg);
+}
+
+#quarter3 .draggable {
+    transform: translate(-50%, -50%) rotate(-180deg);
+}
+
+#quarter4 .draggable {
+    transform: translate(-50%, -50%) rotate(-270deg);
+}
+
+/* Arrow positioning */
+#arrow1 {
+    top: 95%;
+    left: 50%;
+    transform: translate(-50%, 0);
+}
+
+#arrow2 {
+    right: 40%;
+    top: 100%;
+    transform: translate(0, -50%) rotate(0deg);
+}
+
+#arrow3 {
+    left: 40%;
+    top: 100%;
+    transform: translate(0, -50%) rotate(0deg);
+}
+
+#arrow4 {
+    top: 95%;
+    left: 50%;
+    transform: translate(-50%, 0) rotate(0deg);
+}
+
+/* Text box correct answer positioning */
+.text-box .correct-answer {
+    position: absolute;
+    right: -120px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.1em;  /* Original size from memory */
+    padding: 12px 16px;  /* Original padding from memory */
+    max-width: none;
+    background-color: #cddc39;  /* Lime */
+    border: 2px solid #cddc39;
+    border-radius: 5px;
+    color: black;
+    text-align: center;
+    opacity: 0;
+    transition: opacity 0.3s;
+    z-index: 3;
+    white-space: nowrap;
+}
+
+/* Show correct answers when incorrect */
+.incorrect .correct-answer {
+    opacity: 1;
 }
 
 /* Game area */
 .game-area {
-    width: 30%;
-    min-width: 400px;
+    width: 30%;  /* Exact width from memory */
+    min-width: 400px;  /* Ensure minimum width to fit cycle */
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 10px;
     padding: 20px 0;
-    margin-left: 0;
+    margin-left: 0;  /* Center the game area */
+}
+
+/* Draggable container */
+.draggable-container {
+    width: 100%;
+    max-width: 800px;  /* Limit maximum width */
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;  /* Left align items */
+    align-items: center;
+    gap: 10px;
+    margin: 0;  /* No margin for left alignment */
+}
+
+#word-bank {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;  /* Left align items */
+    gap: 10px;
+    width: 100%;
+}
+
+/* Draggable items */
+.draggable {
+    background-color: #e6007e;  /* Brand pink */
+    border: 2px solid #87898A;  /* Brand grey */
+    border-radius: 5px;
+    padding: 12px 16px;
+    display: inline-block;
+    color: white;
+    text-align: center;
+    cursor: move;
+    user-select: none;
+    transition: background-color 0.2s;
+    font-size: 1.1em;
+    touch-action: none;
+}
+
+.draggable:hover {
+    background-color: #b60d91;  /* Brand pink hover */
+}
+
+.draggable.correct {
+    background-color: #cddc39;  /* Lime */
+    border-color: #cddc39;
+    color: black;
+}
+
+.draggable.incorrect {
+    background-color: #87898A;  /* Brand grey */
+    border-color: #87898A;
+    color: white;
+}
+
+/* Sortable styles */
+.sortable-ghost {
+    opacity: 0.4;
+    background-color: #87898A;  /* Brand grey */
+}
+
+.sortable-drag {
+    opacity: 0.8;
+    cursor: move;
+}
+
+.sortable-fallback {
+    opacity: 0.8;
+    transform: rotate(3deg);
+    cursor: move;
+}
+
+/* Drop zones */
+.text-box, .quarter {
+    position: relative;
+    min-height: 50px;  /* Ensure space for dropped items */
+    min-width: 100px;
+}
+
+/* Box labels */
+.box-label {
+    color: black;
+    font-size: 1em;
+    padding: 10px;
+    pointer-events: none;
 }
 
 /* Text boxes */
 .text-box {
-    width: 250px;
-    height: 50px;
-    background-color: #BCCF04;
+    width: 250px;  /* Exact width from memory */
+    height: 50px;  /* Exact height from memory */
+    background-color: #BCCF04;  /* Lime green from memory */
     border: 1px solid #ccc;
     display: flex;
     justify-content: center;
@@ -106,6 +297,141 @@
     margin: 0;
     text-align: center;
     font-size: 1.2em;
+    position: relative;  /* For correct answer positioning */
+}
+
+/* Drop zone styles */
+.text-box.has-draggable,
+.quarter.has-draggable {
+    border: 2px solid #e6007e;  /* Brand pink */
+}
+
+.text-box.incorrect,
+.quarter.incorrect {
+    border: 2px solid #87898A;  /* Brand grey */
+}
+
+/* Quarter numbers and correct answers */
+.quarter span,
+.quarter .correct-answer {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* Quarter numbers */
+.quarter span {
+    font-size: 1.2em;
+    z-index: 1;
+}
+
+/* Keep numbers upright - exact rotations from memory */
+#quarter1 span {
+    transform: translate(-50%, -50%) rotate(0deg);
+}
+
+#quarter2 span {
+    transform: translate(-50%, -50%) rotate(-90deg);
+}
+
+#quarter3 span {
+    transform: translate(-50%, -50%) rotate(-180deg);
+}
+
+#quarter4 span {
+    transform: translate(-50%, -50%) rotate(-270deg);
+}
+
+/* Move number up when draggable is present */
+.quarter.has-draggable span {
+    top: 35px;
+}
+
+/* Keep numbers upright when moved - from memory */
+#quarter1.has-draggable span {
+    transform: translate(-50%, -50%) rotate(0deg);
+}
+
+#quarter2.has-draggable span {
+    transform: translate(-50%, -50%) rotate(-90deg);
+}
+
+#quarter3.has-draggable span {
+    transform: translate(-50%, -50%) rotate(-180deg);
+}
+
+#quarter4.has-draggable span {
+    transform: translate(-50%, -50%) rotate(-270deg);
+}
+
+/* Correct answer display */
+.quarter .correct-answer {
+    position: absolute;
+    font-size: 0.9em;
+    padding: 6px 10px;
+    max-width: 120px;
+    z-index: 2;  /* Above quarter but below draggable */
+    background-color: #cddc39;  /* Lime */
+    border: 2px solid #cddc39;
+    border-radius: 5px;
+    color: black;
+    text-align: center;
+    opacity: 0;
+    transition: opacity 0.3s;
+    white-space: nowrap;
+}
+
+/* Keep correct answers upright - match number rotations */
+#quarter1 .correct-answer {
+    transform: translate(-50%, -50%) rotate(0deg);
+}
+
+#quarter2 .correct-answer {
+    transform: translate(-50%, -50%) rotate(-90deg);
+}
+
+#quarter3 .correct-answer {
+    transform: translate(-50%, -50%) rotate(-180deg);
+}
+
+#quarter4 .correct-answer {
+    transform: translate(-50%, -50%) rotate(-270deg);
+}
+
+/* Text box correct answer positioning */
+.text-box .correct-answer {
+    position: absolute;
+    right: -120px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.1em;  /* Original size from memory */
+    padding: 12px 16px;  /* Original padding from memory */
+    max-width: none;
+    background-color: #cddc39;  /* Lime */
+    border: 2px solid #cddc39;
+    border-radius: 5px;
+    color: black;
+    text-align: center;
+    opacity: 0;
+    transition: opacity 0.3s;
+    z-index: 3;
+    white-space: nowrap;
+}
+
+/* Show correct answers when incorrect */
+.incorrect .correct-answer {
+    opacity: 1;
+}
+
+/* Downward arrows */
+.downward-arrow {
+    width: 0;
+    height: 0;
+    border-left: 20px solid transparent;
+    border-right: 20px solid transparent;
+    border-top: 20px solid #000000;  /* Black */
+    margin: 0;
 }
 
 /* PDSA Cycle */
@@ -117,7 +443,6 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    max-width: 100%;
 }
 
 .quarter {
@@ -158,33 +483,6 @@
     transform: translate(-50%, 0) rotate(270deg);
 }
 
-/* Quarter numbers */
-.quarter span {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 1.2em;
-    z-index: 1;
-}
-
-/* Keep numbers upright */
-#quarter1 span {
-    transform: translate(-50%, -50%) rotate(0deg);
-}
-
-#quarter2 span {
-    transform: translate(-50%, -50%) rotate(-90deg);
-}
-
-#quarter3 span {
-    transform: translate(-50%, -50%) rotate(-180deg);
-}
-
-#quarter4 span {
-    transform: translate(-50%, -50%) rotate(-270deg);
-}
-
 /* Position draggables in quarters */
 .quarter .draggable {
     position: absolute;
@@ -211,29 +509,18 @@
     transform: translate(-50%, -50%) rotate(-270deg);
 }
 
-/* Move number up when draggable is present */
-.quarter.has-draggable span {
-    top: 35px;
+/* Cycle arrows */
+.arrow {
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-left: 20px solid transparent;
+    border-right: 20px solid transparent;
+    border-top: 20px solid #000000;
+    pointer-events: none;
 }
 
-/* Keep numbers upright when moved */
-#quarter1.has-draggable span {
-    transform: translate(-50%, -50%) rotate(0deg);
-}
-
-#quarter2.has-draggable span {
-    transform: translate(-50%, -50%) rotate(-90deg);
-}
-
-#quarter3.has-draggable span {
-    transform: translate(-50%, -50%) rotate(-180deg);
-}
-
-#quarter4.has-draggable span {
-    transform: translate(-50%, -50%) rotate(-270deg);
-}
-
-/* Arrow positioning */
+/* Arrow positions */
 #arrow1 {
     top: 95%;
     left: 50%;
@@ -258,242 +545,53 @@
     transform: translate(-50%, 0) rotate(0deg);
 }
 
-/* Cycle arrows */
-.arrow {
-    position: absolute;
-    width: 0;
-    height: 0;
-    border-left: 20px solid transparent;
-    border-right: 20px solid transparent;
-    border-top: 20px solid #000000;
-    pointer-events: none;
-}
-
-/* Downward arrows */
-.downward-arrow {
-    width: 0;
-    height: 0;
-    border-left: 20px solid transparent;
-    border-right: 20px solid transparent;
-    border-top: 20px solid #000000;
-    margin: 0;
-}
-
-/* Right container */
-.right-container {
-    flex: 0 1 65%;
+/* Final options */
+.final-options {
     display: flex;
     flex-direction: column;
-    gap: 20px;
-    padding: 20px;
-    margin-left: 20px;
+    gap: 10px;
+    margin: 20px 0;
 }
 
-/* Draggable items */
-.draggable {
+.final-option {
     background-color: #e6007e;  /* Brand pink */
     border: 2px solid #87898A;  /* Brand grey */
     border-radius: 5px;
-    padding: 12px 16px;
-    margin: 6px;  
-    display: inline-block;
+    padding: 10px 20px;
+    margin: 5px;
     color: white;
     text-align: center;
-    cursor: move;  
-    user-select: none;
+    cursor: pointer;
     transition: background-color 0.2s;
-    font-size: 1.1em;
-    touch-action: none;
-    -webkit-user-drag: none;  /* Prevent default drag behavior */
+    font-size: 1em;
 }
 
-.draggable:hover {
+.final-option:hover {
     background-color: #b60d91;  /* Brand pink hover */
 }
 
-.draggable.correct {
-    background-color: #cddc39;  /* Lime */
-    border-color: #cddc39;
-    color: black;
-}
-
-.draggable.incorrect {
+.final-option.selected {
     background-color: #87898A;  /* Brand grey */
     border-color: #87898A;
     color: white;
 }
 
-.sortable-ghost {
-    opacity: 0.4;
-    background-color: #f0f0f0;
+/* Main container */
+.main-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 20px;
+    gap: 40px;
 }
 
-.sortable-drag {
-    opacity: 1;
-    background-color: #e6007e;  /* Brand pink */
-    cursor: move;
-}
-
-/* Media queries for responsive layout */
-@media screen and (max-width: 992px) {
-    .game-container {
-        padding: 10px;
-    }
-    .main-container {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    .right-container {
-        flex: 1;
-        margin-left: 0;
-        width: 100%;
-    }
-    .game-area {
-        width: 50%;
-        align-self: flex-start;
-    }
-    .cycle {
-        width: 350px;
-        height: 350px;
-    }
-    .quarter {
-        width: 130px;
-        height: 130px;
-    }
-}
-
-@media screen and (max-width: 768px) {
-    .game-area {
-        width: 70%;
-    }
-    .cycle {
-        width: 300px;
-        height: 300px;
-    }
-    .quarter {
-        width: 110px;
-        height: 110px;
-    }
-}
-
-@media screen and (max-width: 480px) {
-    .game-container {
-        padding: 5px;
-    }
-    .game-area {
-        width: 90%;
-        min-width: 250px;
-    }
-    .right-container {
-        padding: 10px;
-    }
-    .cycle {
-        margin: 30px auto 10px;
-        width: 250px;
-        height: 250px;
-    }
-    .quarter {
-        width: 90px;
-        height: 90px;
-    }
-    /* Adjust arrow positions for smaller cycle */
-    #arrow1, #arrow4 {
-        top: 92%;
-    }
-    #arrow2 {
-        right: 35%;
-    }
-    #arrow3 {
-        left: 35%;
-    }
-}
-
-/* Media query for smaller screens */
-@media screen and (max-width: 1400px) {
-    .game-area {
-        min-width: 350px;
-    }
-    .cycle {
-        width: 350px;
-        height: 350px;
-    }
-    .quarter {
-        width: 130px;
-        height: 130px;
-    }
-    .text-box {
-        width: 250px;  /* Keep original width as per memory */
-    }
-}
-
-@media screen and (max-width: 1200px) {
-    .game-area {
-        min-width: 300px;
-    }
-    .cycle {
-        width: 300px;
-        height: 300px;
-    }
-    .quarter {
-        width: 110px;
-        height: 110px;
-    }
-    .text-box {
-        width: 250px;  /* Keep original width as per memory */
-    }
-}
-
-@media screen and (max-width: 992px) {
-    .game-area {
-        width: 50%;
-    }
-    .cycle {
-        width: 350px;
-        height: 350px;
-    }
-    .quarter {
-        width: 130px;
-        height: 130px;
-    }
-    .text-box {
-        width: 250px;  /* Keep original width as per memory */
-    }
-}
-
-@media screen and (max-width: 768px) {
-    .game-area {
-        width: 70%;
-    }
-    .cycle {
-        width: 300px;
-        height: 300px;
-    }
-    .quarter {
-        width: 110px;
-        height: 110px;
-    }
-    .text-box {
-        width: 250px;  /* Keep original width as per memory */
-    }
-}
-
-@media screen and (max-width: 480px) {
-    .game-area {
-        width: 90%;
-        min-width: 250px;
-    }
-    .cycle {
-        margin: 30px auto 10px;
-        width: 250px;
-        height: 250px;
-    }
-    .quarter {
-        width: 90px;
-        height: 90px;
-    }
-    .text-box {
-        width: 250px;  /* Keep original width as per memory */
-    }
+/* Right container */
+.right-container {
+    flex: 1;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
 /* Instructions container */
@@ -502,159 +600,6 @@
     padding: 20px;
     border-radius: 5px;
     margin-bottom: 20px;
-}
-
-/* Draggable container */
-.draggable-container {
-    background-color: #f5f5f5;
-    padding: 20px;
-    border-radius: 5px;
-}
-
-/* Word bank */
-#word-bank {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    justify-content: center;
-    align-items: center;
-    min-height: 60px;
-    padding: 10px;
-    border: 2px dashed #ccc;
-    border-radius: 5px;
-    background-color: #f5f5f5;
-    user-select: none;  /* Prevent text selection */
-}
-
-/* Logo container */
-.logo-container {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 10px;
-}
-
-/* Logo */
-.logo {
-    width: 150px;
-    height: auto;
-}
-
-/* Course info */
-.course-info {
-    font-size: 1.2em;
-    margin: 0;
-}
-
-/* Hidden elements */
-.hidden {
-    display: none !important;
-}
-
-/* Submit button */
-#submit-button {
-    background-color: #e6007e;  /* Brand pink */
-    border: 2px solid #87898A;  /* Brand grey */
-    border-radius: 5px;
-    padding: 10px 20px;
-    margin: 20px 5px;
-    color: white;
-    text-align: center;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    font-size: 1em;
-}
-
-#submit-button:hover:not(:disabled) {
-    background-color: #b60d91;  /* Brand pink hover */
-}
-
-#submit-button:disabled {
-    background-color: #87898A;  /* Brand grey */
-    border-color: #87898A;
-    cursor: not-allowed;
-    opacity: 0.7;
-}
-
-/* Next question button */
-#next-question-button {
-    background-color: #e6007e;  /* Brand pink */
-    border: 2px solid #87898A;  /* Brand grey */
-    border-radius: 5px;
-    padding: 10px 20px;
-    margin: 20px 5px;
-    color: white;
-    text-align: center;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    font-size: 1em;
-}
-
-#next-question-button:hover {
-    background-color: #b60d91;  /* Brand pink hover */
-}
-
-/* Right container styles */
-.right-container {
-    width: 70%;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    padding: 20px;
-    margin-left: 20px;
-}
-
-/* Instructions styles */
-.instructions-container {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-}
-
-/* Link container styles */
-.link-container {
-    margin: 20px 0;
-    margin-left: 20px;
-    padding: 15px;
-    background-color: #f5f5f5;
-}
-
-/* Generate and copy buttons */
-#generate-link, #copy-link {
-    padding: 0.5rem 1rem;
-    background-color: var(--teal);
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-weight: 500;
-    min-width: 100px;
-}
-
-#generate-link:hover, #copy-link:hover {
-    background-color: var(--teal-dark);
-    transform: translateY(-1px);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-#generate-link:active, #copy-link:active {
-    background-color: var(--teal-darker);
-    transform: translateY(0);
-    box-shadow: none;
-}
-
-#copy-link.copied {
-    background-color: var(--lime);
-    color: black;
-}
-
-#copy-link.failed {
-    background-color: var(--pink);
-    color: white;
 }
 
 /* Brand Colors */
@@ -680,25 +625,40 @@
     font-weight: 500;
 }
 
+/* Base logo styles */
 .logo-container {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
+    position: fixed;
+    top: 0;
+    right: 0;
+    padding: 20px;
+    z-index: 1000;  /* Above all other content */
+    background-color: white;  /* Solid background */
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.5rem;
+    box-sizing: border-box;  /* Include padding in width calculation */
 }
 
 .logo {
-    width: 200px;
-    height: auto;
+    width: 200px;  /* Fixed width on desktop */
+    height: auto;  /* Maintain aspect ratio */
 }
 
+@media screen and (max-width: 480px) {
+    .logo {
+        width: 100px;  /* Smaller width on mobile */
+    }
+    .logo-container {
+        position: static;  /* Allow normal document flow on mobile */
+        padding: 10px;  /* Smaller padding on mobile */
+    }
+}
+
+/* Course info */
 .course-info {
     font-size: 1rem;
     color: #666;
-    margin: 0;
+    margin: 5px 0 0;
     text-align: center;
 }
 
@@ -722,18 +682,6 @@
 
 #organiser-view.hidden {
     display: none;
-}
-
-.logo-container {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 1rem;
-}
-
-.logo-container .logo {
-    height: 50px;
-    width: auto;
 }
 
 #course-title {
@@ -798,48 +746,90 @@
     color: #333;
 }
 
-/* Media queries for responsive layout */
-@media screen and (max-width: 992px) {
-    .game-area {
-        width: 50%;
-    }
-    .cycle {
-        width: 350px;
-        height: 350px;
-    }
-    .quarter {
-        width: 130px;
-        height: 130px;
-    }
+/* Submit button */
+#submit-button {
+    background-color: #e6007e;  /* Brand pink */
+    border: 2px solid #87898A;  /* Brand grey */
+    border-radius: 5px;
+    padding: 10px 20px;
+    margin: 20px 5px;
+    color: white;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    font-size: 1em;
 }
 
-@media screen and (max-width: 768px) {
-    .game-area {
-        width: 70%;
-    }
-    .cycle {
-        width: 300px;
-        height: 300px;
-    }
-    .quarter {
-        width: 110px;
-        height: 110px;
-    }
+#submit-button:hover:not(:disabled) {
+    background-color: #b60d91;  /* Brand pink hover */
 }
 
-@media screen and (max-width: 480px) {
-    .game-area {
-        width: 90%;
-    }
-    .cycle {
-        margin: 30px auto 10px;
-        width: 250px;
-        height: 250px;
-    }
-    .quarter {
-        width: 90px;
-        height: 90px;
-    }
+#submit-button:disabled {
+    background-color: #87898A;  /* Brand grey */
+    border-color: #87898A;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+/* Next question button */
+#next-question-button {
+    background-color: #e6007e;  /* Brand pink */
+    border: 2px solid #87898A;  /* Brand grey */
+    border-radius: 5px;
+    padding: 10px 20px;
+    margin: 20px 5px;
+    color: white;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    font-size: 1em;
+}
+
+#next-question-button:hover {
+    background-color: #b60d91;  /* Brand pink hover */
+}
+
+/* Final submit button */
+#final-submit-button {
+    background-color: #e6007e;  /* Brand pink */
+    border: 2px solid #87898A;  /* Brand grey */
+    border-radius: 5px;
+    padding: 10px 20px;
+    margin: 20px 5px;
+    color: white;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    font-size: 1em;
+}
+
+#final-submit-button:hover:not(:disabled) {
+    background-color: #b60d91;  /* Brand pink hover */
+}
+
+#final-submit-button:disabled {
+    background-color: #87898A;  /* Brand grey */
+    border-color: #87898A;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+/* Game container */
+.game-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0;
+    padding: 20px;
+}
+
+/* Instructions container */
+.instructions-container {
+    display: flex;
+    align-items: center;
+    gap: 20px;
 }
 
 /* Input styles */
@@ -871,16 +861,6 @@
 
 .link-box:focus, #link-output:focus {
     outline: none;
-}
-
-/* Right container styles */
-.right-container {
-    width: 70%;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    padding: 20px;
-    margin-left: 20px;
 }
 
 /* Instructions styles */
@@ -1003,61 +983,6 @@ button {
     cursor: not-allowed;
 }
 
-/* Draggable container */
-.draggable-container {
-    width: 100%;
-    max-width: 800px;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    padding: 10px;
-    margin: 0;
-}
-
-#word-bank {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    justify-content: center;
-    margin: 10px 0;
-    width: 100%;
-}
-
-/* Draggable items */
-.draggable {
-    background-color: #e6007e;
-    border: 2px solid #87898A;
-    border-radius: 5px;
-    padding: 12px 16px;
-    margin: 6px;  
-    color: white;
-    text-align: center;
-    cursor: move;  
-    user-select: none;
-    transition: background-color 0.2s;
-    font-size: 1.1em;
-    touch-action: none;
-    -webkit-user-drag: none;  /* Prevent default drag behavior */
-}
-
-.draggable:hover {
-    background-color: #b60d91;
-}
-
-.draggable.correct {
-    background-color: #cddc39;
-    border-color: #cddc39;
-    color: black;
-}
-
-.draggable.incorrect {
-    background-color: #87898A;
-    border-color: #87898A;
-    color: white;
-}
-
 /* Stats button styles */
 .stats-button-container {
     margin: 0;
@@ -1091,4 +1016,56 @@ button {
 #thank-you h2 {
     color: #e6007e;  /* Brand pink */
     margin: 0;
+}
+
+/* Final question container */
+.final-question-container {
+    background-color: #f5f5f5;
+    padding: 20px;
+    border-radius: 5px;
+    margin-top: 20px;
+    text-align: center;
+}
+
+@media screen and (max-width: 992px) {
+    .game-area {
+        width: 50%;
+    }
+    .cycle {
+        width: 350px;
+        height: 350px;
+    }
+    .quarter {
+        width: 130px;
+        height: 130px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .game-area {
+        width: 70%;
+    }
+    .cycle {
+        width: 300px;
+        height: 300px;
+    }
+    .quarter {
+        width: 110px;
+        height: 110px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .game-area {
+        width: 90%;
+    }
+    .cycle {
+        margin: 30px auto 10px;
+        width: 250px;
+        height: 250px;
+    }
+    .quarter {
+        width: 90px;
+        height: 90px;
+    }
 }

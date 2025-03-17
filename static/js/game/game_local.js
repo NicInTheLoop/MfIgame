@@ -3,88 +3,136 @@ import { doc, updateDoc, arrayUnion } from 'https://www.gstatic.com/firebasejs/1
 import { db } from '/static/firebase_local.js';
 import SessionManager from '/static/js/shared/session_local.js';
 
-export class GameManager {
+class GameManager {
     constructor() {
         this.db = db;
         this.session = new SessionManager();
         this.correctAnswersCount = 0;
         this.incorrectGuesses = [];
         this.finalQuestionResponse = '';
-        this.initialize();
     }
 
     initialize() {
-        document.addEventListener('DOMContentLoaded', () => {
-            // Prevent default drag behavior globally
-            document.addEventListener('dragstart', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-            }, true);
-            
-            this.setupSortable();
-            this.setupEventListeners();
-        });
+        if (typeof Sortable === 'undefined') {
+            console.error('Sortable.js is not loaded!');
+            return;
+        }
+        console.log('Sortable.js is loaded, version:', Sortable.version);
+        
+        this.setupSortable();
+        this.setupEventListeners();
     }
 
     setupSortable() {
+        console.log('Setting up sortable...');
+        
+        // Basic configuration for all sortable elements
         const sortableOptions = {
             group: 'shared',
             animation: 150,
             ghostClass: 'sortable-ghost',
             dragClass: 'sortable-drag',
-            swapThreshold: 0.65,
-            fallbackOnBody: true,  // Use fallback but allow native drag
-            dragoverBubble: true   // Ensure dragover events bubble correctly
+            fallbackClass: 'sortable-fallback',
+            scroll: true,
+            scrollSensitivity: 80,
+            scrollSpeed: 30,
+            draggable: '.draggable',  // Only drag elements with draggable class
+            dragoverBubble: true,     // Enable dragover events on children
+            removeCloneOnHide: true   // Remove clone when hiding
         };
 
         // Initialize word bank
-        new Sortable(document.getElementById('word-bank'), {
-            ...sortableOptions,
-            sort: false,
-            group: {
-                name: 'shared',
-                pull: true,
-                put: true
+        const wordBank = document.getElementById('word-bank');
+        if (wordBank) {
+            new Sortable(wordBank, {
+                ...sortableOptions,
+                sort: false,
+                group: {
+                    name: 'shared',
+                    pull: 'clone',
+                    put: true
+                }
+            });
+        }
+
+        // Initialize text boxes
+        ['box1', 'box2', 'box3'].forEach(id => {
+            const box = document.getElementById(id);
+            if (box) {
+                new Sortable(box, {
+                    ...sortableOptions,
+                    sort: false,
+                    group: {
+                        name: 'shared',
+                        pull: true,
+                        put: true
+                    },
+                    onAdd: (evt) => {
+                        const box = evt.to;
+                        const items = box.getElementsByClassName('draggable');
+                        
+                        // Move excess items back to word bank
+                        if (items.length > 1) {
+                            const wordBank = document.getElementById('word-bank');
+                            while (items.length > 1) {
+                                wordBank.appendChild(items[0]);
+                            }
+                        }
+                        
+                        box.classList.add('has-draggable');
+                        this.checkSubmitButtonState();
+                    },
+                    onRemove: (evt) => {
+                        evt.from.classList.remove('has-draggable', 'incorrect');
+                        // Remove any existing correct answer display
+                        const correctAnswer = evt.from.querySelector('.correct-answer');
+                        if (correctAnswer) {
+                            correctAnswer.remove();
+                        }
+                        this.checkSubmitButtonState();
+                    }
+                });
             }
         });
 
-        // Initialize drop zones
-        ['box1', 'box2', 'box3'].forEach(id => {
-            new Sortable(document.getElementById(id), {
-                ...sortableOptions,
-                onAdd: () => this.checkSubmitButtonState()
-            });
-        });
-
-        // Initialize quarters with one-item limit
+        // Initialize quarters
         ['quarter1', 'quarter2', 'quarter3', 'quarter4'].forEach(id => {
-            new Sortable(document.getElementById(id), {
-                ...sortableOptions,
-                onAdd: (evt) => {
-                    const quarter = evt.to;
-                    const items = quarter.getElementsByClassName('draggable');
-                    
-                    // If there's more than one item, move all previous items back to word bank
-                    if (items.length > 1) {
-                        const wordBank = document.getElementById('word-bank');
-                        // Keep only the newly added item (last item)
-                        const newItem = items[items.length - 1];
-                        // Move all other items back to word bank
-                        while (items.length > 1) {
-                            wordBank.appendChild(items[0]);
+            const quarter = document.getElementById(id);
+            if (quarter) {
+                new Sortable(quarter, {
+                    ...sortableOptions,
+                    sort: false,
+                    group: {
+                        name: 'shared',
+                        pull: true,
+                        put: true
+                    },
+                    onAdd: (evt) => {
+                        const quarter = evt.to;
+                        const items = quarter.getElementsByClassName('draggable');
+                        
+                        // Move excess items back to word bank
+                        if (items.length > 1) {
+                            const wordBank = document.getElementById('word-bank');
+                            while (items.length > 1) {
+                                wordBank.appendChild(items[0]);
+                            }
                         }
+                        
+                        quarter.classList.add('has-draggable');
+                        this.checkSubmitButtonState();
+                    },
+                    onRemove: (evt) => {
+                        evt.from.classList.remove('has-draggable', 'incorrect');
+                        // Remove any existing correct answer display
+                        const correctAnswer = evt.from.querySelector('.correct-answer');
+                        if (correctAnswer) {
+                            correctAnswer.remove();
+                        }
+                        this.checkSubmitButtonState();
                     }
-                    
-                    // Add has-draggable class to quarter
-                    quarter.classList.add('has-draggable');
-                    this.checkSubmitButtonState();
-                },
-                onRemove: (evt) => {
-                    // Remove has-draggable class when item is removed
-                    const quarter = evt.from;
-                    quarter.classList.remove('has-draggable');
-                }
-            });
+                });
+            }
         });
     }
 
@@ -146,12 +194,28 @@ export class GameManager {
 
         zones.forEach(zone => {
             const draggable = zone.querySelector('.draggable');
-            if (draggable && draggable.textContent === correctAnswers[zone.id]) {
-                this.correctAnswersCount++;
-                draggable.classList.add('correct');
-            } else if (draggable) {
-                draggable.classList.add('incorrect');
-                this.incorrectGuesses.push(draggable.textContent);
+            if (draggable) {
+                // Remove any existing correct answer display
+                const existingCorrectAnswer = zone.querySelector('.correct-answer');
+                if (existingCorrectAnswer) {
+                    existingCorrectAnswer.remove();
+                }
+
+                if (draggable.textContent === correctAnswers[zone.id]) {
+                    this.correctAnswersCount++;
+                    draggable.classList.add('correct');
+                    zone.classList.remove('has-draggable', 'incorrect');
+                } else {
+                    draggable.classList.add('incorrect');
+                    zone.classList.add('incorrect');
+                    this.incorrectGuesses.push(draggable.textContent);
+
+                    // Add correct answer display
+                    const correctAnswer = document.createElement('div');
+                    correctAnswer.className = 'correct-answer';
+                    correctAnswer.textContent = `Correct: "${correctAnswers[zone.id]}"`;
+                    zone.appendChild(correctAnswer);
+                }
             }
         });
 
@@ -176,9 +240,23 @@ export class GameManager {
     }
 
     nextQuestion() {
-        // Hide game elements
-        document.getElementById('game-area').style.display = 'none';
-        document.getElementById('draggable-container').style.display = 'none';
+        // Update text box labels
+        document.querySelector('#box1 .box-label').textContent = 'Aim';
+        document.querySelector('#box2 .box-label').textContent = 'Measure';
+        document.querySelector('#box3 .box-label').textContent = 'Change Ideas';
+
+        // Clear any existing draggables from boxes
+        const boxes = document.querySelectorAll('.text-box, .quarter');
+        boxes.forEach(box => {
+            const draggable = box.querySelector('.draggable');
+            if (draggable) {
+                draggable.remove();
+            }
+            box.classList.remove('has-draggable');
+        });
+
+        // Hide draggable container only
+        document.querySelector('.draggable-container').style.display = 'none';
 
         // Show final question
         const finalQuestionContainer = document.getElementById('final-question-container');
@@ -229,12 +307,11 @@ export class GameManager {
     }
 }
 
-// Initialize game when DOM is loaded
-let game;
+// Create and initialize game manager when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    game = new GameManager();
+    const game = new GameManager();
     game.initialize();
 });
 
-// Export functions for global access
-window.selectFinalOption = (option) => game.selectFinalOption(option);
+// Export the GameManager class
+export { GameManager };

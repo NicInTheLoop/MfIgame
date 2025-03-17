@@ -9,17 +9,12 @@ class GameManager {
         this.correctAnswersCount = 0;
         this.incorrectGuesses = [];
         this.finalQuestionResponse = '';
+        this.selectedFinalOption = null;
         this.initialize();
     }
 
     initialize() {
         document.addEventListener('DOMContentLoaded', () => {
-            // Prevent default drag behavior globally
-            document.addEventListener('dragstart', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-            }, true);
-            
             this.setupSortable();
             this.setupEventListeners();
         });
@@ -36,70 +31,80 @@ class GameManager {
             ghostClass: 'sortable-ghost',
             dragClass: 'sortable-drag',
             swapThreshold: 0.65,
-            sort: false,
-            removeCloneOnHide: true,
-            onStart: (evt) => {
-                evt.item.style.cursor = 'move';
-            },
-            onEnd: (evt) => {
-                evt.item.style.cursor = 'move';
-            }
+            sort: false
         };
 
         // Initialize word bank
         new Sortable(document.getElementById('word-bank'), {
             ...sortableOptions,
+            group: {
+                name: 'shared',
+                pull: true,
+                put: true
+            },
             removeOnSpill: false,
             revertOnSpill: true
         });
 
-        // Initialize drop zones
+        // Initialize drop zones (text boxes)
         ['box1', 'box2', 'box3'].forEach(id => {
-            new Sortable(document.getElementById(id), {
-                ...sortableOptions,
-                group: {
-                    name: 'shared',
-                    pull: true,
-                    put: true
-                },
-                onAdd: () => this.checkSubmitButtonState()
-            });
+            const element = document.getElementById(id);
+            if (element) {
+                new Sortable(element, {
+                    ...sortableOptions,
+                    group: {
+                        name: 'shared',
+                        pull: true,
+                        put: true
+                    },
+                    onAdd: () => this.checkSubmitButtonState()
+                });
+            }
         });
 
-        // Initialize quarters with one-item limit
+        // Initialize quarters
         ['quarter1', 'quarter2', 'quarter3', 'quarter4'].forEach(id => {
-            new Sortable(document.getElementById(id), {
-                ...sortableOptions,
-                group: {
-                    name: 'shared',
-                    pull: true,
-                    put: true
-                },
-                onAdd: (evt) => {
-                    const quarter = evt.to;
-                    const items = quarter.getElementsByClassName('draggable');
-                    
-                    // If there's more than one item, move all previous items back to word bank
-                    if (items.length > 1) {
-                        const wordBank = document.getElementById('word-bank');
-                        // Keep only the newly added item (last item)
-                        const newItem = items[items.length - 1];
-                        // Move all other items back to word bank
-                        while (items.length > 1) {
-                            wordBank.appendChild(items[0]);
+            const element = document.getElementById(id);
+            if (element) {
+                new Sortable(element, {
+                    ...sortableOptions,
+                    group: {
+                        name: 'shared',
+                        pull: true,
+                        put: true
+                    },
+                    onAdd: (evt) => {
+                        const quarter = evt.to;
+                        if (!quarter) return;
+                        
+                        const items = quarter.getElementsByClassName('draggable');
+                        
+                        // If there's more than one item, move all previous items back to word bank
+                        if (items.length > 1) {
+                            const wordBank = document.getElementById('word-bank');
+                            if (wordBank) {
+                                // Keep only the newly added item (last item)
+                                const newItem = items[items.length - 1];
+                                // Move all other items back to word bank
+                                while (items.length > 1) {
+                                    wordBank.appendChild(items[0]);
+                                }
+                            }
+                        }
+                        
+                        // Add has-draggable class to quarter
+                        quarter.classList.add('has-draggable');
+                        this.checkSubmitButtonState();
+                    },
+                    onRemove: (evt) => {
+                        // Remove has-draggable class when item is removed
+                        const quarter = evt.from;
+                        if (quarter) {
+                            quarter.classList.remove('has-draggable');
                         }
                     }
-                    
-                    // Add has-draggable class to quarter
-                    quarter.classList.add('has-draggable');
-                    this.checkSubmitButtonState();
-                },
-                onRemove: (evt) => {
-                    // Remove has-draggable class when item is removed
-                    const quarter = evt.from;
-                    quarter.classList.remove('has-draggable');
-                }
-            });
+                });
+            }
         });
     }
 
